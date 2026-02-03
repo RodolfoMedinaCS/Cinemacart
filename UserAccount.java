@@ -1,4 +1,4 @@
-//Stores the users information, user ID, username, and email
+//Holds the users information, user ID, username, and email
 
 public class UserAccount {
     
