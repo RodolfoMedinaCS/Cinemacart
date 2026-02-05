@@ -1,0 +1,13 @@
+# Maven build output
+target/
+
+# Java compiled files
+*.class
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Firebase secrets (DO NOT COMMIT)
+serviceAccountKey.json
+*.firebase.json

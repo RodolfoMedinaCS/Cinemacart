@@ -1,5 +1,7 @@
 //Holds the users information, user ID, username, and email
 
+package com.cinemacart;
+
 public class UserAccount {
     
     private final String userId; //unique numerical ID number for every account
