@@ -32,7 +32,7 @@ public AccountCreation(UserRepository repo){
    
         UserAccount account = new UserAccount(userId, username, email, passwordHash); //User object is created
        
-        repo.save(account); //Store the user object in repository
+        repo.save(account); //Store the user object in repository (UserRepository)
        
         return account;
     }
