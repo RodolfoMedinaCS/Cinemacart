@@ -6,7 +6,7 @@ import java.util.UUID; //Unique User Identifier, unique number assigned to every
 
 public class AccountCreation {
 
-private UserRepository repo;
+private UserRepository repo; //UserRepository not created yet
 
 public AccountCreation(UserRepository repo){
    this.repo = repo;
