@@ -8,7 +8,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
-/* Firebase utilizes a fieldname  */
+/* Firebase utilizes a fieldname and value */
 
 public class UserRepository {
 
@@ -51,8 +51,16 @@ public UserAccount findByUsername(String username) {
         if(!snapshot.exists()) {
             return null; //Return null if user with specified username does not exist in database
     }
+
+        String userId = snapshot.getString("userId");
+        String email = snapshot.getString("email");
+        String passwordHash = snapshot.getString("passwordHash");
+
+        return new UserAccount(userId, username, email, passwordHash); //Return a new user account object with the retrieved data from the database
+
 } catch (Exception e) {
     throw new RuntimeException("Could not find user", e);
 }
 
-}}
+    }
+}
