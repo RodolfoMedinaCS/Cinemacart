@@ -1,7 +1,5 @@
 //Creates the actual User objects
-
 package com.cinemacart;
-
 import java.util.UUID; //Unique User Identifier, unique number assigned to every user
 
 public class AccountCreation {

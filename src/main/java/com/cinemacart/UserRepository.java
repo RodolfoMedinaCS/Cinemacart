@@ -1,5 +1,4 @@
 package com.cinemacart;
-
 import java.util.HashMap;
 import java.util.Map;
 import javax.management.RuntimeErrorException;
@@ -8,11 +7,16 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
-/* Firebase utilizes a fieldname and value */
+/* The primary method of this class is to save user accounts to a database upon creation. Other methods include checking existence of the account within the database, searching and
+   returning a user along with their data, and an account deletion method.
+   
+   Firestore utilizes a fieldname and value to store in the database, in the save method, we are inputting a string for the fieldname and the user's data onto a hashmap which 
+   is then imported to the Firestore database.    
+*/
 
 public class UserRepository {
 
-    private final Firestore db;
+    private final Firestore db; 
 
     public UserRepository() {
         this.db = FirestoreClient.getFirestore();
@@ -46,7 +50,7 @@ public boolean exists(String username) {
 
 public UserAccount findByUsername(String username) {
     try {
-        DocumentSnapshot snapshot = db.collection("users").document(username).get().get();
+        DocumentSnapshot snapshot = db.collection("users").document(username).get().get(); //Read document from "users" collection on Firestore
 
         if(!snapshot.exists()) {
             return null; //Return null if user with specified username does not exist in database
@@ -62,5 +66,12 @@ public UserAccount findByUsername(String username) {
     throw new RuntimeException("Could not find user", e);
 }
 
+/* public void deleteUser(String username) { //delete user by username, call this method to give user an option to delete account, needs to be tested
+    try {
+        users.document(username).delete().get();
+    } catch (Exception e) {
+        throw new RuntimeException ("Failed to delete user");
+    }
+*/
     }
 }
