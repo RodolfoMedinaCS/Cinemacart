@@ -5,13 +5,15 @@ public class Movie {
     private final String title;//movie title or name
     private final String genre;//title like action, drama, and ...
     private final int duration;//duration in minutes
+    private final double rating;
 
     //takes the movie information and store it in this movie object
-    public Movie(int movieId, String title, String genre, int duration) {
+    public Movie(int movieId, String title, String genre, int duration, double rating) {
         this.movieId = movieId;
         this.title = title;
         this.genre = genre;
         this.duration = duration;
+        this.rating = rating;
     }
     //return the movie id
     public int getMovieId() {
@@ -28,5 +30,8 @@ public class Movie {
     //return the movie duration in minutes
     public int getDuration() {
         return duration;
+    }
+    public double getRating(){
+        return rating;
     }
 }
