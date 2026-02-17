@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout – CinemaCart</title>
+  <!-- css and js files -->
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body style="background-color: #000; color: #eee;">
+
+  <!-- Curtains -->
+<div id="curtain" class="active">
+  <div class="curtain left"></div>
+  <div class="curtain right"></div>
+</div>
+
+<!-- Navbar -->
+<header>
+  <div class="logo">Cinema<span>Cart</span></div>
+  <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="login.html">Login</a>
+      <a href="checkout.html">My Cart</a>
+  </nav>
+</header>
+
+<!-- Checkout box size/colors -->
+<section>
+  <div id="checkout-container" style="
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 40px;
+    background: #111;
+    border-radius: 12px;
+    color: #eee;
+    text-align: center;
+  ">
+    <!-- Checkout box text -->
+    <h2 style="margin-bottom: 30px;">Checkout</h2>
+
+    <div id="empty-message" style="display:none;">
+      <p style="font-size:1.2rem; margin-bottom:20px;">
+        You haven't booked any tickets yet!
+      </p>
+      <!-- Find movies button -->
+      <button id="find-movies-btn" class="btn" style="
+        padding: 15px 25px;
+        font-size: 1rem;
+        background-color: #e50914;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      ">
+        Find Movies
+      </button>
+    </div>
+    
+    <div id="order-summary" style="display:none; line-height:1.8;">
+
+      <!-- Order Summary colors/size -->
+      <div style="
+        background: #1a1a1a;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        color: #eee;
+        text-align: left;
+      ">
+      <!-- Reads times/seats/prices -->
+        <p><strong>Movie:</strong> Movie Title</p>
+        <p><strong>Showtime:</strong> <span id="selected-time">--</span></p>
+        <p><strong>Seats:</strong></p>
+        <ul id="seat-list" style="list-style:none; padding-left:0;"></ul>
+        <p style="font-size: 1.2rem; color: #e50914;">
+          <strong>Total:</strong> $<span id="total-price">0.00</span>
+        </p>
+      </div>
+
+      <!-- Payment Form input boxes-->
+      <input type="text" placeholder="Name on Card" style="
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #1c1c1c;
+        color: #eee;
+        border: 1px solid #333;
+        border-radius: 6px;
+      ">
+
+      <input type="text" placeholder="Card Number" style="
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #1c1c1c;
+        color: #eee;
+        border: 1px solid #333;
+        border-radius: 6px;
+      ">
+
+      <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <input type="text" placeholder="Expiration Date" style="
+          flex: 1;
+          padding: 15px;
+          background-color: #1c1c1c;
+          color: #eee;
+          border: 1px solid #333;
+          border-radius: 6px;
+        ">
+        <input type="text" placeholder="CVV" style="
+          width: 120px;
+          padding: 15px;
+          background-color: #1c1c1c;
+          color: #eee;
+          border: 1px solid #333;
+          border-radius: 6px;
+        ">
+      </div>
+
+      <!-- Pay now button displays alert -->
+      <button class="btn" onclick="alert('Booking Confirmed! Enjoy the show.')" style="
+        width: 100%;
+        padding: 18px;
+        font-size: 1.1rem;
+        background-color: #e50914;
+        border: none;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+      ">
+        Pay Now
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- Contact info footer -->
+<footer style="
+  background-color: #111; 
+  color: #ccc; 
+  text-align: center; 
+  padding: 20px 0;
+  font-size: 1rem;
+  border-top: 1px solid #222;
+">
+  <p style="margin: 5px 0;">
+    Email: 
+    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+      support@cinemacart.com
+    </a> | 
+    Phone: 
+    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+      111-111-1111
+    </a>
+  </p>
+  <p style="margin: 5px 0;">
+    123 Cinema Street, Movietown, USA
+  </p>
+
+  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
+    © 2026 CinemaCart
+  </p>
+</footer>
+
+<!-- js specific to this page -->
+<script>
+  // makes sure curtain works on buttons
+  const curtain = document.getElementById('curtain');
+  // Reads seats and time from seat selection
+  let seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+  const time = localStorage.getItem('selectedTime') || '--';
+
+  // Elements of checkout box
+  const orderSummary = document.getElementById('order-summary');
+  const emptyMessage = document.getElementById('empty-message');
+  const seatList = document.getElementById('seat-list');
+  const findBtn = document.getElementById('find-movies-btn');
+
+  // Displays selected seats in checkout box
+  function renderSeats() {
+    seatList.innerHTML = '';
+    seats.forEach(seat => {
+      const li = document.createElement('li');
+      li.style.marginBottom = '5px';
+      li.style.transition = 'opacity 0.5s';
+      li.innerHTML = `
+        ${seat} 
+        <button style="
+          margin-left:6px;
+          background:#e50914;
+          color:#fff;
+          border:none;
+          padding:0 5px;
+          border-radius:50%;
+          cursor:pointer;
+          font-weight:bold;
+        " data-seat="${seat}">✕</button>
+      `;
+      seatList.appendChild(li);
+    });
+    // Each set is $12, can be adjusted
+    document.getElementById('total-price').textContent = (seats.length * 12).toFixed(2);
+  }
+
+  // Loads elements depending on if seats are chosen 
+  function updatePage() {
+    // Displays emptymessage and not ordersummary if no seats are selected
+    if(seats.length === 0){
+      emptyMessage.style.display = 'block';
+      orderSummary.style.display = 'none';
+    } else {
+      // Displays ordersummary and not emptymessage if seats are selected
+      emptyMessage.style.display = 'none';
+      orderSummary.style.display = 'block';
+      // Also displays time of booking
+      document.getElementById('selected-time').textContent = time;
+      // Displays selected seats on checkout box
+      renderSeats();
+    }
+  }
+
+  updatePage();
+
+  // Removes selected seat when X is pressed
+  seatList.addEventListener('click', (e) => {
+    if(e.target.tagName === 'BUTTON'){
+      const seatToRemove = e.target.dataset.seat;
+      const li = e.target.parentElement;
+
+      li.style.opacity = '0';
+
+      setTimeout(() => {
+        seats = seats.filter(s => s !== seatToRemove);
+        localStorage.setItem('selectedSeats', JSON.stringify(seats));
+
+        // Makes sure curtains trigger after refresh
+        curtain.classList.add('active');
+
+        // Updates page and handles curtains
+        const onTransitionEnd = () => {
+          curtain.removeEventListener('transitionend', onTransitionEnd);
+          updatePage();
+          curtain.classList.remove('active');
+        };
+        curtain.addEventListener('transitionend', onTransitionEnd);
+      }, 300);
+    }
+  });
+
+  findBtn?.addEventListener('click', () => {
+    curtain.classList.add('active');
+    const onTransitionEnd = () => {
+      curtain.removeEventListener('transitionend', onTransitionEnd);
+      window.location.href = 'search.html';
+    };
+    curtain.addEventListener('transitionend', onTransitionEnd);
+  });
+</script>
+
+</body>
+</html>
