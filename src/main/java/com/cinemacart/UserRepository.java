@@ -29,7 +29,7 @@ public void save(UserAccount account) { //account is the user object being saved
       fireData.put("userId", account.getUserId());  
       fireData.put("username", account.getUsername());
       fireData.put("email", account.getEmail());
-      fireData.put("password", account.getPassword());
+      fireData.put("password", account.getPasswordHash());
 
       db.collection("users").document(account.getUsername()).set(fireData).get(); //saves the user data to the "users" collection in Firestore database, using the username as the document ID
 
@@ -58,7 +58,7 @@ public UserAccount findByUsername(String username) {
 
         String userId = snapshot.getString("userId");
         String email = snapshot.getString("email");
-        String passwordHash = snapshot.getString("passwordHash");
+        String passwordHash = snapshot.getString("password");
 
         return new UserAccount(userId, username, email, passwordHash); //Return a new user account object with the retrieved data from the database
 
@@ -68,11 +68,10 @@ public UserAccount findByUsername(String username) {
 
 /* public void deleteUser(String username) { //delete user by username, call this method to give user an option to delete account, needs to be tested
     try {
-        users.document(username).delete().get();
+       db.collection("users").document(username).delete().get();
     } catch (Exception e) {
         throw new RuntimeException ("Failed to delete user");
     }
 */
     }
-*/
 }

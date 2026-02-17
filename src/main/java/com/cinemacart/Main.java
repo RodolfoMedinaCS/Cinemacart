@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import java.io.FileInputStream;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
 
@@ -52,7 +53,8 @@ public class Main {
             String password = scanner.nextLine();
 
             String userId = String.valueOf(System.currentTimeMillis()); //Generate unique user ID based on current time in milliseconds
-            UserAccount newUser = new UserAccount(userId, username, email, password); //Creates new user object with the provided username, email, and password
+            String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); //Hash the password using BCrypt
+            UserAccount newUser = new UserAccount(userId, username, email, passwordHash); //Creates new user object with the provided username, email, and password
             userRepository.save(newUser); //Saves user to the firestore database
             System.out.println("Registration successful! You can now login with your credentials.");
         } else {
