@@ -1,7 +1,7 @@
 package com.cinemacart;
 import java.util.ArrayList;
 
-//class to store the available moves
+//This class store all the available moves
 public class MovieRepository {
 public static ArrayList<Movie> getAllMovies(){
     ArrayList<Movie> movies = new ArrayList<>();

@@ -31,6 +31,7 @@ public class Movie {
     public int getDuration() {
         return duration;
     }
+    //return the movie rating
     public double getRating(){
         return rating;
     }
