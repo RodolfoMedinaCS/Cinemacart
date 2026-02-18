@@ -58,7 +58,7 @@ public UserAccount findByUsername(String username) {
 
         String userId = snapshot.getString("userId");
         String email = snapshot.getString("email");
-        String passwordHash = snapshot.getString("password");
+        String passwordHash = snapshot.getString("password"); //Password hash is retrieved from the database password field and stored in the passwordHash variable, this is used to compare with the input password when user tries to login
 
         return new UserAccount(userId, username, email, passwordHash); //Return a new user account object with the retrieved data from the database
 
