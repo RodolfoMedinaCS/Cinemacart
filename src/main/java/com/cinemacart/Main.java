@@ -1,4 +1,10 @@
 package com.cinemacart;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.util.Scanner;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -8,58 +14,31 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
 
-    private static void initFirebase() throws Exception {
+    public static void main(String[] args) {
 
-        FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json");
+        try {
+            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+            
+            server.createContext("/", new Handler());       
+            server.setExecutor(null);
+            server.start();
 
-        FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .build();
-
-        FirebaseApp.initializeApp(options);
-    }
-    public static void main(String[] args) throws Exception {
-        
-        initFirebase();
-
-        UserRepository userRepository = new UserRepository();
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Welcome to CinemaCart! Login or Register to continue");
-        System.out.println("Press 1 to Login, press 2 to register");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-
-        if(choice ==1) {
-            System.out.println("Username: ");
-            String username = scanner.nextLine();
-            System.out.println("Password: ");
-            String password = scanner.nextLine();
-            UserAccount user = userRepository.findByUsername(username);
-            if(user != null && user.passwordMatch(password)) {
-                System.out.println("Welcome, " + user.getUsername());
-            } else {
-                System.out.println("Invalid username or password. Please try again.");
+            System.out.println("Server is running on port 8000");
+        } catch (IOException e) {
+            System.out.println("Error starting server: " + e.getMessage());
             }
         }
 
-        else if(choice == 2) {
-            System.out.println("Enter a username: ");
-            String username = scanner.nextLine();
-            System.out.println("Enter an email: ");
-            String email = scanner.nextLine();
-            System.out.println("Enter a password: ");
-            String password = scanner.nextLine();
+        static class Handler implements HttpHandler {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
 
-            String userId = String.valueOf(System.currentTimeMillis()); //Generate unique user ID based on current time in milliseconds
-            String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); //Hash the password using BCrypt
-            UserAccount newUser = new UserAccount(userId, username, email, passwordHash); //Creates new user object with the provided username, email, and password
-            userRepository.save(newUser); //Saves user to the firestore database
-            System.out.println("Registration successful! You can now login with your credentials.");
-        } else {
-            System.out.println("Invalid choice. Please restart the application and select either 1 or 2.");
-
+                String response = "Hello";
+                exchange.sendResponseHeaders(200, response.length());
+                OutputStream os = exchange.getResponseBody();
+                
+                os.write(response.getBytes());
+                os.close();
+            }
         }
     }
-}
