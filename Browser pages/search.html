@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search – CinemaCart</title>
+  <!-- css and js -->
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+<!-- curtain animation -->
+<div id="curtain" class="active">
+  <div class="curtain left"></div>
+  <div class="curtain right"></div>
+</div>
+
+<!-- navbar -->
+<header>
+  <div class="logo">Cinema<span>Cart</span></div>
+  <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="login.html">Login</a>
+      <a href="checkout.html">My Cart</a>
+  </nav>
+</header>
+
+<section>
+
+  <div style="
+    width: 100%;
+    padding: 60px 5%;
+    background: linear-gradient(to bottom, #111, #000);
+    text-align: center;
+  ">
+    
+    <div style="
+      max-width: 1000px;
+      margin: auto;
+      display: flex;
+    ">
+    <!-- Search bar size/colors -->
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search movies by title or genre..."
+        style="
+          flex: 1;
+          padding: 20px;
+          font-size: 1.2rem;
+          background-color: #1c1c1c;
+          color: #eee;
+          border: 1px solid #333;
+          outline: none;
+          border-radius: 8px 0 0 8px;
+        "
+      >
+    <!-- Search button -->
+      <button 
+        class="btn" 
+        id="searchBtn"
+        style="
+          padding: 20px 40px;
+          font-size: 1.1rem;
+          border-radius: 0 8px 8px 0;
+        "
+      >
+        Search
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Movie grid for results (static placeholder for now) -->
+  <div class="movie-grid" id="searchResults" style="padding: 40px 5%;">
+
+    <div class="movie-card">
+      <!-- Change based on movie returned by search algorithm (also static currently) -->
+      <img src="https://via.placeholder.com/200x300?text=Movie+1" alt="Movie 1">
+      <div class="movie-info">
+        <h3>Movie Title</h3>
+        <p>Action • Thriller</p>
+        <button class="btn" data-link="tickets.html">View</button>
+      </div>
+    </div>
+
+    <div class="movie-card">
+      <!-- Other movie result -->
+      <img src="https://via.placeholder.com/200x300?text=Movie+2" alt="Movie 2">
+      <div class="movie-info">
+        <h3>Movie Title</h3>
+        <p>Romance • Drama</p>
+        <button class="btn" data-link="tickets.html">View</button>
+      </div>
+    </div>
+
+    <div class="movie-card">
+      <!-- Other movie result -->
+      <img src="https://via.placeholder.com/200x300?text=Movie+3" alt="Movie 3">
+      <div class="movie-info">
+        <h3>Movie Title</h3>
+        <p>Sci-Fi • Adventure</p>
+        <button class="btn" data-link="tickets.html">View</button>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- Contact info -->
+<footer style="
+  background-color: #111; 
+  color: #ccc; 
+  text-align: center; 
+  padding: 20px 0;
+  font-size: 1rem;
+  border-top: 1px solid #222;
+">
+
+  <p style="margin: 5px 0;">
+    Email: 
+    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+      support@cinemacart.com
+    </a> | 
+    Phone: 
+    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+      111-111-1111
+    </a>
+  </p>
+  <p style="margin: 5px 0;">
+    123 Cinema Street, Movietown, USA
+  </p>
+
+  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
+    © 2026 CinemaCart
+  </p>
+
+</footer>
+
+</body>
+</html>
