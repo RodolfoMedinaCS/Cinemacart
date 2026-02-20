@@ -3,6 +3,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
@@ -33,10 +34,28 @@ public class Main {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
+                // Allows two way communications
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                    exchange.sendResponseHeaders(204, -1);
+                    return;
+                }
+
+                // Read received message
+                InputStream inputStream = exchange.getRequestBody();
+                Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+                String requestBody = scanner.hasNext() ? scanner.next() : "";
+                scanner.close();
+
+                // Print received message
+                System.out.println("Received from frontend: " + requestBody);
+
+                // Respond with Hello
                 String response = "Hello";
                 exchange.sendResponseHeaders(200, response.length());
                 OutputStream os = exchange.getResponseBody();
-                
                 os.write(response.getBytes());
                 os.close();
             }

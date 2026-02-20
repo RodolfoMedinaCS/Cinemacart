@@ -39,4 +39,29 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.removeItem("nextPage");
     }, 50);
   });
+
+  // Button to ping java server
+  const pingButton = document.getElementById("pingServer");
+
+  if (pingButton) {
+    pingButton.addEventListener("click", () => {
+      // Sends "Hi!" to Java server
+      fetch("http://localhost:8000/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain"
+        },
+        body: "Hi!"
+      })
+        .then(response => response.text())
+        .then(data => {
+          // Shows the server response in an alert (Should be Hello)
+          alert("Received from backend: " + data);
+        })
+        .catch(error => {
+          alert("Error connecting to server");
+          console.error(error);
+        });
+    });
+  }
 });
