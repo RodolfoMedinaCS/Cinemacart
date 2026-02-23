@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>My Cart - CinemaCart</title>
+        <link rel="stylesheet" href="style.css">
+        <script defer src="app.js"></script>
+    </head>
+
+    <body>
+
+        <!--curtain-->
+        <div id="curtain" class="active">
+            <div class="curtain left"></div>
+            <div class="curtain right"></div>
+        </div>
+
+        <header>
+            <div class="logo">Cinema<span>Cart</span></div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="search.html">Search</a>
+                <a href="login.html">Login</a>
+                <a href="checkout.html">My Cart</a>
+            </nav>
+        </header>
+
+        <!-- cart-->
+        <section>
+            <div id="cart-container">
+
+                <h2>Your Cart</h2>
+
+                <div id="empty-cart">
+                    <p>Your cart is empty!</p>
+                    <button class="btn" data-link="search.html">Find Movies</button>
+                </div>
+
+                <!-- show when bookedd-->
+                <div id="cart-details">
+
+                    <!--movie header-->
+                    <div class="cart-movie-header">
+                        <div class="cart-poster-placeholder"></div>
+                        <div>
+                            <p id="cart-movie">Movie Title</p>
+                            <p id="cart-meta">Today, Feb 19 | <span id="cart-item">7:00 PM</span> | PG-13</p>
+                        </div>
+                    </div>
+
+                    <!-- ticket sect-->
+                    <div class="cart-ticket-section">
+                        <p class="cart-section-label">TICKETS</p>
+                        <div class="cart-row">
+                            <span id="cart-ticket-count">1x Adult Ticket</span>
+                            <span id="cart-ticket-price">$12.00</span>
+                        </div>
+                        <p id="cart-seats">Seats: --</p>
+                    </div>
+
+                    <!--price -->
+                    <div class="cart-pricing-section">
+                       <div class="cart-pricing-row">
+                           <span>Subtotal</span>
+                           <span id="cart-subtotal">$12.00</span>
+                       </div>
+
+                       <div class="cart-pricing-row tax">
+                           <span>Tax(9%)</span>
+                           <span id="cart-tax">$1.08</span>
+                       </div>
+
+                        <div class="cart-total-row">
+                            <span>Total</span>
+                            <span id="cart-total">$13.08</span>
+                        </div>
+                    </div>
+
+                    <!-- button -->
+                    <button class="btn btn-checkout" data-link="checkout.html">Proceed to Checkout</button>
+
+                    <button id="clear-cart-btn">Clear Cart</button>
+
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
