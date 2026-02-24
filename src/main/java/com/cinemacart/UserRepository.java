@@ -8,10 +8,10 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
 /* The primary method of this class is to save user accounts to a database upon creation. Other methods include checking existence of the account within the database, searching and
-   returning a user along with their data, and an account deletion method.
-   
-   Firestore utilizes a fieldname and value to store in the database, in the save method, we are inputting a string for the fieldname and the user's data onto a hashmap which 
-   is then imported to the Firestore database.    
+ * returning a user along with their data, and an account deletion method.
+ * 
+ * Firestore utilizes a fieldname and value to store in the database, in the save method, we are inputting a string for the fieldname and the user's data onto a hashmap which 
+ * is then imported to the Firestore database.    
 */
 
 public class UserRepository {
@@ -64,14 +64,15 @@ public UserAccount findByUsername(String username) {
 
 } catch (Exception e) {
     throw new RuntimeException("Could not find user", e);
+    }
 }
-
-/* public void deleteUser(String username) { //delete user by username, call this method to give user an option to delete account, needs to be tested
+ 
+public void deleteUser(String username) { //delete user by username, call this method to give user an option to delete account
     try {
        db.collection("users").document(username).delete().get();
     } catch (Exception e) {
         throw new RuntimeException ("Failed to delete user");
     }
-*/
+    
     }
 }
