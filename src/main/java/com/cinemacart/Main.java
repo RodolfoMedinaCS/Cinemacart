@@ -10,14 +10,29 @@ import java.util.Scanner;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.cloud.firestore.Firestore;
 import java.io.FileInputStream;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
 
+    private static Firestore db;
+
+    private static void initFirebase() throws IOException {
+        FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
+
+        FirebaseOptions options = FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount)) // Set credentials for Firebase using the service account key file
+            .build();
+
+        FirebaseApp.initializeApp(options); // Initialize the Firebase application with the specified options
+        db = FirestoreClient.getFirestore(); // Get an instance of the Firestore database
+    }
     public static void main(String[] args) {
 
         try {
+            initFirebase(); // Initialize Firebase and Firestore database connection
             HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
             
             server.createContext("/", new Handler());       
