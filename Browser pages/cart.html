@@ -4,6 +4,142 @@
         <meta charset="UTF-8">
         <title>My Cart - CinemaCart</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            #cart-container {
+                max-width:600px;
+                margin: 30px auto;
+                padding: 40px;
+                background:#111;
+                border-radius:12px;
+                color: #eee;
+                text-align: center;
+            }
+
+            #cart-container h2 {
+                margin-bottom: 30px;
+            }
+
+            #cart-details {
+                display:  block;
+            }
+
+            .cart-movie-header {
+                display:  flex;
+                align-items:center;
+                gap:  15px;
+                text-align: left;
+                margin-bottom:20px;
+                padding-bottom: 20px;
+                border-bottom: 1px  solid #222;
+            }
+
+            .cart-poster-placeholder {
+                width: 80px;
+                height: 120px;
+                background: #e50914;
+                border-radius: 6px;
+                flex-shrink: 0;
+            }
+
+            #cart-movie {
+                font-size: 1.3rem;
+                font-weight: bold;
+                margin-bottom: 6px;
+            }
+
+            #cart-meta {
+                font-size: 0.85rem;
+                color: #999;
+            }
+
+            .cart-ticket-section {
+                text-align: left;
+                margin-bottom: 20px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #222;
+            }
+
+            .cart-section-label {
+                font-size: 0.75rem;
+                color: #e50914;
+                font-weight: bold;
+                letter-spacing: 1px;
+                margin-bottom: 12px;
+            }
+
+            .cart-row{
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px;
+            }
+            .cart-row-tickets{
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 5px;
+            }
+
+            #cart-seats{
+                font-size: 0.85rem;
+                color: #999;
+            }
+
+            .cart-pricing-section{
+                text-align: left;
+                margin-bottom: 25px;
+            }
+
+            .cart-pricing-row {
+                display: flex;
+                justify-content:space-between;
+                margin-bottom:8px;
+                color:#ccc;
+            }
+
+            .cart-pricing-row.tax {
+                margin-bottom: 12px;
+            }
+
+            .cart-total-row {
+                display:  flex;
+                justify-content:  space-between;
+                padding-top:12px;
+                border-top:1px solid #222;
+                font-size:1.2rem;
+                font-weight:  bold;
+            }
+
+            #cart-total {
+                color: #e50914;
+            }
+
+            .btn-checkout {
+                width:100%;
+                padding:18px;
+                font-size:  1.1rem;
+                margin-bottom:10px;
+            }
+
+            #clear-cart-btn {
+                width:100%;
+                padding:12px;
+                background:  none;
+                border:  1px solid #333;
+                color: #aaa;
+                border-radius:4px;
+                cursor:  pointer;
+                font-size:0.9rem;
+            }
+            #edit-link{
+                text-decoration: none;
+                color: #00a3e7;
+                font-size: 0.9rem;
+                cursor: pointer;
+            }
+            #edit-link:hover{
+                color: white;
+            }
+
+        </style>
         <script defer src="app.js"></script>
     </head>
 
@@ -29,12 +165,8 @@
         <section>
             <div id="cart-container">
 
-                <h2>Your Cart</h2>
+                <h2>Review Order</h2>
 
-                <div id="empty-cart">
-                    <p>Your cart is empty!</p>
-                    <button class="btn" data-link="search.html">Find Movies</button>
-                </div>
 
                 <!-- show when bookedd-->
                 <div id="cart-details">
@@ -50,12 +182,15 @@
 
                     <!-- ticket sect-->
                     <div class="cart-ticket-section">
-                        <p class="cart-section-label">TICKETS</p>
                         <div class="cart-row">
-                            <span id="cart-ticket-count">1x Adult Ticket</span>
+                            <p class="cart-section-label">TICKETS</p>
+                            <p style="color: #1800ff"> <a id="edit-link" href="tickets.html">Edit</a></p>
+                        </div>
+                        <div class="cart-row-tickets">
+                            <span id="cart-ticket-count">1x tickets</span>
                             <span id="cart-ticket-price">$12.00</span>
                         </div>
-                        <p id="cart-seats">Seats: --</p>
+                        <p id="cart-seats">Seats: </p>
                     </div>
 
                     <!--price -->
@@ -79,10 +214,36 @@
                     <!-- button -->
                     <button class="btn btn-checkout" data-link="checkout.html">Proceed to Checkout</button>
 
-                    <button id="clear-cart-btn">Clear Cart</button>
-
                 </div>
             </div>
         </section>
+
+
+        <script>
+            let seats = JSON.parse(localStorage.getItem('selectedSeats') || []);
+            let selectedTime = (localStorage.getItem('selectedTime') || '');
+
+            console.log(seats);
+            console.log(selectedTime);
+
+            let seatsLabel = document.getElementById("cart-seats");
+            let cartItem = document.getElementById("cart-item");
+            const button = document.getElementById("clear-cart-btn");
+
+
+            document.getElementById("cart-ticket-count").textContent = seats.length + "x tickets";
+            document.getElementById("cart-ticket-price").textContent = "$" + (seats.length * 12).toFixed(2);
+            document.getElementById("cart-subtotal").textContent = "$" + (seats.length * 12).toFixed(2);
+            document.getElementById("cart-tax").textContent = "$" + ((seats.length * 12) * 0.09).toFixed(2);
+            document.getElementById("cart-total").textContent = "$" + ((seats.length * 12) * 1.09).toFixed(2);
+
+            cartItem.innerHTML = selectedTime;
+
+            for(let i = 0; i < seats.length; i++){
+                seatsLabel.innerHTML += seats[i] + ", ";
+                seatsLabel.style.color = "RED";
+            };
+
+        </script>
     </body>
 </html>
