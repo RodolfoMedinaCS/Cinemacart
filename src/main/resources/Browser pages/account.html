@@ -135,7 +135,7 @@
 
   <!-- Main Content -->
   <div class="content">
-    <h2>Welcome back, Name</h2>
+    <h2>Welcome back, <span id="usernameDisplay"></span></h2>
 
     <!-- Tabs -->
     <div class="tabs">
@@ -148,8 +148,8 @@
     <!-- Account Info Panel -->
     <div class="panel active" id="accountInfoPanel"> <!-- Default active -->
       <h3>Account Overview</h3>
-      <p><strong>Name:</strong> Name</p>
-      <p><strong>Email:</strong> Email Address</p>
+      <p><strong>Name:</strong> <span id="accountName"></span></p>
+      <p><strong>Email:</strong> <span id="accountEmail"></span></p>
       <p><strong>Member Since:</strong> Date</p>
       <p><strong>Last Login:</strong> Last Login</p>
     </div>
@@ -196,7 +196,7 @@
     <p>&copy; 2026 CinemaCart</p>
   </footer>
 
-  <!-- JS for panels and curtaisn -->
+  <!-- JS for panels and curtains -->
   <script>
     // Defines curtain elements
     const curtain = document.getElementById("curtain");
@@ -205,7 +205,6 @@
 
     // Handles curtain animation on page load
     if (!sessionStorage.getItem('pageLoaded')) {
-      
       curtain.classList.add("active");
       curtainLeft.classList.add("active");
       curtainRight.classList.add("active");
@@ -218,7 +217,6 @@
 
       sessionStorage.setItem('pageLoaded', 'true');
     } else {
-      // Prevents curtains when updating the page (switching panels)
       curtain.classList.remove("active");
       curtainLeft.classList.remove("active");
       curtainRight.classList.remove("active");
@@ -231,18 +229,46 @@
     const panels = document.querySelectorAll(".panel");
     const buttons = document.querySelectorAll(".tabs button");
 
+    // Get stored login info
+    const email = localStorage.getItem("userEmail");
+    const username = localStorage.getItem("username");
+
+    // Display email and username
+    if (email) document.getElementById("accountEmail").textContent = email;
+    if (username) {
+      document.getElementById("accountName").textContent = username;
+      document.getElementById("usernameDisplay").textContent = username;
+    }
+
     buttons.forEach(button => {
       button.addEventListener("click", () => {
-        // Hides all panels
         panels.forEach(panel => panel.classList.remove("active"));
         buttons.forEach(btn => btn.classList.remove("active"));
 
-        // Shows the selected panel
         const panelId = `${button.id.replace("Btn", "Panel")}`;
         document.getElementById(panelId).classList.add("active");
         button.classList.add("active");
       });
     });
+
+    // Logout handling
+    const logoutLink = document.querySelector('nav a[href="login.html"]');
+    if (logoutLink) {
+      logoutLink.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Clear login state
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("username");
+
+        if (curtain) curtain.classList.add("active");
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 500); // Timing might need adjustment
+      });
+    }
   </script>
 
 </body>

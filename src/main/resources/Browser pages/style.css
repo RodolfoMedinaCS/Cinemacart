@@ -258,3 +258,22 @@ footer {
   font-size: 0.9rem;
   color: #aaa;
 }
+
+/* Movie row layout (Title, Rating, Genre, Duration) */
+.movie-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Remove extra spacing */
+.movie-row h3,
+.movie-row p {
+  margin: 0;
+}
+
+/* Rating and duration styling */
+.movie-rating,
+.movie-duration {
+  white-space: nowrap;
+}
