@@ -3,7 +3,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const curtain = document.getElementById("curtain");
   if (!curtain) return;
 
-  // Makes sure buttons/links are hooked after page load
+  // Login state check
+  const navAuthLink = document.querySelector("#navAuthLink");
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  if (navAuthLink) {
+    if (isLoggedIn) {
+      // Show Account button instead of Login
+      navAuthLink.innerHTML = '<a href="account.html" id="accountBtn">Account</a>';
+    } else {
+      // Show login by default
+      navAuthLink.innerHTML = '<a href="login.html">Login</a>';
+    }
+  }
+
+  // Curtains
   document.querySelectorAll("a, button[data-link]").forEach(el => {
     el.addEventListener("click", e => {
       const url = el.getAttribute("href") || el.dataset.link;
@@ -27,9 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Starts curtains closed
   curtain.style.transition = "none";
   curtain.classList.add("active");
-
   curtain.offsetHeight;
-
   curtain.style.transition = "";
 
   // Trigger open animation
@@ -40,24 +52,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 50);
   });
 
-  // Button to ping java server
+  // Ping server button
   const pingButton = document.getElementById("pingServer");
 
   if (pingButton) {
     pingButton.addEventListener("click", () => {
-      // Sends "Hi!" to Java server
       fetch("http://localhost:8000/", {
         method: "POST",
-        headers: {
-          "Content-Type": "text/plain"
-        },
+        headers: { "Content-Type": "text/plain" },
         body: "Hi!"
       })
         .then(response => response.text())
-        .then(data => {
-          // Shows the server response in an alert (Should be Hello)
-          alert("Received from backend: " + data);
-        })
+        .then(data => alert("Received from backend: " + data))
         .catch(error => {
           alert("Error connecting to server");
           console.error(error);

@@ -22,7 +22,9 @@
         <a href="index.html">Home</a>
         <a href="Search.html">Search</a>
         <a href="checkout.html">Cart</a>
-        <a href="login.html">Login</a>
+        <span id="navAuthLink">
+            <a href="login.html">Login</a>
+        </span>
     </nav>
   </header>
 
@@ -145,7 +147,7 @@
         submitBtn.textContent = "Login";
         toggleText.textContent = "Don't have an account?";
         toggleBtn.textContent = "Create One";
-        rememberContainer.style.display = "block";
+        if (rememberContainer) rememberContainer.style.display = "block";
         forgotPassword.style.display = "block";
       } else {
         // Elements to display on create account page
@@ -153,7 +155,7 @@
         submitBtn.textContent = "Create Account";
         toggleText.textContent = "Already have an account?";
         toggleBtn.textContent = "Login";
-        rememberContainer.style.display = "none";
+        if (rememberContainer) rememberContainer.style.display = "none";
         forgotPassword.style.display = "none";
       }
     });
@@ -162,20 +164,57 @@
     const authForm = document.getElementById("authForm");
 
     // Prevents default submission
-    authForm.addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent default form submission
+    authForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
 
-      // Get the email and password values
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      // Validation check
-      if (email && password) {
-        // Trigger curtain animation before redirect
-        triggerCurtainAndRedirect();
-      } else {
+      if (!email || !password) {
         alert("Please enter a valid email and password.");
+        return;
       }
+
+      const action = isLogin ? "login" : "register";
+
+      try {
+
+        const response = await fetch("http://localhost:8000/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: action,
+            email: email,
+            password: password
+          })
+        });
+
+        const message = await response.text();
+
+        if (response.status === 200 || response.status === 201) {
+
+          alert(message);
+
+          // Only redirect after successful login
+          if (action === "login") {
+
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("userEmail", email);
+
+            triggerCurtainAndRedirect();
+          }
+
+        } else {
+          alert(message);
+        }
+
+      } catch (error) {
+        alert("Could not connect to server.");
+        console.error(error);
+      }
+
     });
 
     // Handles curtain animation and page redirection
