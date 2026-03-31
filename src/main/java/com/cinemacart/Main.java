@@ -21,6 +21,8 @@ import java.util.UUID;
 public class Main {
 
     private static Firestore db;
+    private static UserRepository userRepository; // Create an instance of the UserRepository class to interact w
+    private static SessionManager sessionManager = new SessionManager();
 
     private static void initFirebase() throws IOException {
         FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
@@ -39,8 +41,6 @@ public class Main {
         String password;
     }
 
-    private static UserRepository userRepository; // Create an instance of the UserRepository class to interact with the Firestore database for user account management
-    
     public static void main(String[] args) {
 
         try {

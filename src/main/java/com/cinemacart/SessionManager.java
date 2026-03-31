@@ -19,7 +19,7 @@ public class SessionManager {
     public String generateSessionToken(String email) {
         String sessionToken = UUID.randomUUID().toString();
         sessions.put(sessionToken, email);
-        return token;
+        return sessionToken;
     }
 
     // Returns email associated with the session token, or null if the token is invalid
@@ -32,12 +32,12 @@ public class SessionManager {
 
     // Returns true if the token exists in the sessions map, indicating that the session is valid
     public boolean isValidSession(String sessionToken) {
-        return token != null && sessions.containsKey(sessionToken);
+        return sessionToken != null && sessions.containsKey(sessionToken);
     }
 
     // Revoke session token when user logs out
     public void invalidSsesion(String sessionToken) {
-        if (token != null) {
+        if (sessionToken != null) {
             sessions.remove(sessionToken);
         }
     }
