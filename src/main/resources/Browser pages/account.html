@@ -148,8 +148,8 @@
     <!-- Account Info Panel -->
     <div class="panel active" id="accountInfoPanel"> <!-- Default active -->
       <h3>Account Overview</h3>
-      <p><strong>Name:</strong> <span id="accountName"></span></p>
-      <p><strong>Email:</strong> <span id="accountEmail"></span></p>
+      <p><strong>Name:</strong> <span id="accountName"></span> Username</p>
+      <p><strong>Email:</strong> <span id="accountEmail"></span> User email</p>
       <p><strong>Member Since:</strong> Date</p>
       <p><strong>Last Login:</strong> Last Login</p>
     </div>
@@ -254,19 +254,10 @@
     // Logout handling
     const logoutLink = document.querySelector('nav a[href="login.html"]');
     if (logoutLink) {
-      logoutLink.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Clear login state
+      logoutLink.addEventListener("click", () => {
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("username");
-
-        if (curtain) curtain.classList.add("active");
-
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 500); // Timing might need adjustment
       });
     }
   </script>
