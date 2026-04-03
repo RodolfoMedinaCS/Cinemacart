@@ -28,16 +28,16 @@ public class Search {
         // Loop through every movie
         for (Movie movie : allMovies) {
 
-            // we make sure that fields are not null
-            String title = movie.getTitle() == null ? "" : movie.getTitle();
-            String genre = movie.getGenre() == null ? "" : movie.getGenre();
+            // we clean movie title and genre by removing spaces and converting to lower case
+            String title = normalize(movie.getTitle());
+            String genre = normalize(movie.getGenre());
             double rating = movie.getRating();
 
             // Check if movie partially matches the title for example: The Batman ... bat
-            boolean matchesTitle = (tq == null) || title.toLowerCase().contains(tq);
+            boolean matchesTitle = (tq == null) || (title != null && title.contains(tq));
 
             // Check if movie exactly matches genre
-            boolean matchesGenre = (gq == null) || genre.toLowerCase().equals(gq);
+            boolean matchesGenre = (gq == null) || (genre != null && genre.equals(gq));
 
             // Check if rating is greater than or equal to minimum rating
             boolean matchesRating = (minRating == null) || (rating >= minRating);
