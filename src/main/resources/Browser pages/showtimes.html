@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Showtime - CinemaCart</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel = "stylesheet" href = "style.css">
+  <script defer src="app.js"></script>
+
+  <style>
+    .showtime-page{
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .showtime-page h1{
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .showtime-page .movie-subtitle{
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .showtime-page h2{
+      font-size: 1.1rem;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.08rem;
+      margin-bottom: 1rem;
+    }
+
+    .date-btn{
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: var(--white);
+      border-radius: 8px;
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      text-align: center;
+      min-width: 72px;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .date-btn .day-name{
+      font-size: 0.8rem;
+      color: #aaa;
+      display: block;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+    }
+
+    .date-btn .day-number{
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .date-btn:hover{
+      border-color: var(--gold);
+    }
+
+    .date-btn.selected{
+      background: var(--gold);
+      color: black;
+      border-color: var(--gold);
+    }
+
+    .date-btn.selected .day-name{
+      color: #555;
+    }
+
+    /* showtime buttons */
+    .showtime-row{
+      display:flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .time-btn{
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: var(--white);
+      border-radius: 8px;
+      padding: 0.9rem 1.8rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .time-btn:hover{
+      border-color: var(--gold);
+    }
+
+    .time-btn.selected{
+      background: var(--gold);
+      color: black;
+      border-color: var(--gold);
+      font-weight: bold;
+    }
+
+    .showtime-actions{
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-back{
+      background: transparent;
+      color: var(--white);
+      border: 2px solid #444;
+      padding: 0.8rem 1.6rem;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-back:hover{
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-continue{
+      background: #444;
+      color: #888;
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: not-allowed;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .btn-continue.active{
+      background: var(--red);
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn-continue.active:hover{
+      background: var(--gold);
+      color:black;
+    }
+
+    .date-row{
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Curtains -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="showtime-page">
+
+      <h1>Select Date & Showtime</h1>
+      <!-- shows which movie they're booking pulled from local storage -->
+      <p class="movie-subtitle" id="moviesubtitle">Loading movie...</p>
+
+      <!-- Date selection -->
+      <h2>Select a Date </h2>
+      <div class="date-row" id="dateRow">
+      </div>
+
+      <!-- Showtime section -->
+      <h2>Select a time</h2>
+      <div class="showtime-row" id="showtimeRow">
+      </div>
+
+      <!-- back and continue buttons -->
+      <div class="showtime-actions">
+        <button class="btn-back" id="backBtn">← Back</button>
+        <button class="btn-continue" id="continueBtn" disabled>Continue →</button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
+    <p style="margin: 5px 0;">
+      Email:
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">support@cinemacart.com</a> |
+      Phone:
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+    </p>
+    <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const curtain = document.getElementById('curtain');
+
+      //show which movie they're booking for, saved from local storage in 'movieDetails.html' page
+      const movieTitle = localStorage.getItem('selectedMovieTitle');
+      document.getElementById('moviesubtitle').textContent = movieTitle ? "Booking for: " + movieTitle : "booking for: -";
+
+      //track what the user has selected
+      let selectedDate = null;
+      let selectedTime = null;
+
+      // 7 date buttons that always start on today
+      const dateRow = document.getElementById("dateRow");
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+        "Oct", "Nov", "Dec"];
+
+      for(let i = 0; i < 7; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() + i);
+
+        const btn = document.createElement("button");
+        btn.className = "date-btn";
+
+        btn.innerHTML = `
+            <span class="day-name">${i === 0 ? "Today" : dayNames[date.getDay()]}</span>
+            <span class="day-number">${monthNames[date.getMonth()]} ${date.getDate()}</span>`;
+
+        //store full date string to save to local storage
+        const fullDate = date.toDateString();
+
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".date-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedDate = fullDate;
+          checkIfReadyToContinue();
+        });
+
+        dateRow.appendChild(btn);
+      }
+
+      const showtimeRow = document.getElementById("showtimeRow");
+      const showtimes = ["12:00 PM", "3:30 PM", "7:00 PM", "10:00 PM"];
+
+      showtimes.forEach(time => {
+        const btn = document.createElement("button");
+        btn.className = "time-btn";
+        btn.textContent = time;
+
+        btn.addEventListener("click", () => {
+          //remove 'selected' from all the time buttons, then add to this one
+          document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedTime = time;
+          checkIfReadyToContinue();
+        });
+
+        showtimeRow.appendChild(btn);
+      });
+
+      const continueBtn = document.getElementById("continueBtn");
+
+      function checkIfReadyToContinue(){
+        if(selectedDate && selectedTime){
+          continueBtn.classList.add("active");
+          continueBtn.disabled = false;
+        }
+      }
+
+      //back button goes back to movie details
+      document.getElementById("backBtn").addEventListener("click", () => {
+        curtain.classList.add("active");
+        setTimeout(() =>{
+          window.location.href = "movieDetails.html";
+        }, 1500);
+      });
+
+      // continue, save selection to local storage and go to ticket types page
+      continueBtn.addEventListener("click", () => {
+        if (!continueBtn.classList.contains("active")) return;
+
+        localStorage.setItem("selectedDate", selectedDate);
+        localStorage.setItem("selectedTime", selectedTime);
+
+        curtain.classList.add("active");
+        setTimeout(() => {
+          window.location.href = "ticketTypes.html";
+        }, 1500);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Details - Cinema Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel = "stylesheet" href = "style.css">
+  <script defer src="app.js"></script>
+
+  <style>
+    .movie-details-container {
+      display: flex;
+      gap: 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      align-items: flex-start;
+    }
+
+    .movie-poster {
+      width: 320px;
+      min-width: 320px;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .movie-details-info {
+      flex: 1;
+    }
+
+    .movie-details-info h1 {
+      font-size: 2.8rem;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .movie-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .movie-meta span{
+      background: #1a1a1a;
+      border: 1px solid #333;
+      padding: 0.4rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      color: var(--white);
+    }
+
+    .rating-badge{
+      background: var(--gold); !important;
+      color: black; !important;
+      font-weight: bold;
+      border: none;
+    }
+
+    .movie-divider {
+      border: none;
+      border-top: 1px solid #222;
+      margin-bottom: 1.8rem;
+    }
+
+    .movie-description {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #ccc;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-back{
+      background: transparent;
+      color: var(--white);
+      border: 2px solid #444;
+      padding: 0.8rem 1.6rem;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-back:hover{
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .movie-details-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- curtain animations -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="movie-details-container">
+
+      <!-- movie poster -->
+      <img class="movie-poster" src="https://via.placeholder.com/300x450?text=Movie+Poster" alt="Movie Poster"/>
+
+      <!-- movie info -->
+      <div class="movie-details-info">
+
+        <h1>Movie Title</h1>
+
+        <!-- rating, genre, duration... etc -->
+        <div class="movie-meta">
+          <span class="rating-badge">* 9.0 / 10</span>
+          <span>Action</span>
+          <span> 152 min</span>
+        </div>
+
+        <hr class="movie-divider">
+
+        <p class="movie-description">
+          placeholder description this will be replaced with the real movie
+          info once its brought from the backend. For now this text is just
+          here to see how it looks and feels on the page.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="movie-details-actions">
+          <button class="btn-back" id="backBtn">← Back</button>
+          <button class="btn" id="bookBtn">Get Tickets →</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem;
+  border-top: 1px solid #222;">
+
+  <p style="margin: 5px 0;">
+    Email:
+    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">support@cinemacart.com</a> |
+    Phone:
+    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+  </p>
+    <p style="margin: 5px 0;"> 123 Cinema Street, Movietown, USA</p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+  </footer>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const curtain = document.getElementById("curtain");
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        curtain.classList.add("active");
+        setTimeout(() => {window.location.href = "index.html"}, 1500);
+      })
+
+      document.getElementById("bookBtn").addEventListener("click", () => {
+        curtain.classList.add("active");
+        setTimeout(() => {window.location.href = "tickets.html"}, 1500);
+      })
+    })
+
+  </script>
+</body>
+</html>
