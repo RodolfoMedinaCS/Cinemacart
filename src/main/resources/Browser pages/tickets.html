@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Seats – CinemaCart</title>
+  <!-- css and js -->
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+  
+  <!-- Handles the seat map for seat selection -->
+  <style>
+    /* Seat spacing */
+    .seat-map {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 30px 0;
+      align-items: center;
+    }
+
+    .seat-row {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .seat-gap {
+      width: 40px;
+    }
+
+    /* Seat properties */
+    .seat {
+      width: 45px;
+      height: 45px;
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .seat.selected {
+      background-color: #e50914;
+      color: #fff;
+    }
+
+    .seat.occupied {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+    /* Screen properties */
+    .screen {
+      width: 40%;
+      height: 25px;
+      background-color: #333;
+      border-radius: 10px;
+      margin-bottom: 90px;
+      text-align: center;
+      color: #ccc;
+      line-height: 25px;
+      font-size: 0.9rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Showtime selection */
+    .showtime-selector {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .showtime-btn {
+      padding: 10px 15px;
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      cursor: pointer;
+    }
+
+    .showtime-btn.selected {
+      background-color: #e50914;
+      color: #fff;
+    }
+  </style>
+</head>
+<body style="background-color:#000; color:#eee;">
+
+  <!-- Curtains -->
+<div id="curtain" class="active">
+  <div class="curtain left"></div>
+  <div class="curtain right"></div>
+</div>
+
+<!-- Navbar -->
+<header>
+  <div class="logo">Cinema<span>Cart</span></div>
+  <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Login</a>
+  </nav>
+</header>
+
+
+<section style="text-align:center; padding:30px 20px;">
+  <h2>Select Your Seats</h2>
+
+  <!-- Defines buttons for the showtime selector, we'll probably update based on movie class later -->
+  <div class="showtime-selector">
+    <button class="showtime-btn" data-time="1:00 PM">1:00 PM</button>
+    <button class="showtime-btn" data-time="4:00 PM">4:00 PM</button>
+    <button class="showtime-btn" data-time="7:30 PM">7:30 PM</button>
+    <button class="showtime-btn" data-time="10:15 PM">10:15 PM</button>
+  </div>
+
+  <!-- Screen, seat map, and continue to checkout button -->
+  <div class="screen">SCREEN</div>
+
+  <div class="seat-map" id="seat-map">
+  </div>
+
+  <button class="btn" id="continue-btn" style="margin-top:20px;">
+    Continue to Checkout
+  </button>
+</section>
+
+<!-- Contact info -->
+<footer style="
+  background-color: #111; 
+  color: #ccc; 
+  text-align: center; 
+  padding: 20px 0;
+  font-size: 1rem;
+  border-top: 1px solid #222;
+">
+  <p style="margin: 5px 0;">
+    Email: 
+    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+      support@cinemacart.com
+    </a> | 
+    Phone: 
+    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+      111-111-1111
+    </a>
+  </p>
+  <p style="margin: 5px 0;">
+    123 Cinema Street, Movietown, USA
+  </p>
+
+  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
+    © 2026 CinemaCart
+  </p>
+</footer>
+
+<!-- Creates seat assignments -->
+<script>
+  const rows = ['A','B','C','D','E','F'];
+  const seatsPerRow = 8;
+  const seatMap = document.getElementById('seat-map');
+
+  // Stores selected seats and times
+  let selectedSeats = [];
+  let selectedTime = '';
+
+  // Creates rows
+  rows.forEach(row => {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'seat-row';
+
+    // Creates gaps between seats
+    for(let i=1;i<=seatsPerRow;i++){
+      if(i===5){
+        const gap = document.createElement('div');
+        gap.className = 'seat-gap';
+        rowDiv.appendChild(gap);
+      }
+
+      // Each seat is a button
+      const seatBtn = document.createElement('button');
+      seatBtn.className = 'seat';
+      seatBtn.textContent = row + i;
+      rowDiv.appendChild(seatBtn);
+
+      // Whether seat is selected, unselected, or occupied (occupied isn't used yet but is implemented)
+      seatBtn.addEventListener('click', () => {
+        if(seatBtn.classList.contains('occupied')) return;
+        seatBtn.classList.toggle('selected');
+        const seatId = row + i;
+        // Stores selected seats
+        if(seatBtn.classList.contains('selected')){
+          selectedSeats.push(seatId);
+        } else {
+          selectedSeats = selectedSeats.filter(s => s!==seatId);
+        }
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+      });
+    }
+
+    seatMap.appendChild(rowDiv);
+  });
+
+  // Displays selected time and stores it as well
+  const timeBtns = document.querySelectorAll('.showtime-btn');
+  timeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      timeBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedTime = btn.dataset.time;
+      localStorage.setItem('selectedTime', selectedTime);
+    });
+  });
+
+  // Prevents going to checkout without a time and seat selected
+  document.getElementById('continue-btn').addEventListener('click', () => {
+    if(!selectedTime || selectedSeats.length === 0){
+      alert('Please select a showtime and at least one seat.');
+      return;
+    }
+
+    // Makes sure curtains trigger on continue to checkout button press
+    const curtain = document.getElementById('curtain');
+    curtain.classList.add('active');
+    setTimeout(() => {
+      window.location.href = 'checkout.html';
+    }, 1300); 
+  });
+
+  // Remembers selected seats even when exiting the page or browser
+  const prevSeats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+  prevSeats.forEach(seatId => {
+    const btn = [...document.querySelectorAll('.seat')].find(b => b.textContent === seatId);
+    if(btn) btn.classList.add('selected');
+    selectedSeats = prevSeats;
+  });
+
+  // Remembers selected time even when exiting the page or browser
+  const prevTime = localStorage.getItem('selectedTime');
+  if(prevTime){
+    const btn = [...document.querySelectorAll('.showtime-btn')].find(b => b.dataset.time===prevTime);
+    if(btn) btn.classList.add('selected');
+    selectedTime = prevTime;
+  }
+</script>
+
+</body>
+</html>

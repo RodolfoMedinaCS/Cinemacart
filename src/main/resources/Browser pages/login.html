@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login – CinemaCart</title>
+  <!-- css and js -->
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+  <!-- curtains -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="Search.html">Search</a>
+        <a href="checkout.html">Cart</a>
+        <span id="navAuthLink">
+            <a href="login.html">Login</a>
+        </span>
+    </nav>
+  </header>
+
+  <!-- Login box -->
+  <section>
+
+    <div style="
+      max-width: 500px;
+      margin: 80px auto;
+      padding: 40px;
+      background: #111;
+      border-radius: 10px;
+      text-align: center;
+    ">
+
+      <h2 id="formTitle">Account Login</h2>
+
+      <form id="authForm" style="margin-top: 30px;">
+
+        <!-- Email input box, has special properties like requiring @ -->
+        <input 
+          type="email" 
+          id="email"
+          placeholder="Email Address"
+          required
+          style="
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #1c1c1c;
+            color: #eee;
+            border: 1px solid #333;
+            border-radius: 6px;
+          "
+        >
+
+        <!-- Password input box, has special properties like replacing text with ***** -->
+        <input 
+          type="password" 
+          id="password"
+          placeholder="Password"
+          required
+          style="
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #1c1c1c;
+            color: #eee;
+            border: 1px solid #333;
+            border-radius: 6px;
+          "
+        >
+
+        <!-- login button -->
+        <button type="submit" class="btn" style="width:100%; padding:15px;">
+          Login
+        </button>
+
+      </form>
+
+      <!-- Create account text/button -->
+      <p style="margin-top: 20px; font-size: 0.9rem;">
+        <span id="toggleText">Don't have an account?</span>
+        <button id="toggleBtn" type="button" style="background: none; border: none; color: #e50914; cursor: pointer;">
+          Create One
+        </button>
+      </p>
+
+      <!-- Forgot password (doesn't do anything currently) -->
+      <p id="forgotPassword" style="margin-top: 10px; font-size: 0.8rem;">
+        <a href="#" style="color:#aaa; text-decoration:none;">
+          Forgot Password?
+        </a>
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- Contact info -->
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
+    <p style="margin: 5px 0;">
+      Email: 
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+        support@cinemacart.com
+      </a> | 
+      Phone: 
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+        111-111-1111
+      </a>
+    </p>
+    <p style="margin: 5px 0;">
+      123 Cinema Street, Movietown, USA
+    </p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
+      © 2026 CinemaCart
+    </p>
+  </footer>
+
+  <!-- js specific to this page -->
+  <script>
+    // Defines elements so we can switch between login/create account
+    const toggleBtn = document.getElementById("toggleBtn");
+    const formTitle = document.getElementById("formTitle");
+    const toggleText = document.getElementById("toggleText");
+    const rememberContainer = document.getElementById("rememberContainer");
+    const forgotPassword = document.getElementById("forgotPassword");
+    const submitBtn = document.querySelector("#authForm button");
+
+    // Switches between login/create account
+    let isLogin = true;
+
+    // Toggles when button is pressed
+    toggleBtn.addEventListener("click", () => {
+      isLogin = !isLogin;
+
+      // Elements to display on login page
+      if (isLogin) {
+        formTitle.textContent = "Account Login";
+        submitBtn.textContent = "Login";
+        toggleText.textContent = "Don't have an account?";
+        toggleBtn.textContent = "Create One";
+        if (rememberContainer) rememberContainer.style.display = "block";
+        forgotPassword.style.display = "block";
+      } else {
+        // Elements to display on create account page
+        formTitle.textContent = "Create Account";
+        submitBtn.textContent = "Create Account";
+        toggleText.textContent = "Already have an account?";
+        toggleBtn.textContent = "Login";
+        if (rememberContainer) rememberContainer.style.display = "none";
+        forgotPassword.style.display = "none";
+      }
+    });
+
+    // Form validation
+    const authForm = document.getElementById("authForm");
+
+    // Prevents default submission
+    authForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        alert("Please enter a valid email and password.");
+        return;
+      }
+
+      const action = isLogin ? "login" : "register";
+
+      try {
+
+        const response = await fetch("http://localhost:8000/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: action,
+            email: email,
+            password: password
+          })
+        });
+
+        const message = await response.text();
+
+        if (response.status === 200 || response.status === 201) {
+
+          alert(message);
+
+          // Only redirect after successful login
+          if (action === "login") {
+
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("userEmail", email);
+
+            triggerCurtainAndRedirect();
+          }
+
+        } else {
+          alert(message);
+        }
+
+      } catch (error) {
+        alert("Could not connect to server.");
+        console.error(error);
+      }
+
+    });
+
+    // Handles curtain animation and page redirection
+    function triggerCurtainAndRedirect() {
+      const curtain = document.getElementById('curtain');
+      curtain.classList.add('active');  // Add 'active' to show curtain
+
+      // Wait for curtain animation to finish before redirecting
+      setTimeout(() => {
+        window.location.href = "account.html"; // Redirect after curtain effect
+      }, 1500);  // Adjust the time to match your curtain's animation duration
+    }
+  </script>
+
+</body>
+</html>

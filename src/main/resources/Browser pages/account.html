@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Dashboard – CinemaCart</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    header {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .logo span {
+      color: #e50914;
+    }
+
+    nav a {
+      color: #eee;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1rem;
+    }
+
+    /* Main Content */
+    .content {
+      margin: 0 auto;
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+    }
+
+    .tabs button {
+      background: none;
+      border: 2px solid #e50914;
+      color: #eee;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .tabs button:hover {
+      background-color: #e50914;
+      color: #111;
+    }
+
+    .tabs button.active {
+      background-color: #e50914;
+      color: #111;
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+      padding: 30px;
+      background: #1c1c1c;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .panel h3 {
+      color: #e50914;
+      margin-bottom: 20px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Buttons */
+    button {
+      background-color: #e50914;
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #b20710;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 1rem;
+      border-top: 1px solid #222;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Curtains -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- Navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h2>Welcome back, <span id="usernameDisplay"></span></h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button id="accountInfoBtn" class="active">Account Info</button> <!-- Default active -->
+      <button id="purchaseHistoryBtn">Purchase History</button>
+      <button id="paymentInfoBtn">Update Payment Info</button>
+      <button id="securityBtn">Security Settings</button>
+    </div>
+
+    <!-- Account Info Panel -->
+    <div class="panel active" id="accountInfoPanel"> <!-- Default active -->
+      <h3>Account Overview</h3>
+      <p><strong>Name:</strong> <span id="accountName"></span></p>
+      <p><strong>Email:</strong> <span id="accountEmail"></span></p>
+      <p><strong>Member Since:</strong> Date</p>
+      <p><strong>Last Login:</strong> Last Login</p>
+    </div>
+
+    <!-- Purchase History Panel -->
+    <div class="panel" id="purchaseHistoryPanel">
+      <h3>Recent Purchases</h3>
+      <ul>
+        <li><strong>Movie Title</strong> - Watched on <span>Purchase Date</span></li>
+        <li><strong>Movie Title</strong> - Added to cart on <span>Purchase Date</span></li>
+        <li><strong>Movie Title</strong> - Watched on <span>Purchase Date</span></li>
+      </ul>
+    </div>
+
+    <!-- Payment Info Panel -->
+    <div class="panel" id="paymentInfoPanel">
+      <h3>Update Payment Information</h3>
+      <p>Your current payment method is <span>Visa ending in 1234</span>.</p>
+      <button>Change Payment Method</button>
+    </div>
+
+    <!-- Security Settings Panel -->
+    <div class="panel" id="securityPanel">
+      <h3>Security Settings</h3>
+      <p>Change your password or review other security settings.</p>
+      <button>Change Password</button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      Email: 
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+        support@cinemacart.com
+      </a> | 
+      Phone: 
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+        111-111-1111
+      </a>
+    </p>
+    <p>123 Cinema Street, Movietown, USA</p>
+    <p>&copy; 2026 CinemaCart</p>
+  </footer>
+
+  <!-- JS for panels and curtains -->
+  <script>
+    // Defines curtain elements
+    const curtain = document.getElementById("curtain");
+    const curtainLeft = document.querySelector(".curtain.left");
+    const curtainRight = document.querySelector(".curtain.right");
+
+    // Handles curtain animation on page load
+    if (!sessionStorage.getItem('pageLoaded')) {
+      curtain.classList.add("active");
+      curtainLeft.classList.add("active");
+      curtainRight.classList.add("active");
+
+      setTimeout(() => {
+        curtain.classList.remove("active");
+        curtainLeft.classList.remove("active");
+        curtainRight.classList.remove("active");
+      }, 100);
+
+      sessionStorage.setItem('pageLoaded', 'true');
+    } else {
+      curtain.classList.remove("active");
+      curtainLeft.classList.remove("active");
+      curtainRight.classList.remove("active");
+    }
+
+    window.addEventListener("beforeunload", function () {
+      sessionStorage.removeItem('pageLoaded');
+    });
+
+    const panels = document.querySelectorAll(".panel");
+    const buttons = document.querySelectorAll(".tabs button");
+
+    // Get stored login info
+    const email = localStorage.getItem("userEmail");
+    const username = localStorage.getItem("username");
+
+    // Display email and username
+    if (email) document.getElementById("accountEmail").textContent = email;
+    if (username) {
+      document.getElementById("accountName").textContent = username;
+      document.getElementById("usernameDisplay").textContent = username;
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        panels.forEach(panel => panel.classList.remove("active"));
+        buttons.forEach(btn => btn.classList.remove("active"));
+
+        const panelId = `${button.id.replace("Btn", "Panel")}`;
+        document.getElementById(panelId).classList.add("active");
+        button.classList.add("active");
+      });
+    });
+
+    // Logout handling
+    const logoutLink = document.querySelector('nav a[href="login.html"]');
+    if (logoutLink) {
+      logoutLink.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Clear login state
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("username");
+
+        if (curtain) curtain.classList.add("active");
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 500); // Timing might need adjustment
+      });
+    }
+  </script>
+
+</body>
+</html>
