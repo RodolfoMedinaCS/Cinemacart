@@ -37,6 +37,7 @@ public class Main {
         String action; // Variable that determines if user is logging in or registering, this is used to determine which method to call in the handler class
         String email; 
         String password;
+        String query;
     }
 
     private static UserRepository userRepository; // Create an instance of the UserRepository class to interact with the Firestore database for user account management
@@ -84,17 +85,47 @@ public class Main {
             
                 String response;
                 int status;
-                
+
                 Gson gson = new Gson();
                 Authorization req = gson.fromJson(requestBody, Authorization.class); // Allows us to access the action, email, and password fields from the request
+
+                // If the request body is empty or invalid JSON, req can be null
+                if (req == null || req.action == null) {
+                    response = "{\"error\":\"Missing action\"}";
+                     status = 400;
+
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    byte[] bytes = response.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                    exchange.sendResponseHeaders(status, bytes.length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(bytes);
+                    os.close();
+                    return;
+                }
 
                 String action = req.action; // Get the action field from the request, this determines if user is trying to login or register
                 String email = req.email; // Get the email field from the request, this is used to identify the user in the database
                 String password = req.password; // Get the password field from the request
+                String query = req.query; // Get the query field from the request
 
-                // Registration / Logging in logic
                 try {
-                    if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
+                    // handles search
+                    if ("search".equalsIgnoreCase(action)) {
+                        exchange.getResponseHeaders().set("Content-Type", "application/json");
+
+                        String q = (query == null) ? "" : query.trim();
+
+                        if (q.isEmpty()) {
+                            status = 200;
+                            response = "[]";
+                        } else {
+                            java.util.List<Movie> results = Search.search(q, "", 0.0, "");
+                            status = 200;
+                            response = gson.toJson(results);
+                        }
+                    }
+                    // Registration / Logging in logic
+                    else if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
                     if (userRepository.exists(email)) {
                         status = 409;
                         response = "User already exists";
@@ -133,9 +164,10 @@ public class Main {
                     response = "Server error: " + e.getMessage();
                 }
 
-                exchange.sendResponseHeaders(status, response.length());
+                byte[] bytes = response.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(status, bytes.length);
                 OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
+                os.write(bytes);
                 os.close();
         }
     }
