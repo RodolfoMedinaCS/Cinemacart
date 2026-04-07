@@ -10,18 +10,18 @@ import java.util.List;
 import com.google.gson.Gson;
 import java.util.UUID;
 
-/* BookingHandler class is responsible for handling booking related requests from the frontend. It uses the SessionManager class to validate user sessions and the BookingRepository class to interact with the bookings stored in the database.
- * BookingHandlers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
+/* BookingController class is responsible for handling booking related requests from the frontend. It uses the SessionManager class to validate user sessions and the BookingRepository class to interact with the bookings stored in the database.
+ * BookingControllers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
 */
 
 
-    public class BookingHandler implements HttpHandler {
+    public class BookingController implements HttpHandler {
         
         private final SessionManager sessionManager;
         private final BookingRepository bookingRepository;
         
-        // Constructor for the BookingHandler class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
-        public BookingHandler(SessionManager sessionManager, BookingRepository bookingRepository) {
+        // Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
+        public BookingController(SessionManager sessionManager, BookingRepository bookingRepository) {
             this.sessionManager = sessionManager;
             this.bookingRepository = bookingRepository;
         }

@@ -9,9 +9,6 @@ import java.io.FileInputStream;
 
 public class Main {
 
-    private static UserRepository userRepository; // Create an instance of the UserRepository class to interact w
-    private static SessionManager sessionManager = new SessionManager();
-
     private static void initFirebase() throws IOException {
         FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
         FirebaseOptions options = FirebaseOptions.builder()
@@ -24,11 +21,13 @@ public class Main {
 
         try {
             initFirebase(); // Initialize Firebase and Firestore database connection
-            userRepository = new UserRepository(); // Initialize the UserRepository instance to manage user accounts in the database
-            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+            UserRepository userRepository = new UserRepository(); // Constructs a new UserRepository instance to manage user accounts in the database
+            BookingRepository bookingRepository = new BookingRepository(); // Constructs a new BookingRepository instance to manage bookings in the database
+            SessionManager sessionManager = new SessionManager(); // Constructs a new SessionManager instance to manage user sessions and generate session tokens when users login
+            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0); // Constructs an HTTP server on port 8000 for incoming http requests
 
-            server.createContext("/", new LoginHandler(userRepository, sessionManager)); // Create a context for handling login requests using the LoginHandler class
-            server.createContext("/booking", new BookingHandler(sessionManager, new BookingRepository())); // Create a context for handling booking requests using the BookingHandler class
+            server.createContext("/", new LoginRegController(userRepository, sessionManager)); // Create a route for login and registration requests using the LoginController class
+            server.createContext("/booking", new BookingController(sessionManager, bookingRepository)); // Create a route for  booking requests using the BookingController class
             server.setExecutor(null);
             server.start();
 

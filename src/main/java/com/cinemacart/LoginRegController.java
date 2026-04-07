@@ -10,18 +10,18 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
 import java.util.UUID;
 
-/* LoginRegistrationHandler class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
+/* LoginRegController class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
  * and the SessionManager class to generate session tokens to manage user sessions. The handler processes incoming HTTP requests, extracts the relevant information (action type, email, password) and performs the approrpriate actions based
  * It also handles logout requests by invalidating the user's session token. This handler sends appropriate HTTP responses back to the client based on the outcome of the login, registration, or logout attempts, including status codes and messages. 
- * LoginRegistrationHandler also creates the user account objects and saves them to the database upon registration.
+ * LoginRegController also creates the user account objects and saves them to the database upon registration.
 */
 
-public class LoginHandler implements HttpHandler {
+public class LoginRegController implements HttpHandler {
             
         private final UserRepository userRepository; // Create an instance of the UserRepository class to manage user accounts in the database
         private final SessionManager sessionManager; // Create an instance of the SessionManager class to generate user session tokens when they login
 
-        public LoginHandler(UserRepository userRepository, SessionManager sessionManager) {
+        public LoginRegController(UserRepository userRepository, SessionManager sessionManager) {
             this.userRepository = userRepository;
             this.sessionManager = sessionManager;
         }    

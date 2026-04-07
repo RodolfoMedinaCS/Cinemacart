@@ -1,7 +1,6 @@
 package com.cinemacart;
 
-/*
- * Represents a booking made by a customer for a specific movie and showtime.
+/* Represents a booking made by a customer for a specific movie and showtime.
  * Contains details such as the movie, showtime, number of tickets, and total price.
  * Bookings are tied to emails rather than userId
 */

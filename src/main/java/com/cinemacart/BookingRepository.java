@@ -11,7 +11,6 @@ import com.google.cloud.firestore.DocumentSnapshot;
 /* The primary method of this class is to save user bookings to the Firebase database upon creation. Other methods include checking booking history of an account within the database
  * Similarly to the UserRepository class, objects are stored in the Firebase database. They are specifically stored in a collection called Bookings which serves as a "folder" for all booking documents.
  * Each booking document can be considered as a file within the Booking collection / folder. Each booking object in this case is a file that contains the booking data that is saved to a user's account.
- * 
 */
 
 public class BookingRepository { 
@@ -22,6 +21,7 @@ public class BookingRepository {
         this.db = FirestoreClient.getFirestore(); // Initialize the Firestore database connection in the constructor of the BookingRepository class, allowing it to be used for saving and deleting bookings in the database
     }
 
+    // Method to save a booking to the Firestore database, takes in a Booking object and saves its data to the "bookings" collection in the database using the bookingId as the document ID
     public void save(Booking booking) {
         try {
             Map <String, Object> bookingData = new HashMap<>();
