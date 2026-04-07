@@ -110,14 +110,17 @@ section h2 {
 /* Movie grid formatting */
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 40px 5%;
 }
 
 /* Movie card formatting */
 .movie-card {
   background: #141414;
   border-radius: 6px;
+  width: 200px;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
 }
