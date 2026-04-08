@@ -134,14 +134,11 @@
     const forgotPassword = document.getElementById("forgotPassword");
     const submitBtn = document.querySelector("#authForm button");
 
-    // Switches between login/create account
     let isLogin = true;
 
-    // Toggles when button is pressed
     toggleBtn.addEventListener("click", () => {
       isLogin = !isLogin;
 
-      // Elements to display on login page
       if (isLogin) {
         formTitle.textContent = "Account Login";
         submitBtn.textContent = "Login";
@@ -150,7 +147,6 @@
         if (rememberContainer) rememberContainer.style.display = "block";
         forgotPassword.style.display = "block";
       } else {
-        // Elements to display on create account page
         formTitle.textContent = "Create Account";
         submitBtn.textContent = "Create Account";
         toggleText.textContent = "Already have an account?";
@@ -160,10 +156,8 @@
       }
     });
 
-    // Form validation
     const authForm = document.getElementById("authForm");
 
-    // Prevents default submission
     authForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
@@ -181,34 +175,31 @@
 
         const response = await fetch("http://localhost:8000/", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: action,
-            email: email,
-            password: password
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, email, password })
         });
 
         const message = await response.text();
 
         if (response.status === 200 || response.status === 201) {
 
-          alert(message);
-
-          // Only redirect after successful login
           if (action === "login") {
-
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
+            sessionStorage.setItem("isLoggedIn", "true");
+            sessionStorage.setItem("userEmail", email);
 
             triggerCurtainAndRedirect();
+          } else {
+            // For registration, store session and redirect like login
+            sessionStorage.setItem("isLoggedIn", "true");
+            sessionStorage.setItem("userEmail", email);
+
+            triggerCurtainAndRedirect(); // redirect to account.html
           }
 
         } else {
           alert(message);
         }
+
 
       } catch (error) {
         alert("Could not connect to server.");
@@ -217,15 +208,13 @@
 
     });
 
-    // Handles curtain animation and page redirection
     function triggerCurtainAndRedirect() {
       const curtain = document.getElementById('curtain');
-      curtain.classList.add('active');  // Add 'active' to show curtain
+      curtain.classList.add('active');
 
-      // Wait for curtain animation to finish before redirecting
       setTimeout(() => {
-        window.location.href = "account.html"; // Redirect after curtain effect
-      }, 1500);  // Adjust the time to match your curtain's animation duration
+        window.location.href = "account.html";
+      }, 1500);
     }
   </script>
 
