@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Types - CinemaCart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel = "stylesheet" href = "style.css">
+    <script defer src="app.js"></script>
+
+    <style>
+
+      .ticket-page{
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+      }
+
+      .ticket-page h1{
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 0.4rem;
+      }
+
+      .booking-summary{
+        color: #aaa;
+        font-size:0.95rem;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+      }
+
+      .booking-summary span{
+        color: var(--white);
+      }
+
+      .ticket-row{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 1.2rem 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .ticket-info{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .counter-btn{
+        background: #2a2a2a;
+        color: var(--white);
+        border: 1px solid #444;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, border-color 0.2s;
+        line-height: 1;
+      }
+
+      .counter-btn:hover{
+        background: var(--gold);
+        color: black;
+        border-color: var(--gold);
+      }
+
+      .counter-btn:disabled{
+        background: #1a1a1a;
+        color: #444;
+        border-color: #2a2a2a;
+        cursor: not-allowed;
+      }
+
+      .counter-btn:disabled:hover{
+        background: #1a1a1a;
+        color: #444;
+        border-color: #2a2a2a;
+      }
+
+      .ticket-count{
+        font-size: 1.2rem;
+        font-weight: bold;
+        min-width: 24px;
+        text-align: center;
+      }
+
+      .ticket-divider{
+        border: none;
+        border-top: 1px solid #222;
+        margin: 1.5rem 0;
+      }
+
+      .ticket-total{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 0.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .ticket-total p{
+        font-size: 1rem;
+        color: #aaa;
+      }
+
+      .ticket-total .total-price{
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--gold);
+      }
+
+      .ticket-actions{
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn-back{
+        background: transparent;
+        color: var(--white);
+        border: 2px solid #444;
+        padding: 0.8rem 1.6rem;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s, color 0.3s;
+      }
+
+      .btn-back:hover{
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      .btn-continue{
+        background: #444;
+        color: #888;
+        border: none;
+        padding: 0.8rem 1.6rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: not-allowed;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .btn-continue.active{
+        background: var(--red);
+        color: white;
+        cursor: pointer;
+      }
+
+      .btn-continue.active:hover{
+        background: var(--gold);
+        color:black;
+      }
+
+      .ticket-counter{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .ticket-type{
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--white);
+      }
+
+      .ticket-price{
+        font-size: 0.9rem;
+        color: #aaa;
+      }
+
+      .ticket-info{
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+    </style>
+</head>
+<body>
+
+  <!-- curtain -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="ticket-page">
+      <h1>Select Tickets</h1>
+
+    <div class="booking-summary" id="bookingSummary">
+      Loading...
+    </div>
+
+    <!-- adult tickets -->
+    <div class="ticket-row">
+      <div class="ticket-info">
+        <span class="ticket-type">Adult</span>
+        <span class="ticket-price">$14.99 each</span>
+      </div>
+      <div class="ticket-counter">
+        <button class="counter-btn" id="adultMinus" disabled>-</button>
+        <span class="ticket-count" id="adultCount">0</span>
+        <button class="counter-btn" id="adultPlus">+</button>
+      </div>
+    </div>
+
+    <!-- Child tickets -->
+    <div class="ticket-row">
+      <div class="ticket-info">
+        <span class="ticket-type">Child</span>
+        <span class="ticket-price">$9.99 each</span>
+      </div>
+      <div class="ticket-counter">
+        <button class="counter-btn" id="childMinus" disabled>-</button>
+        <span class="ticket-count" id="childCount">0</span>
+        <button class="counter-btn" id="childPlus">+</button>
+      </div>
+    </div>
+
+    <!-- Senior Tickets -->
+    <div class="ticket-row">
+      <div class="ticket-info">
+        <span class="ticket-type">Senior</span>
+        <span class="ticket-price">$11.99 each</span>
+      </div>
+      <div class="ticket-counter">
+          <button class="counter-btn" id="seniorMinus" disabled>-</button>
+          <span class="ticket-count" id="seniorCount">0</span>
+          <button class="counter-btn" id="seniorPlus">+</button>
+      </div>
+    </div>
+
+    <hr class="ticket-divider"/>
+
+    <!-- total cost-->
+    <div class="ticket-total">
+      <p>Total</p>
+      <span class="total-price" id="totalPrice">$0.00</span>
+    </div>
+
+    <!-- back and continue -->
+    <div class="ticket-actions">
+      <button class="btn-back" id="backBtn">← Back</button>
+      <button class="btn-continue" id="continueBtn" disabled>Continue →</button>
+    </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
+    <p style="margin: 5px 0;">
+      Email:
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">support@cinemacart.com</a> |
+      Phone:
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+    </p>
+    <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+  </footer>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const curtain = document.getElementById("curtain");
+
+      // pull the booking info from the local storage to show the summary
+      const movieTitle = localStorage.getItem("selectedMovieTitle") || "unknown movie";
+      const selectedDate = localStorage.getItem("selectedDate") || "unknown date";
+      const selectedTime = localStorage.getItem("selectedTime") || "unknown Time";
+
+      document.getElementById("bookingSummary").innerHTML = `
+          <span>${movieTitle}</span> &nbsp;·&nbsp;
+          <span>${selectedDate}</span> &nbsp;·&nbsp;
+          <span>${selectedTime}</span>
+        `;
+
+      // ticket prices
+
+      const prices = {
+        adult: 14.99,
+        child: 9.99,
+        senior: 11.99
+      };
+
+      // ticket counter (starts at 0 )
+      let counts = {
+        adult: 0,
+        child: 0,
+        senior: 0
+      }
+
+      const continueBtn = document.getElementById("continueBtn");
+
+      //recaculate and u pdate the total and price on screen
+      function updateTotal() {
+        const total = (counts.adult * prices.adult) +
+                (counts.child * prices.child) +
+                (counts.senior * prices.senior);
+
+        document.getElementById("totalPrice").textContent = "$" + total.toFixed(2);
+
+        //enable continue button only if at least 1 ticket is selected
+        const totalTickets = counts.adult + counts.child + counts.senior;
+        if (totalTickets > 0) {
+          continueBtn.classList.add("active");
+          continueBtn.disabled = false;
+        } else {
+          continueBtn.classList.remove("active");
+          continueBtn.disabled = true;
+        }
+      }
+
+        // wiring plus and minus buttons for each ticket type
+
+        function setupCounter(type){
+          const plusBtn = document.getElementById(type + "Plus");
+          const minusBtn = document.getElementById(type + "Minus");
+          const countEl = document.getElementById(type + "Count");
+
+          plusBtn.addEventListener("click", () => {
+            counts[type]++;
+            countEl.textContent = counts[type];
+            minusBtn.disabled = false; //always enable minus once count is greater than 0
+            updateTotal();
+          });
+
+          minusBtn.addEventListener("click", () => {
+            if(counts[type] > 0){
+              counts[type]--;
+              countEl.textContent = counts[type];
+              if(counts[type] === 0){
+                minusBtn.disabled = true; // disable minus when count is back to zero
+              }
+              updateTotal();
+            }
+          });
+        }
+
+        setupCounter("adult")
+        setupCounter("child")
+        setupCounter("senior")
+
+        document.getElementById("backBtn").addEventListener("click", () => {
+          curtain.classList.add("active");
+          setTimeout(() => {
+            window.location.href = "showtimes.html";
+          }, 1500);
+        });
+
+        // continune button
+        continueBtn.addEventListener("click", () => {
+          if(!continueBtn.classList.contains("active")) return;
+
+          const totalTickets = counts.adult + counts.child + counts.senior;
+          const totalPrice = (counts.adult * prices.adult)
+                  + (counts.child * prices.child)
+                  + (counts.senior * prices.senior);
+
+          localStorage.setItem ("ticketAdult", counts.adult);
+          localStorage.setItem("ticketChild", counts.child);
+          localStorage.setItem("ticketSenior", counts.senior);
+          localStorage.setItem("ticketTotal", String(totalTickets));
+          localStorage.setItem("ticketTotalPrice", totalPrice.toFixed(2));
+
+          curtain.classList.add("active");
+          setTimeout(() => {
+            window.location.href = "tickets.html";
+          }, 1500);
+        });
+    })
+
+  </script>
+
+
+</body>
+</html>
