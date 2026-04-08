@@ -1,65 +1,142 @@
 package com.cinemacart;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.util.Scanner;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.cloud.firestore.Firestore;
 import java.io.FileInputStream;
 import org.mindrot.jbcrypt.BCrypt;
+import com.google.gson.Gson;
+import com.google.rpc.context.AttributeContext.Auth;
+import java.util.UUID;
 
 public class Main {
 
-    private static void initFirebase() throws Exception {
+    private static Firestore db;
 
-        FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json");
+    private static void initFirebase() throws IOException {
+        FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
 
         FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount)) // Set credentials for Firebase using the service account key file
             .build();
 
-        FirebaseApp.initializeApp(options);
+        FirebaseApp.initializeApp(options); // Initialize the Firebase application with the specified options
+        db = FirestoreClient.getFirestore(); // Get an instance of the Firestore database
     }
-    public static void main(String[] args) throws Exception {
-        
-        initFirebase();
 
-        UserRepository userRepository = new UserRepository();
-        Scanner scanner = new Scanner(System.in);
+    static class Authorization {
+        String action; // Variable that determines if user is logging in or registering, this is used to determine which method to call in the handler class
+        String email; 
+        String password;
+    }
 
-        System.out.println("Welcome to CinemaCart! Login or Register to continue");
-        System.out.println("Press 1 to Login, press 2 to register");
+    private static UserRepository userRepository; // Create an instance of the UserRepository class to interact with the Firestore database for user account management
+    
+    public static void main(String[] args) {
 
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+        try {
+            initFirebase(); // Initialize Firebase and Firestore database connection
+            userRepository = new UserRepository(); // Initialize the UserRepository instance to manage user accounts in the database
+            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+            
+            server.createContext("/", new Handler());       
+            server.setExecutor(null);
+            server.start();
 
-        if(choice ==1) {
-            System.out.println("Username: ");
-            String username = scanner.nextLine();
-            System.out.println("Password: ");
-            String password = scanner.nextLine();
-            UserAccount user = userRepository.findByUsername(username);
-            if(user != null && user.passwordMatch(password)) {
-                System.out.println("Welcome, " + user.getUsername());
-            } else {
-                System.out.println("Invalid username or password. Please try again.");
+            System.out.println("Server is running on port 8000");
+        } catch (IOException e) {
+            System.out.println("Error starting server: " + e.getMessage());
             }
         }
 
-        else if(choice == 2) {
-            System.out.println("Enter a username: ");
-            String username = scanner.nextLine();
-            System.out.println("Enter an email: ");
-            String email = scanner.nextLine();
-            System.out.println("Enter a password: ");
-            String password = scanner.nextLine();
+        static class Handler implements HttpHandler {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
 
-            String userId = String.valueOf(System.currentTimeMillis()); //Generate unique user ID based on current time in milliseconds
-            String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); //Hash the password using BCrypt
-            UserAccount newUser = new UserAccount(userId, username, email, passwordHash); //Creates new user object with the provided username, email, and password
-            userRepository.save(newUser); //Saves user to the firestore database
-            System.out.println("Registration successful! You can now login with your credentials.");
-        } else {
-            System.out.println("Invalid choice. Please restart the application and select either 1 or 2.");
+                // Allows two way communications
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                    exchange.sendResponseHeaders(204, -1);
+                    return;
+                }
 
+                // Read received message
+                InputStream inputStream = exchange.getRequestBody();
+                Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+                String requestBody = scanner.hasNext() ? scanner.next() : "";
+                scanner.close();
+
+                // Print received message
+                System.out.println("Received from frontend: " + requestBody);
+
+                // Respond with Hello
+            
+                String response;
+                int status;
+                
+                Gson gson = new Gson();
+                Authorization req = gson.fromJson(requestBody, Authorization.class); // Allows us to access the action, email, and password fields from the request
+
+                String action = req.action; // Get the action field from the request, this determines if user is trying to login or register
+                String email = req.email; // Get the email field from the request, this is used to identify the user in the database
+                String password = req.password; // Get the password field from the request
+
+                // Registration / Logging in logic
+                try {
+                    if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
+                    if (userRepository.exists(email)) {
+                        status = 409;
+                        response = "User already exists";
+                    } else {
+                        String userId = UUID.randomUUID().toString(); // Generate a unique user ID using UUID, this is used to identify the user in the database
+                        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt()); // Hash the user's password using BCrypt, this is used to securely store the password in the database
+                        UserAccount account = new UserAccount(userId, email, email, passwordHash);
+                        userRepository.save(account); // Save the new user account to the database using the save method in the UserRepository class
+                        
+                        status = 201;
+                        response = "User registered successfully";
+                    }
+                }
+
+                else if ("login".equalsIgnoreCase(action)) {
+                    UserAccount account = userRepository.findByEmail(email); // Find the user account in the database using the email, this is used to retrieve the stored password hash for comparison
+
+                    if (account == null) {
+                        status = 404;
+                        response = "User not found";
+                    } else if (BCrypt.checkpw(password, account.getPasswordHash())) { // Compare the input password with the stored password hash using BCrypt's checkpw method
+                        status = 200;
+                        response = "Login successful";
+                    } else {
+                        status = 401;
+                        response = "Invalid credentials";
+                    }
+                    
+                } else {
+                    status = 400;
+                    response = "Invalid action";
+                }
+
+                } catch (Exception e) {
+                    status = 500;
+                    response = "Server error: " + e.getMessage();
+                }
+
+                exchange.sendResponseHeaders(status, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
         }
     }
 }

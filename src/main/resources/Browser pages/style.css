@@ -110,14 +110,17 @@ section h2 {
 /* Movie grid formatting */
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 40px 5%;
 }
 
 /* Movie card formatting */
 .movie-card {
   background: #141414;
   border-radius: 6px;
+  width: 200px;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -257,4 +260,23 @@ footer {
   border-top: 1px solid #222;
   font-size: 0.9rem;
   color: #aaa;
+}
+
+/* Movie row layout (Title, Rating, Genre, Duration) */
+.movie-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Remove extra spacing */
+.movie-row h3,
+.movie-row p {
+  margin: 0;
+}
+
+/* Rating and duration styling */
+.movie-rating,
+.movie-duration {
+  white-space: nowrap;
 }

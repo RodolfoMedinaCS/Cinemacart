@@ -40,29 +40,3 @@ public class UserAccount {
     }
     
 }
-
-
-
-
-/*
-public String getPasswordH() {
-    return passwordH;
-}
- 
-public PasswordHash hashPassword(String password) {
-
-SecureRandom random = new SecureRandom();
-byte[] salt = new byte[16];
-random.nextBytes(salt);
-
-KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-
-byte[] hash = factory.generateSecret(spec).getEncoded();
-
-PasswordHash passwordHash = new PasswordHash(hash, salt);
-
-
-return passwordHash;
-}
-*/

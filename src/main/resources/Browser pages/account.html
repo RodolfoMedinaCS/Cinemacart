@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Dashboard – CinemaCart</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .logo span {
+      color: #e50914;
+    }
+
+    nav a {
+      color: #eee;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1rem;
+    }
+
+    .content {
+      margin: 0 auto;
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+    }
+
+    .tabs button {
+      background: none;
+      border: 2px solid #e50914;
+      color: #eee;
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .tabs button:hover {
+      background-color: #e50914;
+      color: #111;
+    }
+
+    .tabs button.active {
+      background-color: #e50914;
+      color: #111;
+    }
+
+    .panel {
+      display: none;
+      padding: 30px;
+      background: #1c1c1c;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .panel h3 {
+      color: #e50914;
+      margin-bottom: 20px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    button {
+      background-color: #e50914;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #b20710;
+    }
+
+    footer {
+      background-color: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 1rem;
+      border-top: 1px solid #222;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="content">
+    <h2>Welcome back, <br><br><span id="usernameDisplay"></span></h2>
+
+    <div class="tabs">
+      <button id="accountInfoBtn" class="active">Account Info</button>
+      <button id="purchaseHistoryBtn">Purchase History</button>
+      <button id="paymentInfoBtn">Update Payment Info</button>
+      <button id="securityBtn">Security Settings</button>
+    </div>
+
+    <div class="panel active" id="accountInfoPanel">
+      <h3>Account Overview</h3>
+      <p><strong>Email:</strong> <span id="accountEmail"></span></p>
+      <p><strong>Member Since:</strong> Date</p>
+      <p><strong>Last Login:</strong> Last Login</p>
+    </div>
+
+    <!-- Purchase history panel -->
+    <div class="panel" id="purchaseHistoryPanel">
+      <h3>Recent Purchases</h3>
+      <div id="bookingList">Click tab to load bookings...</div>
+    </div>
+
+    <div class="panel" id="paymentInfoPanel">
+      <h3>Update Payment Information</h3>
+      <p>Your current payment method is <span>Visa ending in 1234.<br><br></span></p>
+      <button>Change Payment Method</button>
+    </div>
+
+    <div class="panel" id="securityPanel">
+      <h3>Security Settings</h3>
+      <p>Change your password or review other security settings.<br><br></p>
+      <button>Change Password</button>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>
+      Email: 
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+        support@cinemacart.com
+      </a> | 
+      Phone: 
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+        111-111-1111
+      </a>
+    </p>
+    <p>123 Cinema Street, Movietown, USA</p>
+    <p>&copy; 2026 CinemaCart</p>
+  </footer>
+
+<script>
+  const panels = document.querySelectorAll(".panel");
+  const buttons = document.querySelectorAll(".tabs button");
+
+  const email = sessionStorage.getItem("userEmail") || localStorage.getItem("userEmail");
+  const username = sessionStorage.getItem("username") || localStorage.getItem("username");
+
+  if (email) document.getElementById("accountEmail").textContent = email;
+  if (username) document.getElementById("usernameDisplay").textContent = username;
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      panels.forEach(panel => panel.classList.remove("active"));
+      buttons.forEach(btn => btn.classList.remove("active"));
+
+      const panelId = `${button.id.replace("Btn", "Panel")}`;
+      document.getElementById(panelId).classList.add("active");
+      button.classList.add("active");
+    });
+  });
+
+  const logoutLink = document.querySelector('nav a[href="login.html"]');
+  if (logoutLink) {
+    logoutLink.addEventListener("click", () => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  }
+
+  // Booking logic
+  const API_URL = "http://localhost:8000/booking";
+  let bookingsCache = null; // Cache bookings after initial load
+
+  async function fetchBookings(forceRefresh = false) {
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    const email =
+      sessionStorage.getItem("userEmail") ||
+      localStorage.getItem("userEmail");
+
+    const container = document.getElementById("bookingList");
+
+    if (!email) {
+      container.innerHTML = "You are not logged in.";
+      return;
+    }
+
+    if (!sessionToken) {
+      container.innerHTML = "Session expired. Please log in again.";
+      return;
+    }
+
+    // Only fetch if not cached or forced
+    if (!bookingsCache || forceRefresh) {
+      container.innerHTML = "Loading bookings...";
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "viewBookings",
+            sessionToken: sessionToken
+          })
+        });
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          container.innerHTML = "Error loading bookings.";
+          return;
+        }
+
+        bookingsCache = data; // Cache the bookings
+      } catch (err) {
+        container.innerHTML = "Error connecting to server.";
+        return;
+      }
+    }
+
+    if (!bookingsCache || bookingsCache.length === 0) {
+      container.innerHTML = "You have no bookings yet.";
+      return;
+    }
+
+    renderBookings(bookingsCache);
+  }
+
+  function renderBookings(bookings) {
+    const container = document.getElementById("bookingList");
+    container.innerHTML = "";
+
+    bookings.forEach(b => {
+      const div = document.createElement("div");
+      div.style.border = "1px solid #444";
+      div.style.padding = "15px";
+      div.style.marginBottom = "10px";
+      div.style.borderRadius = "6px";
+
+      div.innerHTML = `
+        <strong>${b.movieTitle}</strong><br>
+        Booking Date: ${b.bookingDate}<br>
+        Status: ${b.status}<br><br>
+
+        <button onclick="cancelBooking('${b.bookingId}')">Cancel</button>
+        <button onclick="deleteBooking('${b.bookingId}', '${b.status}')">Delete</button>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+
+  async function cancelBooking(bookingId) {
+    const sessionToken = localStorage.getItem("sessionToken");
+
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "cancel",
+        sessionToken: sessionToken,
+        bookingId: bookingId
+      })
+    });
+
+    alert("Booking cancelled");
+    bookingsCache = null; // Clear cache to force refresh
+    fetchBookings();
+  }
+
+  function deleteBooking(bookingId, status) {
+    if (status !== "cancelled") {
+      alert("Cancel booking first.");
+      return;
+    }
+
+    alert("Delete not implemented in backend yet.");
+    bookingsCache = null; // Clear cache if deletion implemented in future
+    fetchBookings();
+  }
+
+  // Load bookings once on page load
+  setTimeout(() => {
+    fetchBookings();
+  }, 500); // 0.5 seconds
+</script>
+
+</body>
+</html>
