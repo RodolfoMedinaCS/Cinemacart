@@ -201,6 +201,7 @@
   if (logoutLink) {
     logoutLink.addEventListener("click", () => {
       localStorage.clear();
+      sessionStorage.clear();
     });
   }
 
@@ -209,8 +210,14 @@
   let bookingsCache = null; // Cache bookings after initial load
 
   async function fetchBookings(forceRefresh = false) {
-    const sessionToken = localStorage.getItem("sessionToken");
-    const email = localStorage.getItem("userEmail");
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    const email =
+      sessionStorage.getItem("userEmail") ||
+      localStorage.getItem("userEmail");
+
     const container = document.getElementById("bookingList");
 
     if (!email) {
@@ -314,7 +321,9 @@
   }
 
   // Load bookings once on page load
-  fetchBookings();
+  setTimeout(() => {
+    fetchBookings();
+  }, 500); // 0.5 seconds
 </script>
 
 </body>
