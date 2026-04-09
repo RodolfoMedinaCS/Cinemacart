@@ -49,7 +49,6 @@ public class LoginRegController implements HttpHandler {
                 }
                 scanner.close();
 
-                // Print received message
                 System.out.println("Received from frontend: " + requestBody);
             
                 String response;

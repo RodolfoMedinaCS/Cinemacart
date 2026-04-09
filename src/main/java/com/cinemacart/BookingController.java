@@ -45,8 +45,8 @@ import java.util.UUID;
             }
             scanner.close();
 
-            Gson gson = new Gson();
-            BookingRequest req = gson.fromJson(requestBody, BookingRequest.class);
+            Gson gson = new Gson(); // Create a new Gson instance to parse the JSON request body into a BookingRequest object
+            BookingRequest req = gson.fromJson(requestBody, BookingRequest.class); // Convert the JSON request body into a BookingRequest object, allowing access the action, sessionToken, movieId, bookingDate, bookingId, movieTitle, and purchaseDate fields from the request
             
             String response = "";
             int status;
@@ -93,6 +93,7 @@ import java.util.UUID;
                 response = "Server error: " + e.getMessage();
             }
 
+            // HTTP response to frontend sent in JSON format
             exchange.sendResponseHeaders(status, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
