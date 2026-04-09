@@ -14,7 +14,6 @@
       padding: 0;
     }
 
-    /* Navbar */
     header {
       background: #111;
       padding: 20px;
@@ -33,14 +32,12 @@
       font-size: 1rem;
     }
 
-    /* Main Content */
     .content {
       margin: 0 auto;
       padding: 30px;
       max-width: 900px;
     }
 
-    /* Tabs */
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -67,7 +64,6 @@
       color: #111;
     }
 
-    /* Panels */
     .panel {
       display: none;
       padding: 30px;
@@ -86,24 +82,21 @@
       display: block;
     }
 
-    /* Buttons */
     button {
       background-color: #e50914;
       color: white;
       border: none;
-      padding: 14px 22px;
+      padding: 10px 16px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-      margin-top: 20px;
+      font-size: 0.9rem;
+      margin-right: 10px;
     }
 
     button:hover {
       background-color: #b20710;
     }
 
-    /* Footer */
     footer {
       background-color: #111;
       color: #ccc;
@@ -116,13 +109,11 @@
 </head>
 <body>
 
-  <!-- Curtains -->
   <div id="curtain" class="active">
     <div class="curtain left"></div>
     <div class="curtain right"></div>
   </div>
 
-  <!-- Navbar -->
   <header>
     <div class="logo">Cinema<span>Cart</span></div>
     <nav>
@@ -133,54 +124,43 @@
     </nav>
   </header>
 
-  <!-- Main Content -->
   <div class="content">
-    <h2>Welcome back, <span id="usernameDisplay"></span></h2>
+    <h2>Welcome back, <br><br><span id="usernameDisplay"></span></h2>
 
-    <!-- Tabs -->
     <div class="tabs">
-      <button id="accountInfoBtn" class="active">Account Info</button> <!-- Default active -->
+      <button id="accountInfoBtn" class="active">Account Info</button>
       <button id="purchaseHistoryBtn">Purchase History</button>
       <button id="paymentInfoBtn">Update Payment Info</button>
       <button id="securityBtn">Security Settings</button>
     </div>
 
-    <!-- Account Info Panel -->
-    <div class="panel active" id="accountInfoPanel"> <!-- Default active -->
+    <div class="panel active" id="accountInfoPanel">
       <h3>Account Overview</h3>
-      <p><strong>Name:</strong> <span id="accountName"></span></p>
       <p><strong>Email:</strong> <span id="accountEmail"></span></p>
       <p><strong>Member Since:</strong> Date</p>
       <p><strong>Last Login:</strong> Last Login</p>
     </div>
 
-    <!-- Purchase History Panel -->
+    <!-- Purchase history panel -->
     <div class="panel" id="purchaseHistoryPanel">
       <h3>Recent Purchases</h3>
-      <ul>
-        <li><strong>Movie Title</strong> - Watched on <span>Purchase Date</span></li>
-        <li><strong>Movie Title</strong> - Added to cart on <span>Purchase Date</span></li>
-        <li><strong>Movie Title</strong> - Watched on <span>Purchase Date</span></li>
-      </ul>
+      <div id="bookingList">Click tab to load bookings...</div>
     </div>
 
-    <!-- Payment Info Panel -->
     <div class="panel" id="paymentInfoPanel">
       <h3>Update Payment Information</h3>
-      <p>Your current payment method is <span>Visa ending in 1234</span>.</p>
+      <p>Your current payment method is <span>Visa ending in 1234.<br><br></span></p>
       <button>Change Payment Method</button>
     </div>
 
-    <!-- Security Settings Panel -->
     <div class="panel" id="securityPanel">
       <h3>Security Settings</h3>
-      <p>Change your password or review other security settings.</p>
+      <p>Change your password or review other security settings.<br><br></p>
       <button>Change Password</button>
     </div>
 
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>
       Email: 
@@ -196,80 +176,165 @@
     <p>&copy; 2026 CinemaCart</p>
   </footer>
 
-  <!-- JS for panels and curtains -->
-  <script>
-    // Defines curtain elements
-    const curtain = document.getElementById("curtain");
-    const curtainLeft = document.querySelector(".curtain.left");
-    const curtainRight = document.querySelector(".curtain.right");
+<script>
+  const panels = document.querySelectorAll(".panel");
+  const buttons = document.querySelectorAll(".tabs button");
 
-    // Handles curtain animation on page load
-    if (!sessionStorage.getItem('pageLoaded')) {
-      curtain.classList.add("active");
-      curtainLeft.classList.add("active");
-      curtainRight.classList.add("active");
+  const email = sessionStorage.getItem("userEmail") || localStorage.getItem("userEmail");
+  const username = sessionStorage.getItem("username") || localStorage.getItem("username");
 
-      setTimeout(() => {
-        curtain.classList.remove("active");
-        curtainLeft.classList.remove("active");
-        curtainRight.classList.remove("active");
-      }, 100);
+  if (email) document.getElementById("accountEmail").textContent = email;
+  if (username) document.getElementById("usernameDisplay").textContent = username;
 
-      sessionStorage.setItem('pageLoaded', 'true');
-    } else {
-      curtain.classList.remove("active");
-      curtainLeft.classList.remove("active");
-      curtainRight.classList.remove("active");
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      panels.forEach(panel => panel.classList.remove("active"));
+      buttons.forEach(btn => btn.classList.remove("active"));
+
+      const panelId = `${button.id.replace("Btn", "Panel")}`;
+      document.getElementById(panelId).classList.add("active");
+      button.classList.add("active");
+    });
+  });
+
+  const logoutLink = document.querySelector('nav a[href="login.html"]');
+  if (logoutLink) {
+    logoutLink.addEventListener("click", () => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  }
+
+  // Booking logic
+  const API_URL = "http://localhost:8000/booking";
+  let bookingsCache = null; // Cache bookings after initial load
+
+  async function fetchBookings(forceRefresh = false) {
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    const email =
+      sessionStorage.getItem("userEmail") ||
+      localStorage.getItem("userEmail");
+
+    const container = document.getElementById("bookingList");
+
+    if (!email) {
+      container.innerHTML = "You are not logged in.";
+      return;
     }
 
-    window.addEventListener("beforeunload", function () {
-      sessionStorage.removeItem('pageLoaded');
+    if (!sessionToken) {
+      container.innerHTML = "Session expired. Please log in again.";
+      return;
+    }
+
+    // Only fetch if not cached or forced
+    if (!bookingsCache || forceRefresh) {
+      container.innerHTML = "Loading bookings...";
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "viewBookings",
+            sessionToken: sessionToken
+          })
+        });
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          container.innerHTML = "Error loading bookings.";
+          return;
+        }
+
+        bookingsCache = data; // Cache the bookings
+      } catch (err) {
+        container.innerHTML = "Error connecting to server.";
+        return;
+      }
+    }
+
+    if (!bookingsCache || bookingsCache.length === 0) {
+      container.innerHTML = "You have no bookings yet.";
+      return;
+    }
+
+    renderBookings(bookingsCache);
+  }
+
+  function renderBookings(bookings) {
+    const container = document.getElementById("bookingList");
+    container.innerHTML = "";
+
+    bookings.forEach(b => {
+      const div = document.createElement("div");
+      div.style.border = "1px solid #444";
+      div.style.padding = "15px";
+      div.style.marginBottom = "10px";
+      div.style.borderRadius = "6px";
+
+      div.innerHTML = `
+        <strong>${b.movieTitle}</strong><br>
+        Booking Date: ${b.bookingDate}<br>
+        Status: ${b.status}<br><br>
+
+        ${b.status !== "cancelled"
+          ? `<button onclick="cancelBooking('${b.bookingId}')">Cancel</button>`
+          : ""
+        }
+
+        <button onclick="deleteBooking('${b.bookingId}', '${b.status}')">Delete</button>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+
+  async function cancelBooking(bookingId) {
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    if (!sessionToken) {
+      alert("Session expired. Please log in again.");
+      return;
+    }
+
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "cancel",
+        sessionToken: sessionToken,
+        bookingId: bookingId
+      })
     });
 
-    const panels = document.querySelectorAll(".panel");
-    const buttons = document.querySelectorAll(".tabs button");
+    bookingsCache = null;
+    fetchBookings();
+  }
 
-    // Get stored login info
-    const email = localStorage.getItem("userEmail");
-    const username = localStorage.getItem("username");
-
-    // Display email and username
-    if (email) document.getElementById("accountEmail").textContent = email;
-    if (username) {
-      document.getElementById("accountName").textContent = username;
-      document.getElementById("usernameDisplay").textContent = username;
+  function deleteBooking(bookingId, status) {
+    if (status !== "cancelled") {
+      alert("Cancel booking first.");
+      return;
     }
 
-    buttons.forEach(button => {
-      button.addEventListener("click", () => {
-        panels.forEach(panel => panel.classList.remove("active"));
-        buttons.forEach(btn => btn.classList.remove("active"));
+    alert("Delete not implemented in backend yet.");
+    bookingsCache = null; // Clear cache if deletion implemented in future
+    fetchBookings();
+  }
 
-        const panelId = `${button.id.replace("Btn", "Panel")}`;
-        document.getElementById(panelId).classList.add("active");
-        button.classList.add("active");
-      });
-    });
-
-    // Logout handling
-    const logoutLink = document.querySelector('nav a[href="login.html"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Clear login state
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("username");
-
-        if (curtain) curtain.classList.add("active");
-
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 500); // Timing might need adjustment
-      });
-    }
-  </script>
+  // Load bookings once on page load
+  setTimeout(() => {
+    fetchBookings();
+  }, 500); // 0.5 seconds
+</script>
 
 </body>
 </html>

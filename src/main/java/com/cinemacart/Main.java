@@ -6,6 +6,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import java.io.FileInputStream;
+import java.util.UUID;
 
 public class Main {
 
@@ -21,6 +22,9 @@ public class Main {
 
         try {
             initFirebase(); // Initialize Firebase and Firestore database connection
+
+
+
             UserRepository userRepository = new UserRepository(); // Constructs a new UserRepository instance to manage user accounts in the database
             BookingRepository bookingRepository = new BookingRepository(); // Constructs a new BookingRepository instance to manage bookings in the database
             SessionManager sessionManager = new SessionManager(); // Constructs a new SessionManager instance to manage user sessions and generate session tokens when users login
@@ -31,9 +35,17 @@ public class Main {
             server.setExecutor(null);
             server.start();
 
+            // Test booking
+            Booking testBooking = new Booking("1@email.com", UUID.randomUUID().toString(), "Test movie", "2026-04-07", "confirmed", "testMovie", "2026-04-07");
+            bookingRepository.save(testBooking);
+            System.out.println("Test booking saved to Firestore: " + testBooking.getBookingId());
+            // end test
+
             System.out.println("Server is running on port 8000");
         } catch (IOException e) {
             System.out.println("Error starting server: " + e.getMessage());
             }
         }
+
+
     }

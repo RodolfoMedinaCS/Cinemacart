@@ -48,13 +48,19 @@ import java.util.UUID;
             Gson gson = new Gson();
             BookingRequest req = gson.fromJson(requestBody, BookingRequest.class);
             
-            String response;
+            String response = "";
             int status;
 
-            if (sessionManager.validSession(req.sessionToken)) {
-                String email = sessionManager.getEmailByToken(req.sessionToken); // Session token 
-                status = 200;
-                response = "Booking successful";
+            if (!sessionManager.validSession(req.sessionToken)) {
+                System.out.println("Invalid session token");
+                exchange.sendResponseHeaders(401, response.getBytes().length);
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+                return;
+            }
+            String email = sessionManager.getEmailByToken(req.sessionToken);
+
 
                 try {
                     if ("book".equalsIgnoreCase(req.action)) {
@@ -92,7 +98,6 @@ import java.util.UUID;
             os.write(response.getBytes());
             os.close();
         }
-    }
 
     static class BookingRequest {
         String action; // Action to perform: book, viewBookings, or cancel
@@ -104,4 +109,3 @@ import java.util.UUID;
         String purchaseDate; // Date of the purchase (required for booking)
         }
     }
-    

@@ -39,10 +39,10 @@ public class LoginRegController implements HttpHandler {
                 }
 
                 // Read received message
-                InputStream inputStream = exchange.getRequestBody();
-                Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
-                String requestBody;
-                if (scanner.hasNext()) {
+                InputStream inputStream = exchange.getRequestBody(); // Get the request body from the incoming HTTP request, this contains the login or registration information sent from the frontend
+                Scanner scanner = new Scanner(inputStream).useDelimiter("\\A"); // Use a Scanner to read the request body as a string, this allows us to easily parse the JSON data sent from the frontend
+                String requestBody; // Declare a variable to hold the request body as a string
+                if (scanner.hasNext()) { // Check if the scanner has any input, this is to prevent errors when trying to read an empty request body
                     requestBody = scanner.next();
                 } else {
                     requestBody = "";
@@ -51,15 +51,11 @@ public class LoginRegController implements HttpHandler {
 
                 // Print received message
                 System.out.println("Received from frontend: " + requestBody);
-
-                // Respond with Hello
             
                 String response;
                 int status;
-                
                 Gson gson = new Gson();
                 Authorization req = gson.fromJson(requestBody, Authorization.class); // Allows us to access the action, email, and password fields from the request
-
                 String action = req.action; // Get the action field from the request, this determines if user is trying to login or register
                 String email = req.email; // Get the email field from the request, this is used to identify the user in the database
                 String password = req.password; // Get the password field from the request
@@ -86,9 +82,9 @@ public class LoginRegController implements HttpHandler {
                         status = 404;
                         response = "User not found";
                     } else if (BCrypt.checkpw(password, account.getPasswordHash())) { // Compare the input password with the stored password hash using BCrypt's checkpw method
-                        String token = sessionManager.generateSessionToken(account.getEmail()); // Generate a session token for the user using the SessionManager class, this allows the user to access authenticated features of the application
+                        String sessionToken = sessionManager.generateSessionToken(account.getEmail()); // Generate a session token for the user using the SessionManager class, this allows the user to access authenticated features of the application
                         status = 200;
-                        response = gson.toJson(new LoginResponse("Login successful", token));
+                        response = gson.toJson(new LoginResponse("Login successful", sessionToken));
                     } else {
                         status = 401;
                         response = "Invalid credentials";
