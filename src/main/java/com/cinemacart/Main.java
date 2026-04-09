@@ -1,42 +1,28 @@
 package com.cinemacart;
 import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.Scanner;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
-import com.google.cloud.firestore.Firestore;
 import java.io.FileInputStream;
-import org.mindrot.jbcrypt.BCrypt;
-import com.google.gson.Gson;
-import com.google.rpc.context.AttributeContext.Auth;
 import java.util.UUID;
 
 public class Main {
 
-    private static Firestore db;
-
     private static void initFirebase() throws IOException {
         FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
-
         FirebaseOptions options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount)) // Set credentials for Firebase using the service account key file
             .build();
-
         FirebaseApp.initializeApp(options); // Initialize the Firebase application with the specified options
-        db = FirestoreClient.getFirestore(); // Get an instance of the Firestore database
     }
 
     static class Authorization {
         String action; // Variable that determines if user is logging in or registering, this is used to determine which method to call in the handler class
         String email; 
         String password;
+        String query;
     }
 
     private static UserRepository userRepository; // Create an instance of the UserRepository class to interact with the Firestore database for user account management
@@ -45,12 +31,24 @@ public class Main {
 
         try {
             initFirebase(); // Initialize Firebase and Firestore database connection
-            userRepository = new UserRepository(); // Initialize the UserRepository instance to manage user accounts in the database
-            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-            
-            server.createContext("/", new Handler());       
+
+
+
+            UserRepository userRepository = new UserRepository(); // Constructs a new UserRepository instance to manage user accounts in the database
+            BookingRepository bookingRepository = new BookingRepository(); // Constructs a new BookingRepository instance to manage bookings in the database
+            SessionManager sessionManager = new SessionManager(); // Constructs a new SessionManager instance to manage user sessions and generate session tokens when users login
+            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0); // Constructs an HTTP server on port 8000 for incoming http requests
+
+            server.createContext("/", new LoginRegController(userRepository, sessionManager)); // Create a route for login and registration requests using the LoginController class
+            server.createContext("/booking", new BookingController(sessionManager, bookingRepository)); // Create a route for  booking requests using the BookingController class
             server.setExecutor(null);
             server.start();
+
+            // Test booking
+            Booking testBooking = new Booking("1@email.com", UUID.randomUUID().toString(), "Test movie", "2026-04-07", "confirmed", "testMovie", "2026-04-07");
+            bookingRepository.save(testBooking);
+            System.out.println("Test booking saved to Firestore: " + testBooking.getBookingId());
+            // end test
 
             System.out.println("Server is running on port 8000");
         } catch (IOException e) {
@@ -58,18 +56,6 @@ public class Main {
             }
         }
 
-        static class Handler implements HttpHandler {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-
-                // Allows two way communications
-                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                    exchange.sendResponseHeaders(204, -1);
-                    return;
-                }
 
                 // Read received message
                 InputStream inputStream = exchange.getRequestBody();
@@ -84,17 +70,47 @@ public class Main {
             
                 String response;
                 int status;
-                
+
                 Gson gson = new Gson();
                 Authorization req = gson.fromJson(requestBody, Authorization.class); // Allows us to access the action, email, and password fields from the request
+
+                // If the request body is empty or invalid JSON, req can be null
+                if (req == null || req.action == null) {
+                    response = "{\"error\":\"Missing action\"}";
+                     status = 400;
+
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    byte[] bytes = response.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                    exchange.sendResponseHeaders(status, bytes.length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(bytes);
+                    os.close();
+                    return;
+                }
 
                 String action = req.action; // Get the action field from the request, this determines if user is trying to login or register
                 String email = req.email; // Get the email field from the request, this is used to identify the user in the database
                 String password = req.password; // Get the password field from the request
+                String query = req.query; // Get the query field from the request
 
-                // Registration / Logging in logic
                 try {
-                    if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
+                    // handles search
+                    if ("search".equalsIgnoreCase(action)) {
+                        exchange.getResponseHeaders().set("Content-Type", "application/json");
+
+                        String q = (query == null) ? "" : query.trim();
+
+                        if (q.isEmpty()) {
+                            status = 200;
+                            response = "[]";
+                        } else {
+                            java.util.List<Movie> results = Search.search(q, "", 0.0, "");
+                            status = 200;
+                            response = gson.toJson(results);
+                        }
+                    }
+                    // Registration / Logging in logic
+                    else if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
                     if (userRepository.exists(email)) {
                         status = 409;
                         response = "User already exists";
@@ -133,9 +149,10 @@ public class Main {
                     response = "Server error: " + e.getMessage();
                 }
 
-                exchange.sendResponseHeaders(status, response.length());
+                byte[] bytes = response.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(status, bytes.length);
                 OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
+                os.write(bytes);
                 os.close();
         }
     }

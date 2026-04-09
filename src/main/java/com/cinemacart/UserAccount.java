@@ -34,7 +34,7 @@ public class UserAccount {
     public String getPasswordHash() {
         return passwordHash;
     }
-
+    // Returns true if the input password matches the stored password hash, false otherwise. This method is used to verify user credentials during login.
     public boolean passwordMatch(String inputPassword) {
         return inputPassword != null && passwordHash != null && BCrypt.checkpw(inputPassword, passwordHash);
     }
