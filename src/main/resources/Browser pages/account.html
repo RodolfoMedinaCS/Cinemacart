@@ -319,14 +319,27 @@
     fetchBookings();
   }
 
-  function deleteBooking(bookingId, status) {
-    if (status !== "cancelled") {
-      alert("Cancel booking first.");
+  async function deleteBooking(bookingId) {
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    if (!sessionToken) {
+      alert("Session expired.");
       return;
     }
 
-    alert("Delete not implemented in backend yet.");
-    bookingsCache = null; // Clear cache if deletion implemented in future
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete",
+        sessionToken: sessionToken,
+        bookingId: bookingId
+      })
+    });
+
+    bookingsCache = null;
     fetchBookings();
   }
 
