@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CinemaCart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Uses our style.css and app.js files -->
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+  <!-- Starts curtains closed on each page -->
+  <div id="curtain" class="active">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+  </div>
+
+  <!-- Top navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <!-- Button names and what page they redirect to -->
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <!-- Main Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Experience Movies Like Never Before</h1>
+      <p>
+        Book tickets, explore the latest blockbusters, and enjoy the ultimate
+        cinematic experience with CinemaCart.
+      </p>
+      <!-- Find Movies button -->
+      <button class="btn" data-link="search.html">Find Movies</button>
+    </div>
+  </section>
+
+  <!-- Movie banners -->
+  <section>
+    <h2>Now Showing</h2>
+
+    <div class="movie-grid">
+      <div class="movie-card">
+        <!-- Placeholder, replace with image later -->
+        <img src="https://via.placeholder.com/300x450?text=Movie+1" alt="Movie 1">
+        <div class="movie-info">
+          <!-- Title + Rating -->
+          <div class="movie-top">
+            <h3>Movie Title</h3>
+            <span class="movie-rating">Movie Rating</span>
+          </div>
+
+          <!-- Genre + Duration -->
+          <div class="movie-bottom">
+            <p class="movie-genre">Movie Genre</p>
+            <span class="movie-duration">Movie Duration</span>
+          </div>
+
+          <button class="btn" data-link="tickets.html">View Details</button>
+        </div>
+      </div>
+
+      <div class="movie-card">
+        <!-- Placeholder, replace with image later -->
+        <img src="https://via.placeholder.com/300x450?text=Movie+2" alt="Movie 2">
+        <div class="movie-info">
+          <!-- Title + Rating -->
+          <div class="movie-top">
+            <h3>Movie Title</h3>
+            <span class="movie-rating">Movie Rating</span>
+          </div>
+
+          <!-- Genre + Duration -->
+          <div class="movie-bottom">
+            <p class="movie-genre">Movie Genre</p>
+            <span class="movie-duration">Movie Duration</span>
+          </div>
+
+          <button class="btn" data-link="tickets.html">View Details</button>
+        </div>
+      </div>
+
+      <div class="movie-card">
+        <!-- Placeholder, replace with image later -->
+        <img src="https://via.placeholder.com/300x450?text=Movie+3" alt="Movie 3">
+        <div class="movie-info">
+          <!-- Title + Rating -->
+          <div class="movie-top">
+            <h3>Movie Title</h3>
+            <span class="movie-rating">Movie Rating</span>
+          </div>
+
+          <!-- Genre + Duration -->
+          <div class="movie-bottom">
+            <p class="movie-genre">Movie Genre</p>
+            <span class="movie-duration">Movie Duration</span>
+          </div>
+
+          <button class="btn" data-link="tickets.html">View Details</button>
+        </div>
+      </div>
+
+      <div class="movie-card">
+        <!-- Placeholder, replace with image later -->
+        <img src="https://via.placeholder.com/300x450?text=Movie+4" alt="Movie 4">
+        <div class="movie-info">
+          <!-- Title + Rating -->
+          <div class="movie-top">
+            <h3>Movie Title</h3>
+            <span class="movie-rating">Movie Rating</span>
+          </div>
+
+          <!-- Genre + Duration -->
+          <div class="movie-bottom">
+            <p class="movie-genre">Movie Genre</p>
+            <span class="movie-duration">Movie Duration</span>
+          </div>
+
+          <button class="btn" data-link="tickets.html">View Details</button>
+        </div>
+      </div>
+    </div>
+  </section>
+<!-- Footer section (contact info) -->
+  <footer style="
+  background-color: #111; 
+  color: #ccc; 
+  text-align: center; 
+  padding: 20px 0;
+  font-size: 1rem;
+  border-top: 1px solid #222;
+">
+  <!-- Contact info text -->
+  <p style="margin: 5px 0;">
+    Email: 
+    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
+      support@cinemacart.com
+    </a> | 
+    Phone: 
+    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
+      111-111-1111
+    </a>
+  </p>
+  <p style="margin: 5px 0;">
+    123 Cinema Street, Movietown, USA
+  </p>
+
+  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
+    © 2026 CinemaCart
+  </p>
+
+</footer>
+
+</body>
+</html>
