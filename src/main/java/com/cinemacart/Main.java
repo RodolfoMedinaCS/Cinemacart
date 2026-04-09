@@ -1,36 +1,21 @@
 package com.cinemacart;
 import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.Scanner;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
-import com.google.cloud.firestore.Firestore;
 import java.io.FileInputStream;
-import org.mindrot.jbcrypt.BCrypt;
-import com.google.gson.Gson;
-import com.google.rpc.context.AttributeContext.Auth;
 import java.util.UUID;
 
 public class Main {
 
-    private static Firestore db;
-
     private static void initFirebase() throws IOException {
         FileInputStream serviceAccount = new FileInputStream("src/main/resources/serviceAccountKey.json"); // Path to the service account key file for Firebase authentication
-
         FirebaseOptions options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount)) // Set credentials for Firebase using the service account key file
             .build();
-
         FirebaseApp.initializeApp(options); // Initialize the Firebase application with the specified options
-        db = FirestoreClient.getFirestore(); // Get an instance of the Firestore database
     }
 
     static class Authorization {
@@ -46,12 +31,24 @@ public class Main {
 
         try {
             initFirebase(); // Initialize Firebase and Firestore database connection
-            userRepository = new UserRepository(); // Initialize the UserRepository instance to manage user accounts in the database
-            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-            
-            server.createContext("/", new Handler());       
+
+
+
+            UserRepository userRepository = new UserRepository(); // Constructs a new UserRepository instance to manage user accounts in the database
+            BookingRepository bookingRepository = new BookingRepository(); // Constructs a new BookingRepository instance to manage bookings in the database
+            SessionManager sessionManager = new SessionManager(); // Constructs a new SessionManager instance to manage user sessions and generate session tokens when users login
+            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0); // Constructs an HTTP server on port 8000 for incoming http requests
+
+            server.createContext("/", new LoginRegController(userRepository, sessionManager)); // Create a route for login and registration requests using the LoginController class
+            server.createContext("/booking", new BookingController(sessionManager, bookingRepository)); // Create a route for  booking requests using the BookingController class
             server.setExecutor(null);
             server.start();
+
+            // Test booking
+            Booking testBooking = new Booking("1@email.com", UUID.randomUUID().toString(), "Test movie", "2026-04-07", "confirmed", "testMovie", "2026-04-07");
+            bookingRepository.save(testBooking);
+            System.out.println("Test booking saved to Firestore: " + testBooking.getBookingId());
+            // end test
 
             System.out.println("Server is running on port 8000");
         } catch (IOException e) {
@@ -59,18 +56,6 @@ public class Main {
             }
         }
 
-        static class Handler implements HttpHandler {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-
-                // Allows two way communications
-                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                    exchange.sendResponseHeaders(204, -1);
-                    return;
-                }
 
                 // Read received message
                 InputStream inputStream = exchange.getRequestBody();

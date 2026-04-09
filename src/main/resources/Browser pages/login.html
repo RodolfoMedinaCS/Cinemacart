@@ -44,7 +44,7 @@
 
       <form id="authForm" style="margin-top: 30px;">
 
-        <!-- Email input box, has special properties like requiring @ -->
+        <!-- Email input box -->
         <input 
           type="email" 
           id="email"
@@ -61,7 +61,7 @@
           "
         >
 
-        <!-- Password input box, has special properties like replacing text with ***** -->
+        <!-- Password input -->
         <input 
           type="password" 
           id="password"
@@ -85,7 +85,7 @@
 
       </form>
 
-      <!-- Create account text/button -->
+      <!-- Create account toggle -->
       <p style="margin-top: 20px; font-size: 0.9rem;">
         <span id="toggleText">Don't have an account?</span>
         <button id="toggleBtn" type="button" style="background: none; border: none; color: #e50914; cursor: pointer;">
@@ -93,7 +93,7 @@
         </button>
       </p>
 
-      <!-- Forgot password (doesn't do anything currently) -->
+      <!-- Forgot password -->
       <p id="forgotPassword" style="margin-top: 10px; font-size: 0.8rem;">
         <a href="#" style="color:#aaa; text-decoration:none;">
           Forgot Password?
@@ -104,7 +104,7 @@
 
   </section>
 
-  <!-- Contact info -->
+  <!-- footer -->
   <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
     <p style="margin: 5px 0;">
       Email: 
@@ -124,9 +124,7 @@
     </p>
   </footer>
 
-  <!-- js specific to this page -->
   <script>
-    // Defines elements so we can switch between login/create account
     const toggleBtn = document.getElementById("toggleBtn");
     const formTitle = document.getElementById("formTitle");
     const toggleText = document.getElementById("toggleText");
@@ -134,14 +132,11 @@
     const forgotPassword = document.getElementById("forgotPassword");
     const submitBtn = document.querySelector("#authForm button");
 
-    // Switches between login/create account
     let isLogin = true;
 
-    // Toggles when button is pressed
     toggleBtn.addEventListener("click", () => {
       isLogin = !isLogin;
 
-      // Elements to display on login page
       if (isLogin) {
         formTitle.textContent = "Account Login";
         submitBtn.textContent = "Login";
@@ -150,7 +145,6 @@
         if (rememberContainer) rememberContainer.style.display = "block";
         forgotPassword.style.display = "block";
       } else {
-        // Elements to display on create account page
         formTitle.textContent = "Create Account";
         submitBtn.textContent = "Create Account";
         toggleText.textContent = "Already have an account?";
@@ -160,10 +154,8 @@
       }
     });
 
-    // Form validation
     const authForm = document.getElementById("authForm");
 
-    // Prevents default submission
     authForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
@@ -181,33 +173,51 @@
 
         const response = await fetch("http://localhost:8000/", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: action,
-            email: email,
-            password: password
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, email, password })
         });
 
-        const message = await response.text();
+        const text = await response.text();
+
+        let data = {};
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data.message = text;
+        }
 
         if (response.status === 200 || response.status === 201) {
 
-          alert(message);
-
-          // Only redirect after successful login
           if (action === "login") {
+            // Login flow
+            sessionStorage.setItem("isLoggedIn", "true");
+            sessionStorage.setItem("userEmail", email);
 
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userEmail", email);
+            if (data.sessionToken) {
+              sessionStorage.setItem("sessionToken", data.sessionToken);
+            }
 
             triggerCurtainAndRedirect();
+
+          } else {
+            // Register flow
+            alert("Account created! Please log in.");
+
+            // Switch back to login mode
+            isLogin = true;
+            formTitle.textContent = "Account Login";
+            submitBtn.textContent = "Login";
+            toggleText.textContent = "Don't have an account?";
+            toggleBtn.textContent = "Create One";
+            if (rememberContainer) rememberContainer.style.display = "block";
+            forgotPassword.style.display = "block";
+
+            // Clear password field for safety
+            document.getElementById("password").value = "";
           }
 
         } else {
-          alert(message);
+          alert(data.message || "Authentication failed.");
         }
 
       } catch (error) {
@@ -217,15 +227,13 @@
 
     });
 
-    // Handles curtain animation and page redirection
     function triggerCurtainAndRedirect() {
       const curtain = document.getElementById('curtain');
-      curtain.classList.add('active');  // Add 'active' to show curtain
+      curtain.classList.add('active');
 
-      // Wait for curtain animation to finish before redirecting
       setTimeout(() => {
-        window.location.href = "account.html"; // Redirect after curtain effect
-      }, 1500);  // Adjust the time to match your curtain's animation duration
+        window.location.href = "account.html";
+      }, 1500);
     }
   </script>
 
