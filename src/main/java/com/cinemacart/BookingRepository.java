@@ -64,8 +64,6 @@ public class BookingRepository {
         }
     }
 
-
-
     // Method to find bookings by email and return a list of Booking objects associated with that email that is all retrieved from the Firestore database, Firebase
     public List<Booking> findByEmail(String email) {
         try {
