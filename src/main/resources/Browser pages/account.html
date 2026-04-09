@@ -283,7 +283,11 @@
         Booking Date: ${b.bookingDate}<br>
         Status: ${b.status}<br><br>
 
-        <button onclick="cancelBooking('${b.bookingId}')">Cancel</button>
+        ${b.status !== "cancelled"
+          ? `<button onclick="cancelBooking('${b.bookingId}')">Cancel</button>`
+          : ""
+        }
+
         <button onclick="deleteBooking('${b.bookingId}', '${b.status}')">Delete</button>
       `;
 
@@ -292,7 +296,14 @@
   }
 
   async function cancelBooking(bookingId) {
-    const sessionToken = localStorage.getItem("sessionToken");
+    const sessionToken =
+      sessionStorage.getItem("sessionToken") ||
+      localStorage.getItem("sessionToken");
+
+    if (!sessionToken) {
+      alert("Session expired. Please log in again.");
+      return;
+    }
 
     await fetch(API_URL, {
       method: "POST",
@@ -304,8 +315,7 @@
       })
     });
 
-    alert("Booking cancelled");
-    bookingsCache = null; // Clear cache to force refresh
+    bookingsCache = null;
     fetchBookings();
   }
 
