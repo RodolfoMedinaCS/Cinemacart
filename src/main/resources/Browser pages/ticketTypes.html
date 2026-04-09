@@ -42,13 +42,6 @@
         padding: 1.2rem 1.5rem;
         margin-bottom: 1rem;
       }
-
-      .ticket-info{
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
       .counter-btn{
         background: #2a2a2a;
         color: var(--white);
@@ -172,14 +165,23 @@
       }
 
       .ticket-price{
-        font-size: 0.9rem;
+        font-size: 1.1rem;
         color: #aaa;
+        font-weight: bold;
+        color: var(--gold);
+        min-width: 80px;
+        text-align: center;
       }
 
       .ticket-info{
         display: flex;
         flex-direction: column;
         gap: 0.3rem;
+      }
+
+      .ticket-age {
+        font-size: 0.85rem;
+        color: #777;
       }
 
     </style>
@@ -211,44 +213,47 @@
       Loading...
     </div>
 
-    <!-- adult tickets -->
-    <div class="ticket-row">
-      <div class="ticket-info">
-        <span class="ticket-type">Adult</span>
-        <span class="ticket-price">$14.99 each</span>
+      <!-- Adult tickets -->
+      <div class="ticket-row">
+        <div class="ticket-info">
+          <span class="ticket-type">Adult</span>
+        </div>
+        <span class="ticket-price">$14.99</span>
+        <div class="ticket-counter">
+          <button class="counter-btn" id="adultMinus" disabled>-</button>
+          <span class="ticket-count" id="adultCount">0</span>
+          <button class="counter-btn" id="adultPlus">+</button>
+        </div>
       </div>
-      <div class="ticket-counter">
-        <button class="counter-btn" id="adultMinus" disabled>-</button>
-        <span class="ticket-count" id="adultCount">0</span>
-        <button class="counter-btn" id="adultPlus">+</button>
-      </div>
-    </div>
 
-    <!-- Child tickets -->
-    <div class="ticket-row">
-      <div class="ticket-info">
-        <span class="ticket-type">Child</span>
-        <span class="ticket-price">$9.99 each</span>
+      <!-- Child tickets -->
+      <div class="ticket-row">
+        <div class="ticket-info">
+          <span class="ticket-type">Child</span>
+          <span class="ticket-age">Ages 2–12</span>
+        </div>
+        <span class="ticket-price">$9.99</span>
+        <div class="ticket-counter">
+          <button class="counter-btn" id="childMinus" disabled>-</button>
+          <span class="ticket-count" id="childCount">0</span>
+          <button class="counter-btn" id="childPlus">+</button>
+        </div>
       </div>
-      <div class="ticket-counter">
-        <button class="counter-btn" id="childMinus" disabled>-</button>
-        <span class="ticket-count" id="childCount">0</span>
-        <button class="counter-btn" id="childPlus">+</button>
-      </div>
-    </div>
 
-    <!-- Senior Tickets -->
-    <div class="ticket-row">
-      <div class="ticket-info">
-        <span class="ticket-type">Senior</span>
-        <span class="ticket-price">$11.99 each</span>
-      </div>
-      <div class="ticket-counter">
+      <!-- Senior tickets -->
+      <div class="ticket-row">
+        <div class="ticket-info">
+          <span class="ticket-type">Senior</span>
+          <span class="ticket-age">Ages 60+</span>
+        </div>
+        <span class="ticket-price">$11.99</span>
+        <div class="ticket-counter">
           <button class="counter-btn" id="seniorMinus" disabled>-</button>
           <span class="ticket-count" id="seniorCount">0</span>
           <button class="counter-btn" id="seniorPlus">+</button>
+        </div>
       </div>
-    </div>
+
 
     <hr class="ticket-divider"/>
 
@@ -289,11 +294,14 @@
       const selectedDate = localStorage.getItem("selectedDate") || "unknown date";
       const selectedTime = localStorage.getItem("selectedTime") || "unknown Time";
 
+      const totalSeats = JSON.parse(localStorage.getItem('selectedSeats') || '[]').length;
+
       document.getElementById("bookingSummary").innerHTML = `
-          <span>${movieTitle}</span> &nbsp;·&nbsp;
-          <span>${selectedDate}</span> &nbsp;·&nbsp;
-          <span>${selectedTime}</span>
-        `;
+      <span>${movieTitle}</span> &nbsp;·&nbsp;
+      <span>${selectedDate}</span> &nbsp;·&nbsp;
+      <span>${selectedTime}</span>
+      <br/><span>${totalSeats} ticket(s) remaining</span>
+  `;
 
       // ticket prices
 
@@ -310,9 +318,10 @@
         senior: 0
       }
 
+
       const continueBtn = document.getElementById("continueBtn");
 
-      //recaculate and u pdate the total and price on screen
+      //recaculate and update the total and price on screen
       function updateTotal() {
         const total = (counts.adult * prices.adult) +
                 (counts.child * prices.child) +
@@ -320,9 +329,19 @@
 
         document.getElementById("totalPrice").textContent = "$" + total.toFixed(2);
 
-        //enable continue button only if at least 1 ticket is selected
         const totalTickets = counts.adult + counts.child + counts.senior;
-        if (totalTickets > 0) {
+        const remaining = totalSeats - totalTickets;
+
+        // Update the summary live
+        document.getElementById("bookingSummary").innerHTML = `
+          <span>${movieTitle}</span> &nbsp;·&nbsp;
+          <span>${selectedDate}</span> &nbsp;·&nbsp;
+          <span>${selectedTime}</span>
+          <br/><span>${remaining} ticket(s) remaining</span>
+        `;
+
+
+        if (totalTickets === totalSeats) {
           continueBtn.classList.add("active");
           continueBtn.disabled = false;
         } else {
@@ -339,9 +358,11 @@
           const countEl = document.getElementById(type + "Count");
 
           plusBtn.addEventListener("click", () => {
+            const totalTickets = counts.adult + counts.child + counts.senior;
+            if(totalTickets >= totalSeats) return;
             counts[type]++;
             countEl.textContent = counts[type];
-            minusBtn.disabled = false; //always enable minus once count is greater than 0
+            minusBtn.disabled = false;
             updateTotal();
           });
 
@@ -364,7 +385,7 @@
         document.getElementById("backBtn").addEventListener("click", () => {
           curtain.classList.add("active");
           setTimeout(() => {
-            window.location.href = "showtimes.html";
+            window.location.href = "tickets.html";
           }, 1500);
         });
 
@@ -385,7 +406,7 @@
 
           curtain.classList.add("active");
           setTimeout(() => {
-            window.location.href = "tickets.html";
+            window.location.href = "cart.html";
           }, 1500);
         });
     })
