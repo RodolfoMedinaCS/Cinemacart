@@ -18,9 +18,6 @@ public class Main {
         FirebaseApp.initializeApp(options); // Initialize the Firebase application with the specified options
     }
 
-
-
-    
     public static void main(String[] args) {
 
         try {
@@ -49,4 +46,3 @@ public class Main {
             }
         }
     }
-
