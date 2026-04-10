@@ -23,8 +23,6 @@ public class Main {
         try {
             initFirebase(); // Initialize Firebase and Firestore database connection
 
-
-
             UserRepository userRepository = new UserRepository(); // Constructs a new UserRepository instance to manage user accounts in the database
             BookingRepository bookingRepository = new BookingRepository(); // Constructs a new BookingRepository instance to manage bookings in the database
             SessionManager sessionManager = new SessionManager(); // Constructs a new SessionManager instance to manage user sessions and generate session tokens when users login
@@ -32,6 +30,7 @@ public class Main {
 
             server.createContext("/", new LoginRegController(userRepository, sessionManager)); // Create a route for login and registration requests using the LoginController class
             server.createContext("/booking", new BookingController(sessionManager, bookingRepository)); // Create a route for  booking requests using the BookingController class
+            server.createContext("/search", new SearchController()); // Create a route for search requests using the SearchController class
             server.setExecutor(null);
             server.start();
 
@@ -46,6 +45,4 @@ public class Main {
             System.out.println("Error starting server: " + e.getMessage());
             }
         }
-
-
     }
