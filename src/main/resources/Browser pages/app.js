@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Make request to backend
-      fetch("http://localhost:8000/", {
+      fetch("http://localhost:8000/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -190,6 +190,73 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error(err);
           alert("Error connecting to server");
         });
+    });
+  }
+  // Show 4 random movies in "Now Showing" on the homepage
+  if (
+    window.location.pathname.endsWith('index.html') ||
+    window.location.pathname === "/" ||
+    window.location.pathname === "/index.html"
+  ) {
+    fetch("http://localhost:8000/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "search", query: "" }) // Empty query fetches all movies
+    })
+    .then(res => res.json())
+    .then(allMovies => {
+      // Shuffle movies array and pick the first 4
+      allMovies.sort(() => Math.random() - 0.5);
+      const nowShowing = allMovies.slice(0, 4);
+
+      // Get Now Showing container and clear any previous cards
+      const nowShowingContainer = document.getElementById("nowShowing");
+      nowShowingContainer.innerHTML = "";
+
+      // Map movie IDs to images
+      function getMovieImage(id) {
+        const images = {
+          1: "images/titanic.webp",
+          2: "images/godfather1.jpg",
+          3: "images/godfather2.webp",
+          4: "images/gladiator.webp",
+          5: "images/3idiots.jpg",
+          6: "images/batman.jpg",
+          7: "images/lionking.jpg",
+          8: "images/fury.jpg",
+          9: "images/kiterunner.jpg",
+          10: "images/avatar.webp",
+          11: "images/darkknight.avif",
+          12: "images/beautybeast.jpg"
+        };
+        return images[id] || "images/placeholder.jpg";
+      }
+
+      // Create a card for each movie and add to the page
+      nowShowing.forEach(movie => {
+        const card = document.createElement("div");
+        card.className = "movie-card";
+        const image = getMovieImage(movie.movieId);
+        card.innerHTML = `
+          <img src="${image}" alt="${movie.title}">
+          <div class="movie-info">
+            <div class="movie-top">
+              <h3>${movie.title}</h3>
+              <span class="movie-rating">⭐ ${movie.rating}</span>
+            </div>
+            <div class="movie-bottom">
+              <p class="movie-genre">${movie.genre}</p>
+              <span class="movie-duration">${movie.duration} min</span>
+            </div>
+            <button class="btn" data-link="tickets.html">View Details</button>
+          </div>
+        `;
+        nowShowingContainer.appendChild(card);
+      });
+    })
+    .catch(err => {
+      // Show error if movies failed to load
+      console.error("Failed to load now showing movies!", err);
     });
   }
 });
