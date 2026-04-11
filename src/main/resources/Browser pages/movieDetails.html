@@ -190,8 +190,7 @@
       document.getElementById('movieGenre').textContent = movieGenre;
       document.getElementById('movieDuration').textContent = movieDuration + ' min';
       document.getElementById('movieDescription').textContent = movieGenre + ' · ' + movieDuration + ' min';
-      document.getElementById('movieDescription').textContent =
-              localStorage.getItem('selectedMovieDescription') || 'No description available.';
+      document.getElementById('movieDescription').textContent = localStorage.getItem('selectedMovieDescription') || 'No description available.';
 
 
       document.getElementById("backBtn").addEventListener("click", () => {

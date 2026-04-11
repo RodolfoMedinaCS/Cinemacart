@@ -190,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
               localStorage.setItem('selectedMovieGenre', genre);
               localStorage.setItem('selectedMovieDuration', duration);
               localStorage.setItem('selectedMovieRating', rating);
+              localStorage.setItem('selectedMovieDescription', movie.description || '');
               curtain.classList.add('active');
               setTimeout(() => { window.location.href = 'movieDetails.html'; }, 1500);
             });
@@ -267,6 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.setItem('selectedMovieGenre', movie.genre);
           localStorage.setItem('selectedMovieDuration', movie.duration);
           localStorage.setItem('selectedMovieRating', movie.rating);
+          localStorage.setItem('selectedMovieDescription', movie.description || '');
           curtain.classList.add('active');
           setTimeout(() => { window.location.href = 'movieDetails.html'; }, 1500);
         });
