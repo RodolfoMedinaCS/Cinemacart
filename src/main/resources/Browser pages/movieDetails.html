@@ -115,26 +115,24 @@
     <div class="movie-details-container">
 
       <!-- movie poster -->
-      <img class="movie-poster" src="https://via.placeholder.com/300x450?text=Movie+Poster" alt="Movie Poster"/>
+      <img class="movie-poster" id="moviePoster" src="" alt="Movie Poster"/>
 
       <!-- movie info -->
       <div class="movie-details-info">
 
-        <h1>Movie Title</h1>
+        <h1 id="movieTitle">—</h1>
 
         <!-- rating, genre, duration... etc -->
         <div class="movie-meta">
-          <span class="rating-badge">* 9.0 / 10</span>
-          <span>Action</span>
-          <span> 152 min</span>
+          <span class="rating-badge" id="movieRating">—</span>
+          <span id="movieGenre">—</span>
+          <span id="movieDuration">—</span>
         </div>
 
         <hr class="movie-divider">
 
-        <p class="movie-description">
-          placeholder description this will be replaced with the real movie
-          info once its brought from the backend. For now this text is just
-          here to see how it looks and feels on the page.
+        <p class="movie-description" id="movieDescription">
+          Loading movie details...
         </p>
 
         <!-- Action Buttons -->
@@ -165,16 +163,47 @@
     document.addEventListener("DOMContentLoaded", () => {
       const curtain = document.getElementById("curtain");
 
+      const movieId = parseInt(localStorage.getItem('selectedMovieId'));
+      const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
+      const movieGenre = localStorage.getItem('selectedMovieGenre') || '—';
+      const movieDuration = localStorage.getItem('selectedMovieDuration') || '—';
+      const movieRating = localStorage.getItem('selectedMovieRating') || '—';
+
+      const images = {
+        1: "images/titanic.webp",
+        2: "images/godfather1.jpg",
+        3: "images/godfather2.webp",
+        4: "images/gladiator.webp",
+        5: "images/3idiots.jpg",
+        6: "images/batman.jpg",
+        7: "images/lionking.jpg",
+        8: "images/fury.jpg",
+        9: "images/kiterunner.jpg",
+        10: "images/avatar.webp",
+        11: "images/darkknight.avif",
+        12: "images/beautybeast.jpg"
+      };
+
+      document.getElementById('moviePoster').src = images[movieId] || 'images/placeholder.jpg';
+      document.getElementById('movieTitle').textContent = movieTitle;
+      document.getElementById('movieRating').textContent = '⭐ ' + movieRating + ' / 10';
+      document.getElementById('movieGenre').textContent = movieGenre;
+      document.getElementById('movieDuration').textContent = movieDuration + ' min';
+      document.getElementById('movieDescription').textContent = movieGenre + ' · ' + movieDuration + ' min';
+      document.getElementById('movieDescription').textContent =
+              localStorage.getItem('selectedMovieDescription') || 'No description available.';
+
+
       document.getElementById("backBtn").addEventListener("click", () => {
         curtain.classList.add("active");
         setTimeout(() => {window.location.href = "index.html"}, 1500);
-      })
+      });
 
       document.getElementById("bookBtn").addEventListener("click", () => {
         curtain.classList.add("active");
-        setTimeout(() => {window.location.href = "tickets.html"}, 1500);
-      })
-    })
+        setTimeout(() => {window.location.href = "showtimes.html"}, 1500);
+      });
+    });
 
   </script>
 </body>

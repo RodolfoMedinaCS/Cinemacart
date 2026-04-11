@@ -1,264 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Checkout – CinemaCart</title>
-  <!-- css and js files -->
-  <link rel="stylesheet" href="style.css">
-  <script defer src="app.js"></script>
-</head>
-<body style="background-color: #000; color: #eee;">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Checkout - CinemaCart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel = "stylesheet" href = "style.css">
+    <script defer src="app.js"></script>
 
-  <!-- Curtains -->
-<div id="curtain" class="active">
-  <div class="curtain left"></div>
-  <div class="curtain right"></div>
-</div>
+    <style>
+      .checkout-page{
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+      }
 
-<!-- Navbar -->
-<header>
-  <div class="logo">Cinema<span>Cart</span></div>
-  <nav>
+      .checkout-page h1{
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 2rem;
+      }
+
+      .checkout-card{
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .checkout-row{
+        display:flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        color: #ccc;
+        padding: 0.3rem 0;
+      }
+
+      .checkout-label {
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 0.1em;
+        color: var(--red);
+        text-transform: uppercase;
+        margin-bottom: 0.8rem;
+      }
+
+      .checkout-total-row{
+        display:flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--white);
+        padding-top: 1rem;
+        border-top: 1px solid #2a2a2a;
+        margin-top: 0.5rem;
+      }
+
+      .checkout-total-row span:last-child{
+        color: var(--gold);
+      }
+
+      .seat-chips{
+        display:flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .seat-chip{
+        background: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 4px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.9rem;
+        color: var(--white);
+      }
+
+      .form-input{
+        width: 100%;
+        padding: 0.9rem 1rem;
+        margin-bottom: 1rem;
+        background: #111;
+        color: #eee;
+        border: 1px solid #333;
+        border-radius: 6px;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+
+      .form-input:focus{
+        outline: none;
+        border-color: var(--gold);
+      }
+
+      .form-row{
+        display: flex;
+        gap: 1rem;
+      }
+
+      .form-row .form-input{
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      .form-row .form-input.cvv{
+        flex: 0 0 120px;
+      }
+
+      .checkout-actions{
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .btn-back{
+        background: transparent;
+        color: var(--white);
+        border: 2px solid #444;
+        padding: 0.8rem 1.6rem;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s, color 0.3s;
+      }
+
+      .btn-back:hover{
+        border-color: var(--gold);
+        color:var(--gold);
+      }
+
+      .btn-pay{
+        flex:1;
+        padding: 0.9rem;
+        font-size:1rem;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <!-- curtain -->
+    <div id="curtain" class="active">
+      <div class="curtain left"></div>
+      <div class="curtain right"></div>
+    </div>
+
+    <!-- navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
       <a href="checkout.html">Cart</a>
-      <a href="login.html">Login</a>
-  </nav>
-</header>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
 
-<!-- Checkout box size/colors -->
-<section>
-  <div id="checkout-container" style="
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 40px;
-    background: #111;
-    border-radius: 12px;
-    color: #eee;
-    text-align: center;
-  ">
-    <!-- Checkout box text -->
-    <h2 style="margin-bottom: 30px;">Checkout</h2>
+  <main>
+    <div class="checkout-page">
+      <h1>Checkout</h1>
 
-    <div id="empty-message" style="display:none;">
-      <p style="font-size:1.2rem; margin-bottom:20px;">
-        You haven't booked any tickets yet!
+      <!-- order summary-->
+      <div class="checkout-card">
+        <p class="checkout-label">Order Summary</p>
+        <div class="checkout-row">
+          <span>Movie</span>
+          <span id="coMovieTitle">—</span>
+        </div>
+        <div class="checkout-row">
+          <span>Date</span>
+          <span id="coDate">—</span>
+        </div>
+        <div class="checkout-row">
+          <span>Time</span>
+          <span id="coTime">—</span>
+        </div>
+        <div style="margin-top: 0.8rem">
+          <p class="checkout-label" style="margin-bottom: 0.5rem;">Seats</p>
+          <div class="seat-chips" id="coSeats"></div>
+        </div>
+      </div>
+
+      <!-- ticket breakdown-->
+      <div class="checkout-card">
+        <p class="checkout-label">Tickets</p>
+        <div id="coTicketRows"></div>
+        <div class="checkout-row" style="margin-top: 0.5rem; color: #aaa;">
+          <span>Tax (9%)</span>
+          <span id="coTax">$0.00</span>
+        </div>
+        <div class="checkout-total-row">
+          <span>Total</span>
+          <span id="coTotal">$0.00</span>
+        </div>
+      </div>
+
+      <!-- payment form -->
+      <div class="checkout-card">
+        <p class="checkout-label">Payment</p>
+        <input class="form-input" type="text" id="cardName" placeholder="Name on Card">
+        <input class="form-input" type="text" id="cardNumber" placeholder="Card Number"
+        maxlength="19">
+        <div class="form-row">
+          <input class="form-input" type="text" id="cardExp" placeholder="MM / YY" maxlength="7">
+          <input class="form-input cvv" type="text" id="cardCvv" placeholder="CVV" maxlength="4">
+        </div>
+      </div>
+
+      <div class="checkout-actions">
+        <button class="btn-back" id="backBtn">← Back</button>
+        <button class="btn btn-pay" id="payBtn">Confirm Booking →</button>
+      </div>
+
+    </div>
+  </main>
+
+    <!-- Footer -->
+    <footer style="background-color: #111; color: #ccc; text-align: center;
+  padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
+      <p style="margin: 5px 0;">
+        Email:
+        <a href="mailto:support@cinemacart.com" style="color:#e50914;
+  text-decoration:none;">support@cinemacart.com</a> |
+        Phone:
+        <a href="tel:1111111111" style="color:#e50914;
+  text-decoration:none;">111-111-1111</a>
       </p>
-      <!-- Find movies button -->
-      <button id="find-movies-btn" class="btn" style="
-        padding: 15px 25px;
-        font-size: 1rem;
-        background-color: #e50914;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-      ">
-        Find Movies
-      </button>
-    </div>
-    
-    <div id="order-summary" style="display:none; line-height:1.8;">
+      <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+      <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026
+        CinemaCart</p>
+    </footer>
 
-      <!-- Order Summary colors/size -->
-      <div style="
-        background: #1a1a1a;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 30px;
-        color: #eee;
-        text-align: left;
-      ">
-      <!-- Reads times/seats/prices -->
-        <p><strong>Movie:</strong> Movie Title</p>
-        <p><strong>Showtime:</strong> <span id="selected-time">--</span></p>
-        <p><strong>Seats:</strong></p>
-        <ul id="seat-list" style="list-style:none; padding-left:0;"></ul>
-        <p style="font-size: 1.2rem; color: #e50914;">
-          <strong>Total:</strong> $<span id="total-price">0.00</span>
-        </p>
-      </div>
+  <script>
+    const curtain = document.getElementById('curtain');
 
-      <!-- Payment Form input boxes-->
-      <input type="text" placeholder="Name on Card" style="
-        width: 100%;
-        padding: 15px;
-        margin-bottom: 15px;
-        background-color: #1c1c1c;
-        color: #eee;
-        border: 1px solid #333;
-        border-radius: 6px;
-      ">
+    const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
+    const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date';
+    const selectedTime = localStorage.getItem('selectedTime') || 'Unknown Time';
+    const seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+    const adultCount = parseInt(localStorage.getItem('ticketAdult')) || 0;
+    const childCount = parseInt(localStorage.getItem('ticketChild')) || 0;
+    const seniorCount = parseInt(localStorage.getItem('ticketSenior')) || 0;
+    const subtotal = parseFloat(localStorage.getItem('ticketTotalPrice')) || 0;
 
-      <input type="text" placeholder="Card Number" style="
-        width: 100%;
-        padding: 15px;
-        margin-bottom: 15px;
-        background-color: #1c1c1c;
-        color: #eee;
-        border: 1px solid #333;
-        border-radius: 6px;
-      ">
+    document.getElementById('coMovieTitle').textContent = movieTitle;
+    document.getElementById('coDate').textContent = selectedDate;
+    document.getElementById('coTime').textContent = selectedTime;
 
-      <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-        <input type="text" placeholder="Expiration Date" style="
-          flex: 1;
-          padding: 15px;
-          background-color: #1c1c1c;
-          color: #eee;
-          border: 1px solid #333;
-          border-radius: 6px;
-        ">
-        <input type="text" placeholder="CVV" style="
-          width: 120px;
-          padding: 15px;
-          background-color: #1c1c1c;
-          color: #eee;
-          border: 1px solid #333;
-          border-radius: 6px;
-        ">
-      </div>
-
-      <!-- Pay now button displays alert -->
-      <button class="btn" onclick="alert('Booking Confirmed! Enjoy the show.')" style="
-        width: 100%;
-        padding: 18px;
-        font-size: 1.1rem;
-        background-color: #e50914;
-        border: none;
-        color: #fff;
-        border-radius: 6px;
-        cursor: pointer;
-      ">
-        Pay Now
-      </button>
-    </div>
-
-  </div>
-</section>
-
-<!-- Contact info footer -->
-<footer style="
-  background-color: #111; 
-  color: #ccc; 
-  text-align: center; 
-  padding: 20px 0;
-  font-size: 1rem;
-  border-top: 1px solid #222;
-">
-  <p style="margin: 5px 0;">
-    Email: 
-    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
-      support@cinemacart.com
-    </a> | 
-    Phone: 
-    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
-      111-111-1111
-    </a>
-  </p>
-  <p style="margin: 5px 0;">
-    123 Cinema Street, Movietown, USA
-  </p>
-
-  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
-    © 2026 CinemaCart
-  </p>
-</footer>
-
-<!-- js specific to this page -->
-<script>
-  // makes sure curtain works on buttons
-  const curtain = document.getElementById('curtain');
-  // Reads seats and time from seat selection
-  let seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
-  const time = localStorage.getItem('selectedTime') || '--';
-
-  // Elements of checkout box
-  const orderSummary = document.getElementById('order-summary');
-  const emptyMessage = document.getElementById('empty-message');
-  const seatList = document.getElementById('seat-list');
-  const findBtn = document.getElementById('find-movies-btn');
-
-  // Displays selected seats in checkout box
-  function renderSeats() {
-    seatList.innerHTML = '';
+    const coSeats = document.getElementById('coSeats');
     seats.forEach(seat => {
-      const li = document.createElement('li');
-      li.style.marginBottom = '5px';
-      li.style.transition = 'opacity 0.5s';
-      li.innerHTML = `
-        ${seat} 
-        <button style="
-          margin-left:6px;
-          background:#e50914;
-          color:#fff;
-          border:none;
-          padding:0 5px;
-          border-radius:50%;
-          cursor:pointer;
-          font-weight:bold;
-        " data-seat="${seat}">✕</button>
-      `;
-      seatList.appendChild(li);
+      const chip = document.createElement('span');
+      chip.className = 'seat-chip';
+      chip.textContent = seat;
+      coSeats.appendChild(chip);
     });
-    // Each set is $12, can be adjusted
-    document.getElementById('total-price').textContent = (seats.length * 12).toFixed(2);
-  }
 
-  // Loads elements depending on if seats are chosen 
-  function updatePage() {
-    // Displays emptymessage and not ordersummary if no seats are selected
-    if(seats.length === 0){
-      emptyMessage.style.display = 'block';
-      orderSummary.style.display = 'none';
-    } else {
-      // Displays ordersummary and not emptymessage if seats are selected
-      emptyMessage.style.display = 'none';
-      orderSummary.style.display = 'block';
-      // Also displays time of booking
-      document.getElementById('selected-time').textContent = time;
-      // Displays selected seats on checkout box
-      renderSeats();
-    }
-  }
+    const coTicketRows = document.getElementById('coTicketRows');
+    const ticketTypes = [
+            {label: 'Adult', count: adultCount, price: 14.99},
+            {label: 'Child', count: childCount, price: 9.99},
+            {label: 'Senior', count: seniorCount, price: 11.99}
+    ];
 
-  updatePage();
+    ticketTypes.forEach(type => {
+      if(type.count === 0) return;
+      const row = document.createElement('div');
+      row.className = 'checkout-row';
+      row.innerHTML = `
+          <span>${type.label} × ${type.count}</span>
+          <span>$${(type.count * type.price).toFixed(2)}</span>
+        `;
+      coTicketRows.appendChild(row);
+    });
 
-  // Removes selected seat when X is pressed
-  seatList.addEventListener('click', (e) => {
-    if(e.target.tagName === 'BUTTON'){
-      const seatToRemove = e.target.dataset.seat;
-      const li = e.target.parentElement;
+    const tax = subtotal * 0.09;
+    const total = subtotal + tax;
+    document.getElementById('coTax').textContent = '$' + tax.toFixed(2);
+    document.getElementById('coTotal').textContent = '$' + total.toFixed(2);
 
-      li.style.opacity = '0';
-
+    document.getElementById('backBtn').addEventListener('click', () => {
+      curtain.classList.add('active');
       setTimeout(() => {
-        seats = seats.filter(s => s !== seatToRemove);
-        localStorage.setItem('selectedSeats', JSON.stringify(seats));
+        window.location.href = 'cart.html';
+      }, 1500);
+    });
 
-        // Makes sure curtains trigger after refresh
-        curtain.classList.add('active');
+    document.getElementById('payBtn').addEventListener('click', () => {
+      const name = document.getElementById('cardName').value.trim();
+      const number = document.getElementById('cardNumber').value.trim();
+      const exp = document.getElementById('cardExp').value.trim();
+      const cvv = document.getElementById('cardCvv').value.trim();
 
-        // Updates page and handles curtains
-        const onTransitionEnd = () => {
-          curtain.removeEventListener('transitionend', onTransitionEnd);
-          updatePage();
-          curtain.classList.remove('active');
-        };
-        curtain.addEventListener('transitionend', onTransitionEnd);
-      }, 300);
-    }
-  });
+      if(!name || !number || !exp || !cvv){
+        alert('Please fill in all payment fields.');
+        return;
+      }
 
-  findBtn?.addEventListener('click', () => {
-    curtain.classList.add('active');
-    const onTransitionEnd = () => {
-      curtain.removeEventListener('transitionend', onTransitionEnd);
-      window.location.href = 'search.html';
-    };
-    curtain.addEventListener('transitionend', onTransitionEnd);
-  });
-</script>
-
-</body>
+      curtain.classList.add('active');
+      setTimeout(() => {
+        window.location.href = 'bookingConfirmed.html';
+      }, 1500);
+    });
+  </script>
+  </body>
 </html>

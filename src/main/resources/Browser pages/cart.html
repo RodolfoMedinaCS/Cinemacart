@@ -272,13 +272,12 @@
         }
 
         //fill in ticket type rows
-        const ticketRows = document.getElementById('cartTicket Rows');
+        const ticketRows = document.getElementById('cartTicketRows');
         const ticketTypes = [
             { label: 'Adult', count: adultCount, price: 14.99},
             { label: 'Child', count: childCount, price: 9.99},
             { label: 'Senior', count: seniorCount, price: 11.99},
         ];
-
         ticketTypes.forEach(type => {
             if(type.count === 0) return;
             const row = document.createElement('div');

@@ -179,11 +179,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h3>${title}</h3>
                 <p>${genre}</p>
                 <p>⭐ ${rating} | ${duration} min</p>
-                <button class="btn" data-link="tickets.html">View</button>
+                <button class="btn view-btn">View</button>
               </div>
             `;
 
             resultsContainer.appendChild(card);
+            card.querySelector('.view-btn').addEventListener('click', () => {
+              localStorage.setItem('selectedMovieId', movieId);
+              localStorage.setItem('selectedMovieTitle', title);
+              localStorage.setItem('selectedMovieGenre', genre);
+              localStorage.setItem('selectedMovieDuration', duration);
+              localStorage.setItem('selectedMovieRating', rating);
+              curtain.classList.add('active');
+              setTimeout(() => { window.location.href = 'movieDetails.html'; }, 1500);
+            });
           });
         })
         .catch(err => {
@@ -248,10 +257,19 @@ document.addEventListener("DOMContentLoaded", () => {
               <p class="movie-genre">${movie.genre}</p>
               <span class="movie-duration">${movie.duration} min</span>
             </div>
-            <button class="btn" data-link="tickets.html">View Details</button>
+            <button class="btn view-btn">View Details</button>
           </div>
         `;
         nowShowingContainer.appendChild(card);
+        card.querySelector('.view-btn').addEventListener('click', () => {
+          localStorage.setItem('selectedMovieId', movie.movieId);
+          localStorage.setItem('selectedMovieTitle', movie.title);
+          localStorage.setItem('selectedMovieGenre', movie.genre);
+          localStorage.setItem('selectedMovieDuration', movie.duration);
+          localStorage.setItem('selectedMovieRating', movie.rating);
+          curtain.classList.add('active');
+          setTimeout(() => { window.location.href = 'movieDetails.html'; }, 1500);
+        });
       });
     })
     .catch(err => {
