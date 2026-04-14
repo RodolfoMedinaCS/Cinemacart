@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
-import java.util.UUID;
-import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
 
 public class SearchController implements HttpHandler {
