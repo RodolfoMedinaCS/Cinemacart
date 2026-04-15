@@ -280,3 +280,74 @@ footer {
 .movie-duration {
   white-space: nowrap;
 }
+
+/* Account dropdown container */
+.account-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* My Account button*/
+#accountBtn {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#accountBtn:hover {
+  color: var(--gold);
+}
+
+/* Dropdown hidden state */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  margin-top: 10px;
+  background-color: #141414;
+  border: 1px solid #222;
+  border-radius: 6px;
+  min-width: 180px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  overflow: hidden;
+  z-index: 1000;
+
+  /* Animation setup */
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Visible state */
+.dropdown-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Links and buttons inside dropdown */
+.dropdown-menu a,
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  color: var(--white);
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Hover effect */
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+  background-color: #222;
+  color: var(--gold);
+}
