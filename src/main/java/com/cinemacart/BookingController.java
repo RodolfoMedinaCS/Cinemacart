@@ -14,7 +14,6 @@ import java.util.UUID;
  * BookingControllers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
 */
 
-
     public class BookingController implements HttpHandler {
         
         private final SessionManager sessionManager;
@@ -60,7 +59,6 @@ import java.util.UUID;
                 return;
             }
             String email = sessionManager.getEmailByToken(req.sessionToken);
-
 
                 try {
                     if ("book".equalsIgnoreCase(req.action)) {

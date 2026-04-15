@@ -26,7 +26,6 @@ public class LoginRegController implements HttpHandler {
             this.sessionManager = sessionManager;
         }    
         
-        @Override
         public void handle(HttpExchange exchange) throws IOException {
 
                 // Allows two way communications

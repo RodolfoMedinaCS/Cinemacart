@@ -9,6 +9,32 @@
   
   <!-- Handles the seat map for seat selection -->
   <style>
+
+    .seat-page{
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .seat-page h1{
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    /*booking summary*/
+    .booking-summary{
+      color:#aaa;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .booking-summary span{
+      color: var(--white);
+    }
+
     /* Seat spacing */
     .seat-map {
       display: flex;
@@ -41,18 +67,24 @@
       transition: 0.2s;
     }
 
+    .seat:hover{
+      border-color: var(--gold);
+    }
+
     .seat.selected {
       background-color: #e50914;
       color: #fff;
+      border-color: var(--red);
     }
 
     .seat.occupied {
       background-color: #555;
       cursor: not-allowed;
+      border-color: #555;
     }
     /* Screen properties */
     .screen {
-      width: 40%;
+      width: 80%;
       height: 25px;
       background-color: #333;
       border-radius: 10px;
@@ -65,27 +97,51 @@
       margin-right: auto;
     }
 
-    /* Showtime selection */
-    .showtime-selector {
+    /*legend colors*/
+    .seat-legend{
       display: flex;
-      gap: 25px;
       justify-content: center;
-      margin: 20px 0;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color:#aaa;
     }
 
-    .showtime-btn {
-      padding: 10px 15px;
-      background-color: #1c1c1c;
-      border: 1px solid #333;
-      border-radius: 6px;
-      color: #eee;
+    .legend-item{
+      display:flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-dot{
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+    }
+
+    .seat-actions{
+      display:flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-back{
+      background: transparent;
+      color: var(--white);
+      border: 2px solid #444;
+      padding: 0.8rem 1.6rem;
       cursor: pointer;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s, color 0.3s
     }
 
-    .showtime-btn.selected {
-      background-color: #e50914;
-      color: #fff;
+    .btn-back:hover{
+      border-color: var(--gold);
+      color: var(--gold);
     }
+
   </style>
 </head>
 <body style="background-color:#000; color:#eee;">
@@ -107,146 +163,141 @@
   </nav>
 </header>
 
+<main>
+  <div class="seat-page">
 
-<section style="text-align:center; padding:30px 20px;">
-  <h2>Select Your Seats</h2>
+    <h1>Select Your Seats</h1>
 
-  <!-- Defines buttons for the showtime selector, we'll probably update based on movie class later -->
-  <div class="showtime-selector">
-    <button class="showtime-btn" data-time="1:00 PM">1:00 PM</button>
-    <button class="showtime-btn" data-time="4:00 PM">4:00 PM</button>
-    <button class="showtime-btn" data-time="7:30 PM">7:30 PM</button>
-    <button class="showtime-btn" data-time="10:15 PM">10:15 PM</button>
+    <div class="booking-summary" id="bookingSummary">
+      Loading...
+    </div>
+
+    <div class="seat-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#1c1c1c; border:1px solid #333;"></div>
+         Available
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--red);"></div>
+        Selected
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#555;"></div>
+        Occupied
+      </div>
+    </div>
+
+    <!-- Screen -->
+    <div class="screen">SCREEN</div>
+
+    <!-- seat map -->
+    <div class="seat-map" id="seat-map"></div>
+
+    <!-- back and continue buttons -->
+    <div class="seat-actions">
+      <button class="btn-back" id="backBtn">← Back</button>
+      <button class="btn" id="continue-btn">Continue →</button>
+    </div>
+
   </div>
+</main>
 
-  <!-- Screen, seat map, and continue to checkout button -->
-  <div class="screen">SCREEN</div>
+  <!-- Footer -->
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0;
+  font-size: 1rem; border-top: 1px solid #222;">
+    <p style="margin: 5px 0;">
+      Email:
+      <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">support@cinemacart.com</a> |
+      Phone:
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+    </p>
+    <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+  </footer>
 
-  <div class="seat-map" id="seat-map">
-  </div>
 
-  <button class="btn" id="continue-btn" style="margin-top:20px;">
-    Continue to Checkout
-  </button>
-</section>
-
-<!-- Contact info -->
-<footer style="
-  background-color: #111; 
-  color: #ccc; 
-  text-align: center; 
-  padding: 20px 0;
-  font-size: 1rem;
-  border-top: 1px solid #222;
-">
-  <p style="margin: 5px 0;">
-    Email: 
-    <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">
-      support@cinemacart.com
-    </a> | 
-    Phone: 
-    <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">
-      111-111-1111
-    </a>
-  </p>
-  <p style="margin: 5px 0;">
-    123 Cinema Street, Movietown, USA
-  </p>
-
-  <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">
-    © 2026 CinemaCart
-  </p>
-</footer>
 
 <!-- Creates seat assignments -->
 <script>
+  const curtain = document.getElementById("curtain");
+
+  //show booking summary from local storage
+  const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
+  const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date';
+  const selectedTime = localStorage.getItem('selectedTime') || 'Unknown Time';
+
+  document.getElementById('bookingSummary').innerHTML = `
+        <span>${movieTitle}</span> &nbsp;·&nbsp;
+        <span>${selectedDate}</span> &nbsp;·&nbsp;
+        <span>${selectedTime}</span>
+      `;
+
+
+  // build the seat map
   const rows = ['A','B','C','D','E','F'];
   const seatsPerRow = 8;
   const seatMap = document.getElementById('seat-map');
-
-  // Stores selected seats and times
   let selectedSeats = [];
-  let selectedTime = '';
 
-  // Creates rows
   rows.forEach(row => {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'seat-row';
 
-    // Creates gaps between seats
-    for(let i=1;i<=seatsPerRow;i++){
-      if(i===5){
+    for(let i = 1; i <= seatsPerRow; i++) {
+      if(i === 5){
         const gap = document.createElement('div');
         gap.className = 'seat-gap';
         rowDiv.appendChild(gap);
       }
 
-      // Each seat is a button
       const seatBtn = document.createElement('button');
       seatBtn.className = 'seat';
       seatBtn.textContent = row + i;
-      rowDiv.appendChild(seatBtn);
 
-      // Whether seat is selected, unselected, or occupied (occupied isn't used yet but is implemented)
       seatBtn.addEventListener('click', () => {
         if(seatBtn.classList.contains('occupied')) return;
+
         seatBtn.classList.toggle('selected');
         const seatId = row + i;
-        // Stores selected seats
         if(seatBtn.classList.contains('selected')){
           selectedSeats.push(seatId);
-        } else {
-          selectedSeats = selectedSeats.filter(s => s!==seatId);
+        }else{
+          selectedSeats = selectedSeats.filter(s => s !== seatId);
         }
         localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
       });
+      rowDiv.appendChild(seatBtn);
     }
-
     seatMap.appendChild(rowDiv);
   });
 
-  // Displays selected time and stores it as well
-  const timeBtns = document.querySelectorAll('.showtime-btn');
-  timeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      timeBtns.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedTime = btn.dataset.time;
-      localStorage.setItem('selectedTime', selectedTime);
-    });
-  });
-
-  // Prevents going to checkout without a time and seat selected
-  document.getElementById('continue-btn').addEventListener('click', () => {
-    if(!selectedTime || selectedSeats.length === 0){
-      alert('Please select a showtime and at least one seat.');
-      return;
-    }
-
-    // Makes sure curtains trigger on continue to checkout button press
-    const curtain = document.getElementById('curtain');
-    curtain.classList.add('active');
-    setTimeout(() => {
-      window.location.href = 'checkout.html';
-    }, 1300); 
-  });
-
-  // Remembers selected seats even when exiting the page or browser
+  //restore previously selected seats if user goes back to this page
   const prevSeats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
   prevSeats.forEach(seatId => {
     const btn = [...document.querySelectorAll('.seat')].find(b => b.textContent === seatId);
     if(btn) btn.classList.add('selected');
-    selectedSeats = prevSeats;
+  });
+  selectedSeats = prevSeats;
+
+  //back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    curtain.classList.add('active');
+    setTimeout(() => {
+      window.location.href = 'showtimes.html';
+    }, 1500);
   });
 
-  // Remembers selected time even when exiting the page or browser
-  const prevTime = localStorage.getItem('selectedTime');
-  if(prevTime){
-    const btn = [...document.querySelectorAll('.showtime-btn')].find(b => b.dataset.time===prevTime);
-    if(btn) btn.classList.add('selected');
-    selectedTime = prevTime;
-  }
+  //continue button
+  document.getElementById('continue-btn').addEventListener('click', () =>{
+    if(selectedSeats.length === 0){
+      alert('Please select at least one seat');
+      return;
+    }
+    curtain.classList.add('active');
+    setTimeout(() => {
+      window.location.href = 'ticketTypes.html';
+    }, 1300);
+  });
 </script>
-
 </body>
 </html>

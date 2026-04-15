@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmed -CinemaCart</title>
+    <link rel = "stylesheet" href = "style.css">
+    <script defer src="app.js"></script>
+  <style>
+
+    .confirmed-page{
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .confirmed-icon{
+      font-size: 4rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .confirmed-page h1{
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .confirmed-page > p{
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .confirmed-card{
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .confirmed-label{
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.1rem;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .confirmed-row{
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      color: #ccc;
+      padding: 0.3rem 0;
+    }
+
+    .confirmed-total{
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--white);
+      padding-top: 0.8rem;
+      border-top: 1px solid #2a2a2a;
+      margin-top: 0.5rem;
+    }
+
+    .confirmed-total span:last-child{
+      color: var(--gold);
+    }
+
+    .seat-chips{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .seat-chip{
+      background: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.9rem;
+      color: var(--white);
+    }
+
+    .btn-home{
+      width:100%;
+      padding: 0.9rem;
+      font-size: 1rem;
+      margin-top:0.5rem;
+    }
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- crtain -->
+  <div id="curtain" class="active">
+      <div class="curtain left"></div>
+      <div class="curtain right"></div>
+  </div>
+
+  <!--navbar -->
+  <header>
+    <div class="logo">Cinema<span>Cart</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="Search.html">Search</a>
+      <a href="checkout.html">Cart</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="confirmed-page">
+      <div class="confirmed-icon">&#10003;</div>
+      <h1>You're all set!</h1>
+      <p>Your booking is confirmed. See you at the movies!</p>
+
+      <!--booking details-->
+      <div class="confirmed-card">
+        <p class="confirmed-label">Booking Details</p>
+        <div class="confirmed-row">
+          <span>Movie</span>
+          <span id="cfMovieTitle">—</span>
+        </div>
+        <div class="confirmed-row">
+          <span>Date</span>
+          <span id="cfDate">—</span>
+        </div>
+        <div class="confirmed-row">
+          <span>Time</span>
+          <span id="cfTime">—</span>
+        </div>
+        <div style="margin-top: 0.8rem;">
+          <p class="confirmed-label" style="margin-bottom: 0.5rem;">Seats</p>
+          <div class="seat-chips" id="cfSeats"></div>
+        </div>
+      </div>
+
+      <!-- payment summary -->
+      <div class="confirmed-card">
+        <p class="confirmed-label">Payment</p>
+        <div id="cfTicketRows"></div>
+        <div class="confirmed-row" style="color: #aaa; margin-top: 0.5rem;">
+          <span>Tax (9%)</span>
+          <span id="cfTax">$0.00</span>
+        </div>
+        <div class="confirmed-total">
+          <span>Total Paid</span>
+          <span id="cfTotal">$0.00</span>
+        </div>
+      </div>
+
+      <button class="btn btn-home" id="homeBtn">Back to Home</button>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0;
+  font-size: 1rem; border-top: 1px solid #222;">
+    <p style="margin: 5px 0;">
+      Email:
+      <a href="mailto:support@cinemacart.com" style="color:#e50914;
+  text-decoration:none;">support@cinemacart.com</a> |
+      Phone:
+      <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+    </p>
+    <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+    <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+  </footer>
+
+  <script>
+    const curtain = document.getElementById('curtain');
+    const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
+    const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date';
+    const selectedTime = localStorage.getItem('selectedTime') || 'Unknown Time';
+    const seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+    const adultCount = parseInt(localStorage.getItem('ticketAdult')) || 0;
+    const childCount = parseInt(localStorage.getItem('ticketChild')) || 0;
+    const seniorCount = parseInt(localStorage.getItem('ticketSenior')) || 0;
+    const subtotal = parseFloat(localStorage.getItem('ticketTotalPrice')) || 0;
+
+    document.getElementById('cfMovieTitle').textContent = movieTitle
+    document.getElementById('cfDate').textContent = selectedDate
+    document.getElementById('cfTime').textContent = selectedTime
+
+    const cfSeats = document.getElementById('cfSeats');
+    seats.forEach(seat => {
+      const chip = document.createElement('span')
+      chip.className = 'seat-chip';
+      chip.textContent = seat;
+      cfSeats.appendChild(chip);
+    });
+
+    const cfTicketRows = document.getElementById('cfTicketRows');
+    const ticketTypes = [
+      {label: 'Adult', count: adultCount, price: 14.99},
+      {label: 'Child', count: childCount, price: 9.99},
+      {label: 'Senior', count: seniorCount, price: 11.99}
+    ];
+    ticketTypes.forEach(type => {
+      if(type.count === 0) return;
+      const row = document.createElement('div');
+      row.className = 'confirmed-row';
+      row.innerHTML = `
+          <span>${type.label} × ${type.count}</span>
+          <span>$${(type.count * type.price).toFixed(2)}</span>
+        `;
+      cfTicketRows.appendChild(row);
+    });
+
+    const tax = subtotal * 0.09;
+    const total = subtotal + tax;
+    document.getElementById('cfTax').textContent = '$' + tax.toFixed(2);
+    document.getElementById('cfTotal').textContent = '$' + total.toFixed(2);
+
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      localStorage.removeItem('selectedMovieTitle');
+      localStorage.removeItem('selectedDate');
+      localStorage.removeItem('selectedTime');
+      localStorage.removeItem('selectedSeats');
+      localStorage.removeItem('ticketAdult');
+      localStorage.removeItem('ticketChild');
+      localStorage.removeItem('ticketSenior');
+      localStorage.removeItem('ticketTotalPrice');
+      localStorage.removeItem('ticketTotal');
+      curtain.classList.add('active');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    })
+  </script>
+</body>
+</html>

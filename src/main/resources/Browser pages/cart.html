@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Order - CinemaCart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel = "stylesheet" href = "style.css">
+    <script defer src="app.js"></script>
+    <style>
+
+        .cart-page{
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .cart-page h1{
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 2rem;
+        }
+
+        .cart-card{
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-label{
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .cart-movie-title{
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--white);
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-movie-meta{
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .seat-chips{
+            display:flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top:0.5rem;
+        }
+
+        .seat-chip{
+            background:#2a2a2a;
+            border:1px solid #444;
+            border-radius: 4px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+
+        .cart-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+
+        .cart-divider{
+            border:none;
+            border-top: 1px solid #2a2a2a;
+            margin:1rem 0;
+        }
+
+        .cart-pricing-row{
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: #aaa;
+            padding: 0.3rem 0;
+        }
+
+        .cart-total-row{
+            display:flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--white);
+            padding-top: 1rem;
+            border-top: 1px solid #2a2a2a;
+            margin-top: 0.5rem;
+        }
+
+        .cart-total-row span:last-child{
+            color:var(--gold);
+        }
+
+        .cart-label-row{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom:0.8rem;
+        }
+
+        .edit-link{
+            font-size: 0.85rem;
+            color: #aaa;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .edit-link:hover{
+            color: var(--gold);
+        }
+
+        .cart-actions{
+            display:flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-back{
+            background: transparent;
+            color: var(--white);
+            border: 2px solid #444;
+            padding: 0.8rem 1.6rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s, color 0.3s;
+        }
+
+        .btn-back:hover{
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-checkout{
+            flex: 1;
+            padding: 0.9rem;
+            font-size: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- curtain-->
+    <div id="curtain" class="active">
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+    </div>
+
+    <!-- navbar -->
+    <header>
+        <div class="logo">Cinema<span>Cart</span></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="Search.html">Search</a>
+            <a href="checkout.html">Cart</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="cart-page">
+            <h1>Review Order</h1>
+
+            <!-- movie info -->
+            <div class="cart-card">
+                <p class="cart-label">Movie</p>
+                <p class="cart-movie-title" id="cartMovieTitle">—</p>
+                <p class="cart-movie-meta" id="cartMovieMeta">—</p>
+            </div>
+
+            <!-- seats-->
+            <div class="cart-card">
+                <div class="cart-label-row">
+                    <p class="cart-label">Seats</p>
+                    <button class="edit-link" id="editSeatsBtn">Edit</button>
+                </div>
+                <div class="seat-chips" id="cartSeats"></div>
+            </div>
+
+            <!--tickets-->
+            <div class="cart-card">
+                <div class="cart-label-row">
+                    <p class="cart-label">Tickets</p>
+                    <button class="edit-link" id="editTicketsBtn">Edit</button>
+                </div>
+                <div id="cartTicketRows"></div>
+            </div>
+
+            <!-- pricing -->
+            <div class="cart-card">
+                <div class="cart-pricing-row">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="cart-pricing-row">
+                    <span>Tax (9%)</span>
+                    <span id="cartTax">$0.00</span>
+                </div>
+                <div class="cart-total-row">
+                    <span>Total</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+            </div>
+
+            <!--actions-->
+
+            <div class="cart-actions">
+                <button class="btn-back" id="backBtn">← Back</button>
+                <button class="btn btn-checkout" id="checkoutBtn">Proceed to Checkout →</button>
+            </div>
+
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: #111; color: #ccc; text-align: center; padding: 20px 0; font-size: 1rem; border-top: 1px solid #222;">
+        <p style="margin: 5px 0;">
+            Email:
+            <a href="mailto:support@cinemacart.com" style="color:#e50914; text-decoration:none;">support@cinemacart.com</a> |
+            Phone:
+            <a href="tel:1111111111" style="color:#e50914; text-decoration:none;">111-111-1111</a>
+        </p>
+        <p style="margin: 5px 0;">123 Cinema Street, Movietown, USA</p>
+        <p style="margin: 10px 0; font-size: 0.95rem; color:#aaa;">© 2026 CinemaCart</p>
+    </footer>
+
+
+    <script>
+        const curtain = document.getElementById("curtain");
+
+        //read everything from local storage
+        const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
+        const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date'
+        const selectedTime = localStorage.getItem('selectedTime') || 'Unknown Time'
+        const seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+        const adultCount = parseInt(localStorage.getItem('ticketAdult')) || 0;
+        const childCount = parseInt(localStorage.getItem('ticketChild')) || 0;
+        const seniorCount = parseInt(localStorage.getItem('ticketSenior')) || 0;
+        const subtotal = parseFloat(localStorage.getItem('ticketTotalPrice')) || 0;
+
+        // fill in movie info
+        document.getElementById('cartMovieTitle').textContent = movieTitle;
+        document.getElementById('cartMovieMeta').textContent = selectedDate + '  ·  ' + selectedTime;
+
+        // fill in seats
+        const seatsContainer = document.getElementById('cartSeats');
+        if(seats.length === 0){
+            seatsContainer.textContent = "No seats selected";
+        }else{
+            seats.forEach(seat => {
+                const chip = document.createElement('span');
+                chip.className = 'seat-chip';
+                chip.textContent = seat;
+                seatsContainer.appendChild(chip);
+            });
+        }
+
+        //fill in ticket type rows
+        const ticketRows = document.getElementById('cartTicketRows');
+        const ticketTypes = [
+            { label: 'Adult', count: adultCount, price: 14.99},
+            { label: 'Child', count: childCount, price: 9.99},
+            { label: 'Senior', count: seniorCount, price: 11.99},
+        ];
+        ticketTypes.forEach(type => {
+            if(type.count === 0) return;
+            const row = document.createElement('div');
+            row.className = 'cart-row';
+            row.innerHTML = `
+          <span>${type.label} × ${type.count}</span>
+          <span>$${(type.count * type.price).toFixed(2)}</span>
+          `;
+            ticketRows.appendChild(row);
+        });
+
+        //calculate and fill in pricing
+        const tax = subtotal * 0.09;
+        const total = subtotal + tax;
+
+        document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
+        document.getElementById('cartTax').textContent = '$' + tax.toFixed(2);
+        document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+
+        //edit buttons
+        document.getElementById('editSeatsBtn').addEventListener('click', () => {
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'tickets.html';
+            }, 1500);
+        });
+
+        document.getElementById('editTicketsBtn').addEventListener('click', () => {
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'ticketTypes.html';
+            }, 1500);
+        });
+
+        //back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'ticketTypes.html';
+            }, 1500);
+        });
+
+        //checkout button
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            curtain.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'checkout.html';
+            }, 1500);
+        })
+
+
+    </script>
+</body>
+</html>
