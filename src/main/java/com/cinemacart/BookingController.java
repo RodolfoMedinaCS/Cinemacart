@@ -20,18 +20,16 @@ import java.util.UUID;
  * BookingControllers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
  * 
  * e. Methods:
- * 
+ * - BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
+ * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler.
+ * - BookingRequest - Represents the structure of the incoming JSON request body for booking-related actions
+
+
+/**
  * BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
  * @param sessionManager - An instance of the SessionManager class to validate user sessions
  * @param bookingRepository - An instance of the BookingRepository class to manage bookings in the database
- * @return - A new instance of the BookingController class
- * 
- * handle - This void method is called when an HTTP request is received at the endpoint associated with this handler. 
- * It processes the incoming request, validates the user's session, and performs the appropriate booking action based on the "action" field in the request body. 
- * The method sends an HTTP response back to the client with the result of the booking operation.
- * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
-*/     
-
+ */
     public class BookingController implements HttpHandler {
         
         private final SessionManager sessionManager;
@@ -42,6 +40,13 @@ import java.util.UUID;
             this.sessionManager = sessionManager;
             this.bookingRepository = bookingRepository;
         }
+
+/** 
+ * handle - This void method is called when an HTTP request is received at the endpoint associated with this handler. 
+ * It processes the incoming request, validates the user's session, and performs the appropriate booking action based on the "action" field in the request body. 
+ * The method sends an HTTP response back to the client with the result of the booking operation.
+ * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
+ **/
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -115,6 +120,17 @@ import java.util.UUID;
             os.write(response.getBytes());
             os.close();
         }
+
+/**
+ * BookingRequest - Represents the structure of the incoming JSON request body for booking-related actions.
+ * @param action - The action to perform, such as "book", "viewBookings", or "cancel"
+ * @param sessionToken - The user's session token for authentication
+ * @param movieId - The ID of the movie to book (required for booking)
+ * @param bookingDate - The date of the booking (required for booking)
+ *  @param bookingId - The ID of the booking to cancel (required for cancellation)
+ * @param movieTitle - The title of the movie to book (required for booking)
+ * @param purchaseDate - The date of the purchase (required for booking)
+ */
 
     static class BookingRequest {
         String action; // Action to perform: book, viewBookings, or cancel

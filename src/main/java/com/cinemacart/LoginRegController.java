@@ -20,29 +20,12 @@ import java.util.UUID;
  * It also handles logout requests by invalidating the user's session token. This handler sends appropriate HTTP responses back to the client based on the outcome of the login, registration, or logout attempts, including status codes and messages. 
  * LoginRegController also creates the user account objects and saves them to the database upon registration.
  * 
- * LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
- * @param userRepository - An instance of the UserRepository class to manage user accounts in the database
- * @param sessionManager - An instance of the SessionManager class to generate user session tokens when they login
+ * e. Methods:
  * 
- * Gson - A library used to parse JSON data from the incoming HTTP requests and to create JSON responses to send back to the client. 
- * It allows us to easily convert between Java objects and JSON strings, which is essential for handling the data sent from the frontend.
- * @param gson - An instance of the Gson class to parse JSON data from the incoming HTTP requests and to create JSON responses to send back to the client
- * 
- * handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering). 
- * It processes the incoming request, validates the user's session with sessionToken, and performs the appropriate action: login, registration, or logout based on the "action" field in the request body. 
- * The method sends an HTTP response back to the client with the result of the login, registration, or logout operation.
- * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
- * 
- * InputStream - Used to read the request body from the incoming HTTP request, this contains the login or registration information sent from the frontend
- * @param inputStream - An InputStream object used to read the request body from the incoming HTTP request
- * 
- * Scanner - Used to read the request body as a string, this allows us to easily parse the JSON data sent from the frontend
- * @param scanner - A Scanner object used to read the request body as a string
- * 
- * Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken.
- * 
- * LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field.
-
+ * - LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
+ * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering)
+ * - Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken
+ * - LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field
  */
 
 
@@ -51,11 +34,21 @@ public class LoginRegController implements HttpHandler {
         private final UserRepository userRepository; // Create an instance of the UserRepository class to manage user accounts in the database
         private final SessionManager sessionManager; // Create an instance of the SessionManager class to generate user session tokens when they login
 
+ /** 
+ * LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
+ * @param userRepository - An instance of the UserRepository class to manage user accounts in the database
+ * @param sessionManager - An instance of the SessionManager class to generate user session tokens when they login
+**/
         public LoginRegController(UserRepository userRepository, SessionManager sessionManager) {
             this.userRepository = userRepository;
             this.sessionManager = sessionManager;
         }    
-        
+
+ /** handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering). 
+ * It processes the incoming request, validates the user's session with sessionToken, and performs the appropriate action: login, registration, or logout based on the "action" field in the request body. 
+ * The method sends an HTTP response back to the client with the result of the login, registration, or logout operation.
+ * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
+ */       
         public void handle(HttpExchange exchange) throws IOException {
 
                 // Allows two way communications
@@ -139,6 +132,9 @@ public class LoginRegController implements HttpHandler {
                 os.close();
                 }    
 
+                /** 
+                * Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken.
+                **/
                 static class Authorization {
                     String action;
                     String email;
@@ -149,6 +145,9 @@ public class LoginRegController implements HttpHandler {
                     String message;
                     String sessionToken;
 
+                /** 
+                * LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field.
+                **/
                     public LoginResponse(String message, String sessionToken) {
                         this.message = message;
                         this.sessionToken = sessionToken;
