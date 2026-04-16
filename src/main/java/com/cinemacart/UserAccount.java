@@ -3,6 +3,40 @@ package com.cinemacart;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * a. UserAccount
+ * b. Date created: 
+ * c. Author: Winter Tomas
+ * 
+ * d. The primary method of this class is to manage user accounts and their information.
+ *  This includes storing and retrieving user details such as ID, username, email, and password hash.
+ * 
+ * e. Methods:
+ * 
+ * UserAccount - Constructor for the UserAccount class, initializes a new user account with the provided userId, username, email, and passwordHash.
+ * @param userId - A unique identifier for the user account
+ * @param username - The username associated with the user account
+ * @param email - The email address associated with the user account
+ * @param passwordHash - The hashed password for the user account, used for authentication
+ * @return - A new instance of the UserAccount class with the provided details
+ * 
+ * getUserId - Getter method to retrieve the unique identifier for the user account
+ * @return - The userId of the user account
+ * 
+ * getUsername - Getter method to retrieve the username associated with the user account
+ * @return - The username of the user account
+ * 
+ * getEmail - Getter method to retrieve the email address associated with the user account
+ * @return - The email of the user account
+ * 
+ * getPasswordHash - Getter method to retrieve the hashed password for the user account
+ * @return - The passwordHash of the user account
+ * 
+ * passwordMatch - This method takes in a plaintext password and compares it to the stored password hash using BCrypt.checkpw. It returns true if the passwords match and false otherwise. This method is used to verify user credentials during login.
+ * @param inputPassword - The plaintext password to compare against the stored password hash
+ * @return - true if the input password matches the stored password hash, false otherwise
+*/
+
 public class UserAccount {
     
     private final String userId; //unique numerical ID number for every account

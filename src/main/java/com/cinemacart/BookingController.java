@@ -10,9 +10,27 @@ import java.util.List;
 import com.google.gson.Gson;
 import java.util.UUID;
 
-/* BookingController class is responsible for handling booking related requests from the frontend. It uses the SessionManager class to validate user sessions and the BookingRepository class to interact with the bookings stored in the database.
+/**
+ * a. BookingController
+ * b. Date created: 
+ * c. Author: Winter Tomas
+ * 
+ * d. BookingController class is responsible for handling booking related requests from the frontend. 
+ * It uses the SessionManager class to validate user sessions and the BookingRepository class to interact with the bookings stored in the database.
  * BookingControllers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
-*/
+ * 
+ * e. Methods:
+ * 
+ * BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
+ * @param sessionManager - An instance of the SessionManager class to validate user sessions
+ * @param bookingRepository - An instance of the BookingRepository class to manage bookings in the database
+ * @return - A new instance of the BookingController class
+ * 
+ * handle - This void method is called when an HTTP request is received at the endpoint associated with this handler. 
+ * It processes the incoming request, validates the user's session, and performs the appropriate booking action based on the "action" field in the request body. 
+ * The method sends an HTTP response back to the client with the result of the booking operation.
+ * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
+*/     
 
     public class BookingController implements HttpHandler {
         
