@@ -1,7 +1,16 @@
 package com.cinemacart;
 
 import java.util.*;
-
+/**
+ * Represents a user cart during the ticket booking process.
+ * It stores the selected movie, date and time, chosen seats, and the number
+ * of tickets for each category such as adult, child, and senior. It also includes
+ * validation to ensure the data is correct, such as checking valid seat formats,
+ * preventing negative ticket counts, and making sure the number of seats matches
+ * the total number of tickets.
+ * The cart help manage user selections before confirming a booking and provides
+ * methods to update, validate, and clear the stored data when needed
+ */
 public class Cart {
 
     // Store selected seats and avoid duplicates,also keeps the order

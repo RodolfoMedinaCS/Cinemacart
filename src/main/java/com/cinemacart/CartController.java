@@ -5,7 +5,16 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.*;
 import java.util.*;
 import com.google.gson.Gson;
-
+/**
+ * it handles HTTP requests related to the user's cart
+ * It receives requests from the frontend, validates the user session,
+ * and performs different cart operations such as retrieving the cart,
+ * updating it with new selections, or clearing it.
+ * Each user's cart is stored in memory using their session token, so
+ * different users have separate carts. The controller also checks for
+ * valid input data and returns appropriate HTTP status codes and JSON
+ * responses back to the frontend.
+ */
 public class CartController implements HttpHandler {
 
     private final SessionManager sessionManager;

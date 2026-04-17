@@ -2,7 +2,11 @@ package com.cinemacart;
 
 import java.util.List;
 
-// This class stores all the available movies
+/**
+ * This class act as a simple storage for all available movies.
+ * It returns a predefined list of Movie objects that can be used
+ * throughout the system for searching and booking.
+ */
 public class MovieRepository {
 
     // Return the list of available movies
