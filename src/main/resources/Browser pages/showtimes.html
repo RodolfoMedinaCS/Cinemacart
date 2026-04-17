@@ -172,7 +172,6 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
-      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -219,6 +218,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const curtain = document.getElementById('curtain');
+
+      const sessionToken = sessionStorage.getItem('sessionToken');
+      if (!sessionToken) {
+        window.location.href = 'login.html';
+        return;
+      }
 
       //show which movie they're booking for, saved from local storage in 'movieDetails.html' page
       const movieTitle = localStorage.getItem('selectedMovieTitle');

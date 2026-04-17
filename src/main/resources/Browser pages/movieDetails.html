@@ -106,7 +106,6 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
-      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -201,9 +200,19 @@
       });
 
       document.getElementById("bookBtn").addEventListener("click", () => {
+        localStorage.removeItem('selectedDate');
+        localStorage.removeItem('selectedTime');
+        localStorage.removeItem('selectedSeats');
+        localStorage.removeItem('ticketAdult');
+        localStorage.removeItem('ticketChild');
+        localStorage.removeItem('ticketSenior');
+        localStorage.removeItem('ticketTotal');
+        localStorage.removeItem('ticketTotalPrice');
         curtain.classList.add("active");
         setTimeout(() => {window.location.href = "showtimes.html"}, 1500);
       });
+
+
     });
 
   </script>
