@@ -23,19 +23,18 @@ import java.util.UUID;
  * - BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
  * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler.
  * - BookingRequest - Represents the structure of the incoming JSON request body for booking-related actions
+*/
 
-
-/**
- * BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
- * @param sessionManager - An instance of the SessionManager class to validate user sessions
- * @param bookingRepository - An instance of the BookingRepository class to manage bookings in the database
- */
     public class BookingController implements HttpHandler {
         
         private final SessionManager sessionManager;
         private final BookingRepository bookingRepository;
         
-        // Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
+    /**
+     * BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
+     * @param sessionManager - An instance of the SessionManager class to validate user sessions
+     * @param bookingRepository - An instance of the BookingRepository class to manage bookings in the database
+     */
         public BookingController(SessionManager sessionManager, BookingRepository bookingRepository) {
             this.sessionManager = sessionManager;
             this.bookingRepository = bookingRepository;
