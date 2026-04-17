@@ -33,7 +33,6 @@ public class UserAccount {
      * @param username - The username associated with the user account
      * @param email - The email address associated with the user account
      * @param passwordHash - The hashed password for the user account, used for authentication
-     * @return - A new instance of the UserAccount class with the provided details
     */
 
     public UserAccount(String userId, String username, String email, String passwordHash) {

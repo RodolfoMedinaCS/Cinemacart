@@ -34,7 +34,6 @@ public class UserRepository {
 
     /**
      * UserRepository - Constructor for the UserRepository class, initializes the Firestore database connection that will be used for saving and retrieving user accounts in the database
-     * @return - A new instance of the UserRepository class with an initialized Firestore database connection
     */
 
     public UserRepository() {

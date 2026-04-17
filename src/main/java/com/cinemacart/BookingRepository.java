@@ -34,7 +34,6 @@ public class BookingRepository {
 
     /**
      * BookingRepository - Constructor for the BookingRepository class, initializes the Firestore database connection that will be used for saving and retrieving bookings in the database
-     * @return - A new instance of the BookingRepository class with an initialized Firestore database connection
      */
 
     public BookingRepository() {
