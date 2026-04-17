@@ -2,7 +2,11 @@ package com.cinemacart;
 
 import java.util.Objects;//I used it for requireNoNull for validation
 
-//This class stores movie information like id,title, genre, and duration.
+/**
+ * This class store movie information such as id, title, genre, duration, and rating.
+ * Also, it validates all values when creating a Movie object.
+ * it is used to represent all the movies in the cinema system.
+ */
 public class Movie {
     private final int movieId; //in case if two movies have same title
     private final String title; //movie title or name

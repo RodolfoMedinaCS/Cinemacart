@@ -5,14 +5,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Login state check
   const navAuthLink = document.querySelector("#navAuthLink");
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
 
   if (navAuthLink) {
+    // Account dropdown menu for logged in users
     if (isLoggedIn) {
-      // Show Account button instead of Login
-      navAuthLink.innerHTML = '<a href="account.html" id="accountBtn">Account</a>';
+      navAuthLink.innerHTML = `
+        <div class="account-dropdown">
+          <button id="accountBtn" class="btn">My Account ▾</button>
+          <div class="dropdown-menu" id="dropdownMenu">
+            <button id="accountPageBtn">Account Page</button>
+            <button id="logoutBtn">Logout</button>
+          </div>
+        </div>
+      `;
+
+      // Toggle dropdown
+      const accountBtn = document.getElementById("accountBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      accountBtn.addEventListener("click", () => {
+        dropdownMenu.classList.toggle("show");
+      });
+
+      // Logout logic
+      const logoutBtn = document.getElementById("logoutBtn");
+      logoutBtn.addEventListener("click", () => {
+        sessionStorage.clear();
+        localStorage.clear();
+
+        window.location.href = "login.html";
+      });
+
+      const accountPageBtn = document.getElementById("accountPageBtn");
+
+      accountPageBtn.addEventListener("click", () => {
+        window.location.href = "account.html";
+      });
+
+      // Close dropdown if clicked outside
+      document.addEventListener("click", (e) => {
+        if (!accountBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+          dropdownMenu.classList.remove("show");
+        }
+      });
+
+      // Login button if not logged in 
     } else {
-      // Show login by default
       navAuthLink.innerHTML = '<a href="login.html">Login</a>';
     }
   }
