@@ -151,7 +151,6 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
-      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -160,7 +159,7 @@
 
   <main>
     <div class="checkout-page">
-      <h1>Checkout</h1>
+      <h1>Confirm Purchase</h1>
 
       <!-- order summary-->
       <div class="checkout-card">
@@ -211,7 +210,7 @@
 
       <div class="checkout-actions">
         <button class="btn-back" id="backBtn">← Back</button>
-        <button class="btn btn-pay" id="payBtn">Confirm Booking →</button>
+        <button class="btn btn-pay" id="payBtn">Purchase</button>
       </div>
 
     </div>
@@ -287,7 +286,7 @@
       }, 1500);
     });
 
-    document.getElementById('payBtn').addEventListener('click', () => {
+    document.getElementById('payBtn').addEventListener('click', async () => {
       const name = document.getElementById('cardName').value.trim();
       const number = document.getElementById('cardNumber').value.trim();
       const exp = document.getElementById('cardExp').value.trim();
@@ -298,10 +297,39 @@
         return;
       }
 
-      curtain.classList.add('active');
-      setTimeout(() => {
-        window.location.href = 'bookingConfirmed.html';
-      }, 1500);
+      const sessionToken = sessionStorage.getItem('sessionToken');
+      if(!sessionToken){
+        alert('You need to be logged in to complete your booking.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try{
+        const res = await fetch('http://localhost:8000/booking', {
+          method: 'POST',
+          headers: {'Content-Type' : 'application/json'},
+          body: JSON.stringify({
+            action: 'book',
+            sessionToken: sessionToken,
+            movieId: localStorage.getItem('selectedMovieId'),
+            movieTitle: localStorage.getItem('selectedMovieTitle'),
+            bookingDate: localStorage.getItem('selectedDate')
+          })
+        });
+
+        if(res.status === 201){
+          curtain.classList.add('active');
+          setTimeout(() => {
+            window.location.href = 'bookingConfirmed.html';
+          }, 1500);
+        }else{
+          alert('Something went wrong with your booking. Please try again.');
+        }
+
+      }catch(err){
+        alert('Could not connect to server. Please try again.');
+        console.error(err);
+      }
     });
   </script>
   </body>
