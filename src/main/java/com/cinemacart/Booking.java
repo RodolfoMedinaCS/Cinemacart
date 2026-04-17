@@ -1,15 +1,15 @@
 package com.cinemacart;
 
 /**
- * a. Booking
- * b. Date created: 
- * c. Author: Winter Tomas
+ * Booking
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. Represents a booking made by a customer for a specific movie and showtime.
+ * Represents a booking made by a customer for a specific movie and showtime.
  * Contains details such as the movie, showtime, number of tickets, and total price.
  * Bookings are tied to emails rather than userId
  * 
- * e. Methods:
+ * Methods:
  * Booking - Constructor to initialize a booking with the provided details
  * getEmail - Getter method to retrieve the email associated with the booking
  * getBookingId - Getter method to retrieve the unique identifier for the booking

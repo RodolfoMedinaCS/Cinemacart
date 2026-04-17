@@ -11,17 +11,16 @@ import com.google.gson.Gson;
 import java.util.UUID;
 
 /**
- * a. LoginRegController
- * b. Date created: 
- * c. Author: Winter Tomas
+ * LoginRegController
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. LoginRegController class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
+ * LoginRegController class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
  * and the SessionManager class to generate session tokens to manage user sessions. The handler processes incoming HTTP requests, extracts the relevant information (action type, email, password) and performs the approrpriate actions based
  * It also handles logout requests by invalidating the user's session token. This handler sends appropriate HTTP responses back to the client based on the outcome of the login, registration, or logout attempts, including status codes and messages. 
  * LoginRegController also creates the user account objects and saves them to the database upon registration.
  * 
- * e. Methods:
- * 
+ * Methods:
  * - LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
  * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering)
  * - Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken
