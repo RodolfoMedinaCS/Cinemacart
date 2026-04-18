@@ -48,11 +48,14 @@
       border-radius: 20px;
       font-size: 0.95rem;
       color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .rating-badge{
-      background: var(--gold); !important;
-      color: black; !important;
+      background: var(--gold) !important;
+      color: black !important;
       font-weight: bold;
       border: none;
     }
@@ -106,6 +109,7 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
+      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -190,7 +194,6 @@
       document.getElementById('movieRating').textContent = '⭐ ' + movieRating + ' / 10';
       document.getElementById('movieGenre').textContent = movieGenre;
       document.getElementById('movieDuration').textContent = movieDuration + ' min';
-      document.getElementById('movieDescription').textContent = movieGenre + ' · ' + movieDuration + ' min';
       document.getElementById('movieDescription').textContent = localStorage.getItem('selectedMovieDescription') || 'No description available.';
 
 

@@ -219,12 +219,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       const curtain = document.getElementById('curtain');
 
-      const sessionToken = sessionStorage.getItem('sessionToken');
-      if (!sessionToken) {
-        window.location.href = 'login.html';
-        return;
-      }
-
       //show which movie they're booking for, saved from local storage in 'movieDetails.html' page
       const movieTitle = localStorage.getItem('selectedMovieTitle');
       document.getElementById('moviesubtitle').textContent = movieTitle ? "Booking for: " + movieTitle : "booking for: -";
