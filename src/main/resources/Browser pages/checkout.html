@@ -135,6 +135,26 @@
         font-size:1rem;
       }
 
+      .form-input.error{
+        border-color: #e50914;
+      }
+
+      .field-error{
+        color: #e50914;
+        font-size: 0.85rem;
+        margin-top: -0.5rem;
+        margin-bottom: 0.8rem;
+        display: none;
+      }
+
+      .field-error.visible{
+        display: block;
+      }
+
+      .form-row + .field-error{
+        margin-top: 0.5rem;
+      }
+
     </style>
   </head>
 
@@ -151,7 +171,6 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
-      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -160,7 +179,7 @@
 
   <main>
     <div class="checkout-page">
-      <h1>Checkout</h1>
+      <h1>Confirm Purchase</h1>
 
       <!-- order summary-->
       <div class="checkout-card">
@@ -198,20 +217,26 @@
       </div>
 
       <!-- payment form -->
+
       <div class="checkout-card">
         <p class="checkout-label">Payment</p>
         <input class="form-input" type="text" id="cardName" placeholder="Name on Card">
-        <input class="form-input" type="text" id="cardNumber" placeholder="Card Number"
-        maxlength="19">
+        <p class="field-error" id="errName">Please enter the name on your card</p>
+
+        <input class="form-input" type="text" id="cardNumber" placeholder="Card Number" maxlength="19">
+        <p class="field-error" id="errNumber">Card number must be 16 digits</p>
+
         <div class="form-row">
           <input class="form-input" type="text" id="cardExp" placeholder="MM / YY" maxlength="7">
           <input class="form-input cvv" type="text" id="cardCvv" placeholder="CVV" maxlength="4">
         </div>
+        <p class="field-error" id="errExp">Please check your expiry date and CVV.</p>
       </div>
+
 
       <div class="checkout-actions">
         <button class="btn-back" id="backBtn">← Back</button>
-        <button class="btn btn-pay" id="payBtn">Confirm Booking →</button>
+        <button class="btn btn-pay" id="payBtn">Purchase</button>
       </div>
 
     </div>
@@ -287,22 +312,92 @@
       }, 1500);
     });
 
-    document.getElementById('payBtn').addEventListener('click', () => {
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      const payBtn = document.getElementById('payBtn');
       const name = document.getElementById('cardName').value.trim();
       const number = document.getElementById('cardNumber').value.trim();
       const exp = document.getElementById('cardExp').value.trim();
       const cvv = document.getElementById('cardCvv').value.trim();
 
-      if(!name || !number || !exp || !cvv){
-        alert('Please fill in all payment fields.');
-        return;
+      function showError(id, inputId){
+        document.getElementById(id).classList.add('visible');
+        document.getElementById(inputId).classList.add('error');
       }
 
-      curtain.classList.add('active');
-      setTimeout(() => {
-        window.location.href = 'bookingConfirmed.html';
-      }, 1500);
+      function clearErrors(){
+        document.querySelectorAll('.field-error').forEach(el => el.classList.remove('visible'));
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+      }
+
+      clearErrors();
+
+      payBtn.textContent = 'Processing...';
+      payBtn.disabled = true;
+
+
+      function resetBtn() { payBtn.textContent = 'Purchase'; payBtn.disabled = false; }
+
+      if(!name) { showError('errName', 'cardName'); resetBtn(); return; }
+
+      const rawNumber = number.replace(/\s/g, '');
+      if(!/^\d{16}$/.test(rawNumber)) { showError('errNumber', 'cardNumber'); resetBtn(); return; }
+
+      const expMatch = exp.replace(/\s/g, '').match(/^(\d{2})\/(\d{2})$/);
+      if(!expMatch) { showError('errExp', 'cardExp'); resetBtn(); return; }
+      const expMonth = parseInt(expMatch[1]);
+      const expYear = parseInt('20' + expMatch[2]);
+      const now = new Date();
+      if(expMonth < 1 || expMonth > 12 || expYear < now.getFullYear() ||
+              (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
+        showError('errExp', 'cardExp'); resetBtn(); return;
+      }
+
+      if(!/^\d{3,4}$/.test(cvv)) { showError('errExp', 'cardCvv'); resetBtn(); return; }
+
+      const sessionToken = sessionStorage.getItem('sessionToken');
+
+      if (sessionToken) {
+        try {
+
+          const res = await fetch('http://localhost:8000/booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'book',
+              sessionToken: sessionToken,
+              movieId: localStorage.getItem('selectedMovieId'),
+              movieTitle: localStorage.getItem('selectedMovieTitle'),
+              bookingDate: localStorage.getItem('selectedDate')
+            })
+          });
+
+          if (res.status === 201) {
+            await fetch('http://localhost:8000/cart', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'clearCart', sessionToken: sessionToken })
+            });
+            curtain.classList.add('active');
+            setTimeout(() => { window.location.href = 'bookingConfirmed.html'; }, 1500);
+          } else {
+            alert('Something went wrong with your booking. Please try again.');
+            payBtn.textContent = 'Purchase';
+            payBtn.disabled = false;
+          }
+
+        } catch (err) {
+          alert('Could not connect to server. Please try again.');
+          console.error(err);
+          payBtn.textContent = 'Purchase';
+          payBtn.disabled = false;
+        }
+
+      } else {
+        curtain.classList.add('active');
+        setTimeout(() => { window.location.href = 'bookingConfirmed.html'; }, 1500);
+      }
     });
+
   </script>
   </body>
 </html>

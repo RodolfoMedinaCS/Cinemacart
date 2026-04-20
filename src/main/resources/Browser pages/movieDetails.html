@@ -48,11 +48,14 @@
       border-radius: 20px;
       font-size: 0.95rem;
       color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .rating-badge{
-      background: var(--gold); !important;
-      color: black; !important;
+      background: var(--gold) !important;
+      color: black !important;
       font-weight: bold;
       border: none;
     }
@@ -191,7 +194,6 @@
       document.getElementById('movieRating').textContent = '⭐ ' + movieRating + ' / 10';
       document.getElementById('movieGenre').textContent = movieGenre;
       document.getElementById('movieDuration').textContent = movieDuration + ' min';
-      document.getElementById('movieDescription').textContent = movieGenre + ' · ' + movieDuration + ' min';
       document.getElementById('movieDescription').textContent = localStorage.getItem('selectedMovieDescription') || 'No description available.';
 
 
@@ -201,9 +203,19 @@
       });
 
       document.getElementById("bookBtn").addEventListener("click", () => {
+        localStorage.removeItem('selectedDate');
+        localStorage.removeItem('selectedTime');
+        localStorage.removeItem('selectedSeats');
+        localStorage.removeItem('ticketAdult');
+        localStorage.removeItem('ticketChild');
+        localStorage.removeItem('ticketSenior');
+        localStorage.removeItem('ticketTotal');
+        localStorage.removeItem('ticketTotalPrice');
         curtain.classList.add("active");
         setTimeout(() => {window.location.href = "showtimes.html"}, 1500);
       });
+
+
     });
 
   </script>
