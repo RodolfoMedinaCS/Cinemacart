@@ -351,3 +351,11 @@ footer {
   background-color: #222;
   color: var(--gold);
 }
+
+.logo {
+  text-decoration: none;
+}
+
+.logo:hover {
+  text-decoration: none;
+}
