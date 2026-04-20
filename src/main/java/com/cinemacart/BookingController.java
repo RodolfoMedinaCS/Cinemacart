@@ -103,6 +103,11 @@ import java.util.UUID;
                         status = 200;
                         System.out.println("Booking cancelled successfully");
 
+                    } else if ("delete".equalsIgnoreCase(req.action)) {
+                        bookingRepository.deleteBooking(req.bookingId);
+                        status = 200;
+                        System.out.println("Booking cancelled successfully");
+
                     } else {
                         status = 400;
                         System.out.println("Invalid action");
