@@ -8,6 +8,16 @@ import java.io.OutputStream;
 import java.util.Scanner;
 import com.google.gson.Gson;
 
+/**
+ * It handles incoming HTTP requests related to searching movies
+ * It also receives requests from the frontend, reads the JSON body, and processes
+ * search queries using the Search class. The controller supports searching
+ * by title or genre and returns the result as a JSON response.
+ * If the query is empty, it returns all available movies. If no results are
+ * found for a title search, it attempts to search by genre as a fallback.
+ * It also manages request validation, error handling, and sets appropriate
+ * HTTP response codes and headers for communication with the frontend.
+ */
 public class SearchController implements HttpHandler {
 
     static class SearchRequest {

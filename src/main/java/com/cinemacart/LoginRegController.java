@@ -10,22 +10,45 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
 import java.util.UUID;
 
-/* LoginRegController class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
+/**
+ * a. LoginRegController
+ * b. Date created: 
+ * c. Author: Winter Tomas
+ * 
+ * d. LoginRegController class is responsible for handling both login and registration request from the login page. It uses the UserRepository class to interact with the user accounts stored in the database
  * and the SessionManager class to generate session tokens to manage user sessions. The handler processes incoming HTTP requests, extracts the relevant information (action type, email, password) and performs the approrpriate actions based
  * It also handles logout requests by invalidating the user's session token. This handler sends appropriate HTTP responses back to the client based on the outcome of the login, registration, or logout attempts, including status codes and messages. 
  * LoginRegController also creates the user account objects and saves them to the database upon registration.
-*/
+ * 
+ * e. Methods:
+ * 
+ * - LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
+ * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering)
+ * - Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken
+ * - LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field
+ */
+
 
 public class LoginRegController implements HttpHandler {
             
         private final UserRepository userRepository; // Create an instance of the UserRepository class to manage user accounts in the database
         private final SessionManager sessionManager; // Create an instance of the SessionManager class to generate user session tokens when they login
 
+ /** 
+ * LoginRegController - Constructor for the LoginRegController class, takes in a UserRepository and SessionManager instance to manage user accounts and sessions in the database
+ * @param userRepository - An instance of the UserRepository class to manage user accounts in the database
+ * @param sessionManager - An instance of the SessionManager class to generate user session tokens when they login
+**/
         public LoginRegController(UserRepository userRepository, SessionManager sessionManager) {
             this.userRepository = userRepository;
             this.sessionManager = sessionManager;
         }    
-        
+
+ /** handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering). 
+ * It processes the incoming request, validates the user's session with sessionToken, and performs the appropriate action: login, registration, or logout based on the "action" field in the request body. 
+ * The method sends an HTTP response back to the client with the result of the login, registration, or logout operation.
+ * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
+ */       
         public void handle(HttpExchange exchange) throws IOException {
 
                 // Allows two way communications
@@ -60,7 +83,7 @@ public class LoginRegController implements HttpHandler {
 
                 // Registration / Logging in logic
                 try {
-                    if ("register".equalsIgnoreCase(action)) { // If the action is "register", call the register method in the handler class
+                    if ("register".equalsIgnoreCase(action)) { // 
                         if (userRepository.exists(email)) {
                             status = 409;
                             response = "User already exists";
@@ -109,6 +132,9 @@ public class LoginRegController implements HttpHandler {
                 os.close();
                 }    
 
+                /** 
+                * Authorization - Used to represent the structure of the JSON data sent from the frontend for login, registration, and logout requests. It contains fields for action, email, password, and sessionToken.
+                **/
                 static class Authorization {
                     String action;
                     String email;
@@ -119,6 +145,9 @@ public class LoginRegController implements HttpHandler {
                     String message;
                     String sessionToken;
 
+                /** 
+                * LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field.
+                **/
                     public LoginResponse(String message, String sessionToken) {
                         this.message = message;
                         this.sessionToken = sessionToken;

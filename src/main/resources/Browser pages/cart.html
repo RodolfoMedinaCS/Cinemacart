@@ -167,7 +167,6 @@
         <nav>
             <a href="index.html">Home</a>
             <a href="Search.html">Search</a>
-            <a href="checkout.html">Cart</a>
             <span id="navAuthLink">
                 <a href="login.html">Login</a>
             </span>
@@ -245,91 +244,149 @@
 
     <script>
         const curtain = document.getElementById("curtain");
+        const sessionToken = sessionStorage.getItem('sessionToken');
 
-        //read everything from local storage
-        const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
-        const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date'
-        const selectedTime = localStorage.getItem('selectedTime') || 'Unknown Time'
-        const seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
-        const adultCount = parseInt(localStorage.getItem('ticketAdult')) || 0;
-        const childCount = parseInt(localStorage.getItem('ticketChild')) || 0;
-        const seniorCount = parseInt(localStorage.getItem('ticketSenior')) || 0;
-        const subtotal = parseFloat(localStorage.getItem('ticketTotalPrice')) || 0;
-
-        // fill in movie info
-        document.getElementById('cartMovieTitle').textContent = movieTitle;
-        document.getElementById('cartMovieMeta').textContent = selectedDate + '  ·  ' + selectedTime;
-
-        // fill in seats
-        const seatsContainer = document.getElementById('cartSeats');
-        if(seats.length === 0){
-            seatsContainer.textContent = "No seats selected";
-        }else{
-            seats.forEach(seat => {
-                const chip = document.createElement('span');
-                chip.className = 'seat-chip';
-                chip.textContent = seat;
-                seatsContainer.appendChild(chip);
+        function showEmptyCart() {
+            document.querySelector('.cart-page').innerHTML = `
+                <h1>Your Cart</h1>
+                <p style="color:#aaa; margin-bottom:2rem;">Your cart is empty.</p>
+                <button class="btn" id="browseBtn">Browse Movies</button>`;
+            document.getElementById('browseBtn').addEventListener('click', () => {
+                curtain.classList.add('active');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
             });
         }
 
-        //fill in ticket type rows
-        const ticketRows = document.getElementById('cartTicketRows');
-        const ticketTypes = [
-            { label: 'Adult', count: adultCount, price: 14.99},
-            { label: 'Child', count: childCount, price: 9.99},
-            { label: 'Senior', count: seniorCount, price: 11.99},
-        ];
-        ticketTypes.forEach(type => {
-            if(type.count === 0) return;
-            const row = document.createElement('div');
-            row.className = 'cart-row';
-            row.innerHTML = `
-          <span>${type.label} × ${type.count}</span>
-          <span>$${(type.count * type.price).toFixed(2)}</span>
-          `;
-            ticketRows.appendChild(row);
-        });
+        function renderCart(movieTitle, selectedDate, selectedTime, seats, adultCount, childCount, seniorCount, subtotal) {
+            // fill in movie info
+            document.getElementById('cartMovieTitle').textContent = movieTitle;
+            document.getElementById('cartMovieMeta').textContent = selectedDate + '  ·  ' + selectedTime;
 
-        //calculate and fill in pricing
-        const tax = subtotal * 0.09;
-        const total = subtotal + tax;
+            // fill in seats
+            const seatsContainer = document.getElementById('cartSeats');
+            if(seats.length === 0){
+                seatsContainer.textContent = "No seats selected";
+            }else{
+                seats.forEach(seat => {
+                    const chip = document.createElement('span');
+                    chip.className = 'seat-chip';
+                    chip.textContent = seat;
+                    seatsContainer.appendChild(chip);
+                });
+            }
 
-        document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
-        document.getElementById('cartTax').textContent = '$' + tax.toFixed(2);
-        document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+            // fill in ticket type rows
+            const ticketRows = document.getElementById('cartTicketRows');
+            const ticketTypes = [
+                { label: 'Adult', count: adultCount, price: 14.99 },
+                { label: 'Child', count: childCount, price: 9.99 },
+                { label: 'Senior', count: seniorCount, price: 11.99 }
+            ];
+            ticketTypes.forEach(type => {
+                if(type.count === 0) return;
+                const row = document.createElement('div');
+                row.className = 'cart-row';
+                row.innerHTML = `
+                    <span>${type.label} × ${type.count}</span>
+                    <span>$${(type.count * type.price).toFixed(2)}</span>`;
+                ticketRows.appendChild(row);
+            });
 
-        //edit buttons
-        document.getElementById('editSeatsBtn').addEventListener('click', () => {
-            curtain.classList.add('active');
-            setTimeout(() => {
-                window.location.href = 'tickets.html';
-            }, 1500);
-        });
+            // calculate and fill in pricing
+            const tax = subtotal * 0.09;
+            const total = subtotal + tax;
+            document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('cartTax').textContent = '$' + tax.toFixed(2);
+            document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
 
-        document.getElementById('editTicketsBtn').addEventListener('click', () => {
-            curtain.classList.add('active');
-            setTimeout(() => {
-                window.location.href = 'ticketTypes.html';
-            }, 1500);
-        });
+            // edit buttons
+            document.getElementById('editSeatsBtn').addEventListener('click', () => {
+                curtain.classList.add('active');
+                setTimeout(() => { window.location.href = 'tickets.html'; }, 1500);
+            });
 
-        //back button
-        document.getElementById('backBtn').addEventListener('click', () => {
-            curtain.classList.add('active');
-            setTimeout(() => {
-                window.location.href = 'ticketTypes.html';
-            }, 1500);
-        });
+            document.getElementById('editTicketsBtn').addEventListener('click', () => {
+                curtain.classList.add('active');
+                setTimeout(() => { window.location.href = 'ticketTypes.html'; }, 1500);
+            });
 
-        //checkout button
-        document.getElementById('checkoutBtn').addEventListener('click', () => {
-            curtain.classList.add('active');
-            setTimeout(() => {
-                window.location.href = 'checkout.html';
-            }, 1500);
-        })
+            // back button
+            document.getElementById('backBtn').addEventListener('click', () => {
+                curtain.classList.add('active');
+                setTimeout(() => { window.location.href = 'ticketTypes.html'; }, 1500);
+            });
 
+            // checkout button
+            document.getElementById('checkoutBtn').addEventListener('click', () => {
+                curtain.classList.add('active');
+                setTimeout(() => { window.location.href = 'checkout.html'; }, 1500);
+            });
+        }
+
+        async function loadCart() {
+            // logged in try getCart from backend first
+            if (sessionToken) {
+                try {
+                    const res = await fetch('http://localhost:8000/cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'getCart', sessionToken })
+                    });
+                    const data = await res.json();
+                    if (data && data.movieTitle) {
+                        const subtotal = (data.adultCount * 14.99) + (data.childCount * 9.99) + (data.seniorCount * 11.99);
+                        renderCart(data.movieTitle, data.selectedDate, data.selectedTime,
+                            data.selectedSeats || [], data.adultCount || 0, data.childCount || 0,
+                            data.seniorCount || 0, subtotal);
+                        return;
+                    }
+                } catch(e) {}
+            }
+
+            // guest or backend empty: fall back to localStorage
+            const isCartComplete =
+                localStorage.getItem('selectedMovieTitle') &&
+                localStorage.getItem('selectedDate') &&
+                localStorage.getItem('selectedTime') &&
+                JSON.parse(localStorage.getItem('selectedSeats') || '[]').length > 0 &&
+                parseFloat(localStorage.getItem('ticketTotalPrice') || '0') > 0;
+
+            if (!isCartComplete) { showEmptyCart(); return; }
+
+            // read everything from localStorage
+            const movieTitle = localStorage.getItem('selectedMovieTitle');
+            const selectedDate = localStorage.getItem('selectedDate');
+            const selectedTime = localStorage.getItem('selectedTime');
+            const seats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+            const adultCount = parseInt(localStorage.getItem('ticketAdult')) || 0;
+            const childCount = parseInt(localStorage.getItem('ticketChild')) || 0;
+            const seniorCount = parseInt(localStorage.getItem('ticketSenior')) || 0;
+            const subtotal = parseFloat(localStorage.getItem('ticketTotalPrice')) || 0;
+
+            renderCart(movieTitle, selectedDate, selectedTime, seats, adultCount, childCount, seniorCount, subtotal);
+
+            // sync to backend if logged in
+            if (sessionToken) {
+                fetch('http://localhost:8000/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateCart',
+                        sessionToken,
+                        movieId: parseInt(localStorage.getItem('selectedMovieId')),
+                        movieTitle,
+                        selectedDate,
+                        selectedTime,
+                        selectedSeats: seats,
+                        adultCount,
+                        childCount,
+                        seniorCount
+                    })
+                });
+            }
+        }
+
+        loadCart();
 
     </script>
 </body>

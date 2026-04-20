@@ -4,8 +4,14 @@ import java.util.ArrayList;//used to store the filtered search results
 import java.util.Comparator;//use to sort movies by rating or title
 import java.util.List;//used to represent a list of Movie objects
 
-// This class handle searching movies from the MovieRepository
-public class Search {
+/**
+ * This class handles the searching for movies from the MovieRepository.
+ * It filters movies based on different things such as title, genre,
+ * and minimum rating. It also allows optional sorting of the results
+ * either by highest rating  or by title alphabetically.
+ * The search is flexible, meaning users can provide any combination
+ * of filters, and only the matching movies will be returned.
+ */public class Search {
 
     // this method search movies based on title, genre and minimum rating
     // Also, if the user wants it can sort the results by rating and title
