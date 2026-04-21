@@ -103,8 +103,10 @@ public class LoginRegController implements HttpHandler {
                         response = "User not found";
                     } else if (BCrypt.checkpw(password, account.getPasswordHash())) { // Compare the input password with the stored password hash using BCrypt's checkpw method
                         String sessionToken = sessionManager.generateSessionToken(account.getEmail()); // Generate a session token for the user using the SessionManager class, this allows the user to access authenticated features of the application
+                        String managerToken = sessionManager.checkManager(account.getEmail());
+                        boolean isManager = managerToken != null;
                         status = 200;
-                        response = gson.toJson(new LoginResponse("Login successful", sessionToken));
+                        response = gson.toJson(new LoginResponse("Login successful", sessionToken, isManager));
                     } else {
                         status = 401;
                         response = "Invalid credentials";
@@ -140,16 +142,19 @@ public class LoginRegController implements HttpHandler {
                     String password;
                     String sessionToken; // Add sessionToken field to the Authorization class to handle logout requests
                 }
+                
                 static class LoginResponse {
                     String message;
                     String sessionToken;
+                    boolean isManager;
 
                 /** 
                 * LoginResponse - Used to represent the structure of the JSON response sent back to the client upon a successful login, it contains a message and a sessionToken field.
                 **/
-                    public LoginResponse(String message, String sessionToken) {
+                    public LoginResponse(String message, String sessionToken, boolean isManager) {
                         this.message = message;
                         this.sessionToken = sessionToken;
+                        this.isManager = isManager;
                     }
                 }
             }

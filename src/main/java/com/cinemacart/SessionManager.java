@@ -62,12 +62,21 @@ public class SessionManager {
     }
     
     /** 
-        * invalidSession - This method takes in a session token and removes it from the sessions map, effectively invalidating the session and logging the user out.
-        * @param sessionToken - The session token to invalidate
+     * invalidSession - This method takes in a session token and removes it from the sessions map, effectively invalidating the session and logging the user out.
+     * @param sessionToken - The session token to invalidate
     **/
     public void invalidSession(String sessionToken) {
         if (sessionToken != null) {
             sessions.remove(sessionToken);
         }
+    }
+
+    public String checkManager(String email) {
+        if ("manager@cinemacart.com".equals(email)) {
+            String managerToken = UUID.randomUUID().toString();
+            sessions.put(managerToken, email);
+            return managerToken;
+        }
+        return null;
     }
 }
