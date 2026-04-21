@@ -86,7 +86,7 @@ import java.util.UUID;
                     if ("book".equalsIgnoreCase(req.action)) {
                         // Creates a new booking and saves it to Firebase
                         String bookingId = UUID.randomUUID().toString();
-                        Booking booking = new Booking(email, bookingId, req.movieId, req.bookingDate, "confirmed", req.movieTitle, req.bookingDate);
+                        Booking booking = new Booking(email, bookingId, req.movieId, req.bookingDate, "Confirmed", req.movieTitle, req.bookingDate, req.amount);
                         bookingRepository.save(booking);
                         status = 201;
 
@@ -144,5 +144,6 @@ import java.util.UUID;
         String bookingId; // ID of the booking to cancel (required for cancellation)
         String movieTitle; // Title of the movie to book (required for booking)
         String purchaseDate; // Date of the purchase (required for booking)
+        double amount;
         }
     }

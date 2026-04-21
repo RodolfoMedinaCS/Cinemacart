@@ -56,6 +56,7 @@ public class BookingRepository {
             bookingData.put("status", booking.getStatus());
             bookingData.put("movieTitle", booking.getMovieTitle());
             bookingData.put("purchaseDate", booking.getPurchaseDate());
+            bookingData.put("amount", booking.getAmount());
             db.collection("bookings").document(booking.getBookingId()).set(bookingData).get(); // Saves the booking data to the "bookings" collection in Firestore database, using the bookingId as the document ID
         } catch (Exception e) {
             throw new RuntimeException("Error saving booking", e);
@@ -117,7 +118,8 @@ public class BookingRepository {
                 String status = doc.getString("status");
                 String movieTitle = doc.getString("movieTitle");
                 String purchaseDate = doc.getString("purchaseDate");
-                Booking booking = new Booking(email, bookingId, movieId, bookingDate, status, movieTitle, purchaseDate); // Create a new Booking object using the retrieved data from the document
+                double amount = doc.getDouble("amount");
+                Booking booking = new Booking(email, bookingId, movieId, bookingDate, status, movieTitle, purchaseDate, amount); // Create a new Booking object using the retrieved data from the document
                 bookings.add(booking); // Add the Booking object to the list of bookings
             }
             return bookings; // Return the list of bookings associated with the specified email

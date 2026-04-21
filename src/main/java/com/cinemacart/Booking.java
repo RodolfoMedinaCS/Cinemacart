@@ -30,6 +30,7 @@ public class Booking {
     private String status;
     private final String movieTitle;
     private final String purchaseDate;
+    private final double amount;
 
     
     /** 
@@ -42,7 +43,7 @@ public class Booking {
      * @param movieTitle - The title of the movie that was booked
      * @param purchaseDate - The date and time when the booking was made
      **/
-    public Booking (String email, String bookingId, String movieId, String bookingDate, String status, String movieTitle, String purchaseDate) {
+    public Booking (String email, String bookingId, String movieId, String bookingDate, String status, String movieTitle, String purchaseDate, double amount) {
         this.email = email;
         this.bookingId = bookingId;
         this.movieId = movieId;
@@ -50,6 +51,7 @@ public class Booking {
         this.status = status;
         this.movieTitle = movieTitle;
         this.purchaseDate = purchaseDate;
+        this.amount = amount;
     }
 
     // Getters for the booking details
@@ -116,5 +118,9 @@ public class Booking {
     */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public double amount() {
+        return amount;
     }
 }
