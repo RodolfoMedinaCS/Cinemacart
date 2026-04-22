@@ -33,5 +33,8 @@ public class ReportsController implements HttpHandler {
         Scanner scanner = new Scanner(inputStream);
         String requestBody = scanner.hasNext();
         scanner.close();
+
+        Gson gson = new Gson();
+        ReportRequest req = gson.fromJson(requestBody, ReportRequest.class);
     }
 }
