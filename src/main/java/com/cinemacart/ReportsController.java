@@ -1,16 +1,17 @@
 package com.cinemacart;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
+import java.io.OutputStream;
+import java.util.List;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
+import java.util.Map;
+import java.util.HashMap;
 
-public class ReportsController implements HttpHandler {
+public class ReportsController extends HttpRequestController {
 
     private final SessionManager sessionManager;
     private final Firestore db;
@@ -20,21 +21,110 @@ public class ReportsController implements HttpHandler {
         this.db = FirestoreClient.getFirestore();
     }
 
-    public void handle(Httpexchange exchange) throws IOException {
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        exchange.getResponseHeaders().add("Acess-Conntrol-Allow-Headers", "Content-Type");
+    public void handle(HttpExchange exchange) throws IOException {
+        addHeaders(exchange);
         if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")){
             exchange.sendResponseHeaders(204, -1);
             return;
         }
 
-        InputStream inputStream = exchange.getRequestBody();
-        Scanner scanner = new Scanner(inputStream);
-        String requestBody = scanner.hasNext();
-        scanner.close();
+        String requestBody = readBody(exchange);
 
         Gson gson = new Gson();
         ReportRequest req = gson.fromJson(requestBody, ReportRequest.class);
+
+        String response = "";
+        int status;
+
+        if (!sessionManager.validSession(req.sessionToken)) {
+            status = 401;
+            exchange.sendResponseHeaders(status, response.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+            return;
+        }
+
+        String email = sessionManager.getEmailByToken(req.sessionToken);
+        if (!"manager@cinemacart.com".equals(email)) {
+            status = 403;
+            exchange.sendResponseHeaders(status, response.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+            return;
+        }
+
+        try {
+            List<QueryDocumentSnapshot> documents = db.collection("bookings").whereEqualTo("month", req.month).whereEqualTo("year", req.year).get().get().getDocuments();
+            double totalRevenue = 0;
+            int totalBookings = 0;
+            int cancelledBookings = 0;
+            Map<String, Integer> movieCount = new HashMap<>();
+        
+        for (int i = 0; i < documents.size(); i++) {
+            QueryDocumentSnapshot doc = documents.get(i);
+            totalBookings++;
+
+            String bookingStatus = doc.getString("status");
+            if ("cancelled".equalsIgnoreCase(bookingStatus)) {
+                cancelledBookings++;
+            } else {
+                Double amount = doc.getDouble("amount");
+                if (amount != null) totalRevenue += amount;
+            }
+
+            String movieTitle = doc.getString("movieTitle");
+            if (movieTitle != null) {
+                movieCount.put(movieTitle, movieCount.getOrDefault(movieTitle, 0) + 1);
+            }
+        }
+        
+
+            String mostPopularMovie = "N/A";
+            int highestcount = 0;
+
+            for (Map.Entry<String, Integer> entry : movieCount.entrySet()) {
+            if (entry.getValue() > highestcount) {
+                highestcount = entry.getValue();
+                mostPopularMovie = entry.getKey();
+            }
+        }    
+
+            ReportResponse report = new ReportResponse(totalRevenue, totalBookings, cancelledBookings, req.month, req.year, mostPopularMovie);
+            response = gson.toJson(report);
+            status = 200;
+
+    } catch (Exception e) {
+        status = 500;
+        response = "Server error: " + e.getMessage();
+    }
+
+        // HTTP response to frontend sent in JSON format
+        sendHttpResponse(exchange, status, response);
+    }
+
+    static class ReportRequest {
+        String sessionToken;
+        String month;
+        String year;
+    }
+
+    static class ReportResponse {
+        double totalRevenue;
+        int totalBookings;
+        int cancelledBookings;
+        String month;
+        String year;
+        String mostPopularMovie;
+
+        public ReportResponse(double totalRevenue, int totalBookings, int cancelledBookings, String month, String year, String mostPopularMovie) {
+            this.totalRevenue = totalRevenue;
+            this.totalBookings = totalBookings;
+            this.cancelledBookings = cancelledBookings;
+            this.month = month;
+            this.year = year;
+            this.mostPopularMovie = mostPopularMovie;
+        }
     }
 }

@@ -6,7 +6,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import java.io.FileInputStream;
-import java.util.UUID;
 
 public class Main {
 
@@ -34,12 +33,6 @@ public class Main {
             server.createContext("/cart", new CartController(sessionManager));// Create a route for cart operations stuff like add, view, update, clear
             server.setExecutor(null);
             server.start();
-
-            // Test booking
-            Booking testBooking = new Booking("1@email.com", UUID.randomUUID().toString(), "Test movie", "2026-04-07", "confirmed", "testMovie", "2026-04-07");
-            bookingRepository.save(testBooking);
-            System.out.println("Test booking saved to Firestore: " + testBooking.getBookingId());
-            // end test
 
             System.out.println("Server is running on port 8000");
         } catch (IOException e) {

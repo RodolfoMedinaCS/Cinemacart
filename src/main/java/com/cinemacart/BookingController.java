@@ -1,11 +1,8 @@
 package com.cinemacart;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Scanner;
 import java.util.List;
 import com.google.gson.Gson;
 import java.util.UUID;
@@ -25,7 +22,7 @@ import java.util.UUID;
  * - BookingRequest - Represents the structure of the incoming JSON request body for booking-related actions
 */
 
-    public class BookingController implements HttpHandler {
+    public class BookingController extends HttpRequestController {
         
         private final SessionManager sessionManager;
         private final BookingRepository bookingRepository;
@@ -47,25 +44,13 @@ import java.util.UUID;
  * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
  **/
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+            addHeaders(exchange);
             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
 
-            InputStream inputStream = exchange.getRequestBody();
-            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
-            String requestBody;
-
-            if (scanner.hasNext()) {
-                requestBody = scanner.next();
-            } else {
-                requestBody = "";
-            }
-            scanner.close();
-
+            String requestBody = readBody(exchange);
             Gson gson = new Gson(); // Create a new Gson instance to parse the JSON request body into a BookingRequest object
             BookingRequest req = gson.fromJson(requestBody, BookingRequest.class); // Convert the JSON request body into a BookingRequest object, allowing access the action, sessionToken, movieId, bookingDate, bookingId, movieTitle, and purchaseDate fields from the request
             
@@ -119,10 +104,7 @@ import java.util.UUID;
             }
 
             // HTTP response to frontend sent in JSON format
-            exchange.sendResponseHeaders(status, response.getBytes().length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            sendHttpResponse(exchange, status, response);
         }
 
 /**

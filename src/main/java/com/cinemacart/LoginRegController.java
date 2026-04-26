@@ -1,11 +1,7 @@
 package com.cinemacart;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Scanner;
 import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
 import java.util.UUID;
@@ -28,7 +24,7 @@ import java.util.UUID;
  */
 
 
-public class LoginRegController implements HttpHandler {
+public class LoginRegController extends HttpRequestController {
             
         private final UserRepository userRepository; // Create an instance of the UserRepository class to manage user accounts in the database
         private final SessionManager sessionManager; // Create an instance of the SessionManager class to generate user session tokens when they login
@@ -43,33 +39,19 @@ public class LoginRegController implements HttpHandler {
             this.sessionManager = sessionManager;
         }    
 
- /** handle - This void method is called when an HTTP request is received at the endpoint associated with this handler (HTTP requests for logging in and registering). 
- * It processes the incoming request, validates the user's session with sessionToken, and performs the appropriate action: login, registration, or logout based on the "action" field in the request body. 
+ /** handle - This void method is called when there is an incoming request, it validates the user's session with sessionToken 
+ * and performs the appropriate action: login, registration, or logout based on the "action" field in the request body. 
  * The method sends an HTTP response back to the client with the result of the login, registration, or logout operation.
  * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
  */       
         public void handle(HttpExchange exchange) throws IOException {
-
-                // Allows two way communications
-                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+            addHeaders(exchange);
                 if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
                     exchange.sendResponseHeaders(204, -1);
                     return;
                 }
 
-                // Read received message
-                InputStream inputStream = exchange.getRequestBody(); // Get the request body from the incoming HTTP request, this contains the login or registration information sent from the frontend
-                Scanner scanner = new Scanner(inputStream).useDelimiter("\\A"); // Use a Scanner to read the request body as a string, this allows us to easily parse the JSON data sent from the frontend
-                String requestBody; // Declare a variable to hold the request body as a string
-                if (scanner.hasNext()) { // Check if the scanner has any input, this is to prevent errors when trying to read an empty request body
-                    requestBody = scanner.next();
-                } else {
-                    requestBody = "";
-                }
-                scanner.close();
-
+                String requestBody = readBody(exchange);
                 System.out.println("Received from frontend: " + requestBody);
             
                 String response;
@@ -127,10 +109,7 @@ public class LoginRegController implements HttpHandler {
                     response = "Server error: " + e.getMessage();
                 }
 
-                exchange.sendResponseHeaders(status, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
+                sendHttpResponse(exchange, status, response);
                 }    
 
                 /** 

@@ -120,7 +120,7 @@ public class Booking {
         this.status = status;
     }
 
-    public double amount() {
+    public double getAmount() {
         return amount;
     }
 }
