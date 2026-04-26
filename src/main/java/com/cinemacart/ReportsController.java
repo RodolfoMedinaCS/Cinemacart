@@ -10,6 +10,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class ReportsController extends HttpRequestController {
 
@@ -80,14 +81,15 @@ public class ReportsController extends HttpRequestController {
             }
         }
         
-
             String mostPopularMovie = "N/A";
             int highestcount = 0;
 
-            for (Map.Entry<String, Integer> entry : movieCount.entrySet()) {
-            if (entry.getValue() > highestcount) {
-                highestcount = entry.getValue();
-                mostPopularMovie = entry.getKey();
+
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(movieCount.entrySet());
+            for (int i = 0; i < entries.size(); i++){
+                if (entries.get(i).getValue() > highestcount) {
+                highestcount = entries.get(i).getValue();
+                mostPopularMovie = entries.get(i).getKey();
             }
         }    
 
