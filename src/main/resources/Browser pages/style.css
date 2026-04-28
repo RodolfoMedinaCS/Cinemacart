@@ -366,3 +366,20 @@ footer {
 .logo:hover {
   text-decoration: none;
 }
+
+.hidden {
+  display: none !important;
+}
+
+#revenueBtn {
+  border: 2px solid var(--gold);
+}
+
+#revenueBtn:hover {
+  background: var(--gold);
+  color: black;
+}
+
+#revenueBtn.hidden {
+  display: none;
+}
