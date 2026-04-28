@@ -424,7 +424,7 @@
 
       output.innerHTML = `
         <h4>Report for ${data.month}/${data.year}</h4>
-        <p><strong>Total Revenue:</strong> $${data.totalRevenue}</p>
+        <p><strong>Total Revenue:</strong> $${parseFloat(data.totalRevenue).toFixed(2)}</p>
         <p><strong>Total Bookings:</strong> ${data.totalBookings}</p>
         <p><strong>Cancelled Bookings:</strong> ${data.cancelledBookings}</p>
         <p><strong>Most Popular Movie:</strong> ${data.mostPopularMovie}</p>
