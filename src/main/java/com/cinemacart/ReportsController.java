@@ -57,14 +57,32 @@ public class ReportsController extends HttpRequestController {
         }
 
         try {
-            List<QueryDocumentSnapshot> documents = db.collection("bookings").whereEqualTo("month", req.month).whereEqualTo("year", req.year).get().get().getDocuments();
+            List<QueryDocumentSnapshot> documents = db.collection("bookings").get().get().getDocuments();
             double totalRevenue = 0;
             int totalBookings = 0;
             int cancelledBookings = 0;
             Map<String, Integer> movieCount = new HashMap<>();
         
-        for (int i = 0; i < documents.size(); i++) {
+            for (int i = 0; i < documents.size(); i++) {
             QueryDocumentSnapshot doc = documents.get(i);
+
+            String bookingDate = doc.getString("bookingDate");
+            if (bookingDate == null) continue;
+
+            String[] parts = bookingDate.split(" ");
+            String docYear = parts[3];
+            String docMonthName = parts[1];
+
+            String[] month = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+            String docMonth = "01";
+            for (int m = 0; m < month.length; m++) {
+                if (month[m].equals(docMonthName)) {
+                    docMonth = String.format("%02d", m + 1);
+                    break;
+                }
+            }
+    
+            if (!docMonth.equals(req.month) || !docYear.equals(req.year)) continue;
             totalBookings++;
 
             String bookingStatus = doc.getString("status");

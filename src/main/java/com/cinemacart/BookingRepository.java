@@ -48,7 +48,10 @@ public class BookingRepository {
 
     public void save(Booking booking) {
         try {
+            String date = booking.getBookingDate();
             Map <String, Object> bookingData = new HashMap<>();
+            bookingData.put("year", date.substring(0,4));
+            bookingData.put("month", date.substring(5, 7));
             bookingData.put("bookingId", booking.getBookingId());
             bookingData.put("email", booking.getEmail());
             bookingData.put("movieId", booking.getMovieId());
