@@ -115,7 +115,7 @@
   </div>
 
   <header>
-    <div class="logo">Cinema<span>Cart</span></div>
+    <a href="index.html" class="logo">Cinema<span>Cart</span></a>
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
@@ -131,6 +131,7 @@
       <button id="purchaseHistoryBtn">Purchase History</button>
       <button id="paymentInfoBtn">Update Payment Info</button>
       <button id="securityBtn">Security Settings</button>
+      <button id="revenueBtn">Revenue</button>
     </div>
 
     <div class="panel active" id="accountInfoPanel">
@@ -158,6 +159,20 @@
       <button>Change Password</button>
     </div>
 
+    <div class="panel" id="revenuePanel">
+      <h3>Revenue Dashboard</h3>
+
+      <label>Month:</label>
+      <input type="number" id="reportMonth" min="1" max="12">
+
+      <label>Year:</label>
+      <input type="number" id="reportYear" min="2020">
+
+      <button id="loadReportBtn">Generate Report</button>
+
+      <div id="reportOutput" style="margin-top:20px;"></div>
+    </div>
+
   </div>
 
   <footer>
@@ -179,18 +194,41 @@
   const panels = document.querySelectorAll(".panel");
   const buttons = document.querySelectorAll(".tabs button");
 
-  const email = sessionStorage.getItem("userEmail") || localStorage.getItem("userEmail");
-  const username = sessionStorage.getItem("username") || localStorage.getItem("username");
+  const email =
+    sessionStorage.getItem("userEmail") ||
+    localStorage.getItem("userEmail");
 
-  if (email) document.getElementById("accountEmail").textContent = email;
-  if (username) document.getElementById("usernameDisplay").textContent = username;
+  const isManager = sessionStorage.getItem("isManager") === "true";
+  if (!isManager) {
+    document.getElementById("revenueBtn").style.display = "none";
+    document.getElementById("revenuePanel").classList.add("hidden");
+  }
 
-  buttons.forEach(button => {
+  const revenueBtn = document.getElementById("revenueBtn");
+  const revenuePanel = document.getElementById("revenuePanel");
+
+  if (!isManager) {
+    if (revenueBtn) revenueBtn.style.display = "none";
+    if (revenuePanel) revenuePanel.classList.add("hidden");
+  } else {
+    if (revenueBtn) revenueBtn.style.display = "inline-block";
+    if (revenuePanel) revenuePanel.classList.remove("hidden");
+  }
+
+  if (email) {
+    document.getElementById("accountEmail").textContent = email;
+    document.getElementById("usernameDisplay").textContent = email;
+  }
+
+  document.querySelectorAll(".tabs button").forEach(button => {
     button.addEventListener("click", () => {
+      if (!isManager && button.id === "revenueBtn") return;
       panels.forEach(panel => panel.classList.remove("active"));
-      buttons.forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tabs button").forEach(btn =>
+        btn.classList.remove("active")
+      );
 
-      const panelId = `${button.id.replace("Btn", "Panel")}`;
+      const panelId = button.id.replace("Btn", "Panel");
       document.getElementById(panelId).classList.add("active");
       button.classList.add("active");
     });
@@ -204,9 +242,8 @@
     });
   }
 
-  // Booking logic
   const API_URL = "http://localhost:8000/booking";
-  let bookingsCache = null; // Cache bookings after initial load
+  let bookingsCache = null;
 
   async function fetchBookings(forceRefresh = false) {
     const sessionToken =
@@ -229,7 +266,6 @@
       return;
     }
 
-    // Only fetch if not cached or forced
     if (!bookingsCache || forceRefresh) {
       container.innerHTML = "Loading bookings...";
       try {
@@ -251,7 +287,7 @@
           return;
         }
 
-        bookingsCache = data; // Cache the bookings
+        bookingsCache = data;
       } catch (err) {
         container.innerHTML = "Error connecting to server.";
         return;
@@ -287,7 +323,7 @@
           : ""
         }
 
-        <button onclick="deleteBooking('${b.bookingId}', '${b.status}')">Delete</button>
+        <button onclick="deleteBooking('${b.bookingId}')">Delete</button>
       `;
 
       container.appendChild(div);
@@ -342,10 +378,67 @@
     fetchBookings();
   }
 
-  // Load bookings once on page load
+  document.getElementById("loadReportBtn").addEventListener("click", async () => {
+    const output = document.getElementById("reportOutput");
+    const sessionToken = sessionStorage.getItem("sessionToken");
+
+    if (!sessionToken) {
+      output.innerHTML = "Session expired. Please log in again.";
+      return;
+    }
+
+    const month = document.getElementById("reportMonth").value;
+    const year = document.getElementById("reportYear").value;
+
+
+    if (!month || !year) {
+      output.innerHTML = "Please enter month and year.";
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionToken,
+          month,
+          year
+        })
+      });
+
+      const text = await res.text();
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        output.innerHTML = text;
+        return;
+      }
+
+      if (res.status !== 200) {
+        output.innerHTML = data.message || "Failed to load report.";
+        return;
+      }
+
+      output.innerHTML = `
+        <h4>Report for ${data.month}/${data.year}</h4>
+        <p><strong>Total Revenue:</strong> $${data.totalRevenue}</p>
+        <p><strong>Total Bookings:</strong> ${data.totalBookings}</p>
+        <p><strong>Cancelled Bookings:</strong> ${data.cancelledBookings}</p>
+        <p><strong>Most Popular Movie:</strong> ${data.mostPopularMovie}</p>
+      `;
+
+    } catch (err) {
+      output.innerHTML = "Error connecting to server.";
+      console.error(err);
+    }
+  });
+
   setTimeout(() => {
     fetchBookings();
-  }, 500); // 0.5 seconds
+  }, 500);
 </script>
 
 </body>

@@ -17,7 +17,7 @@
 
   <!-- navbar -->
   <header>
-    <div class="logo">Cinema<span>Cart</span></div>
+    <a href="index.html" class="logo">Cinema<span>Cart</span></a>
     <nav>
         <a href="index.html">Home</a>
         <a href="Search.html">Search</a>
@@ -193,6 +193,8 @@
             if (data.sessionToken) {
               sessionStorage.setItem("sessionToken", data.sessionToken);
             }
+
+            sessionStorage.setItem("isManager", data.isManager);
 
             triggerCurtainAndRedirect();
 
