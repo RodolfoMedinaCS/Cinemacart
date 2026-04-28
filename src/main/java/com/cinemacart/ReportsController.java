@@ -84,8 +84,7 @@ public class ReportsController extends HttpRequestController {
             String mostPopularMovie = "N/A";
             int highestcount = 0;
 
-
-        List<Map.Entry<String, Integer>> entries = new ArrayList<>(movieCount.entrySet());
+            List<Map.Entry<String, Integer>> entries = new ArrayList<>(movieCount.entrySet());
             for (int i = 0; i < entries.size(); i++){
                 if (entries.get(i).getValue() > highestcount) {
                 highestcount = entries.get(i).getValue();
@@ -93,9 +92,9 @@ public class ReportsController extends HttpRequestController {
             }
         }    
 
-            ReportResponse report = new ReportResponse(totalRevenue, totalBookings, cancelledBookings, req.month, req.year, mostPopularMovie);
-            response = gson.toJson(report);
-            status = 200;
+        ReportResponse report = new ReportResponse(totalRevenue, totalBookings, cancelledBookings, req.month, req.year, mostPopularMovie);
+        response = gson.toJson(report);
+        status = 200;
 
     } catch (Exception e) {
         status = 500;

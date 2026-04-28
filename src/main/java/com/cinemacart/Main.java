@@ -31,6 +31,7 @@ public class Main {
             server.createContext("/booking", new BookingController(sessionManager, bookingRepository)); // Create a route for  booking requests using the BookingController class
             server.createContext("/search", new SearchController()); // Create a route for search requests using the SearchController class
             server.createContext("/cart", new CartController(sessionManager));// Create a route for cart operations stuff like add, view, update, clear
+            server.createContext("/reports", new ReportsController(sessionManager));
             server.setExecutor(null);
             server.start();
 
