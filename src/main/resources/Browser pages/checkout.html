@@ -359,6 +359,8 @@
       if (sessionToken) {
         try {
 
+          const amountPreTax = parseFloat(subtotal.toFixed(2));
+
           const res = await fetch('http://localhost:8000/booking', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -367,7 +369,8 @@
               sessionToken: sessionToken,
               movieId: localStorage.getItem('selectedMovieId'),
               movieTitle: localStorage.getItem('selectedMovieTitle'),
-              bookingDate: localStorage.getItem('selectedDate')
+              bookingDate: localStorage.getItem('selectedDate'),
+              amount: amountPreTax
             })
           });
 
