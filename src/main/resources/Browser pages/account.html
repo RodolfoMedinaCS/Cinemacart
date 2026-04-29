@@ -38,6 +38,10 @@
       max-width: 900px;
     }
 
+    .content h2 {
+      margin-bottom: 25px;
+    }
+
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -105,6 +109,39 @@
       font-size: 1rem;
       border-top: 1px solid #222;
     }
+
+    .styled-select {
+      background-color: #1c1c1c;
+      color: #eee;
+      border: 2px solid #e50914;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 20px 30px 0;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .styled-select:focus {
+      outline: none;
+      border-color: #ff1e1e;
+    }
+
+    .styled-select option {
+      background-color: #1c1c1c;
+      color: #eee;
+    }
+
+    #revenuePanel label {
+      display: inline-block;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+
+    .gold-text {
+      color: #d4af37;
+      font-weight: 600;
+    }
+
   </style>
 </head>
 <body>
@@ -119,12 +156,13 @@
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
+      <a href="cart.html">Cart</a>
       <a href="login.html">Logout</a>
     </nav>
   </header>
 
   <div class="content">
-    <h2>Welcome back, <br><br><span id="usernameDisplay"></span></h2>
+    <h2>Welcome back, <span id="usernameDisplay"></span></h2>
 
     <div class="tabs">
       <button id="accountInfoBtn" class="active">Account Info</button>
@@ -137,8 +175,9 @@
     <div class="panel active" id="accountInfoPanel">
       <h3>Account Overview</h3>
       <p><strong>Email:</strong> <span id="accountEmail"></span></p>
-      <p><strong>Member Since:</strong> Date</p>
-      <p><strong>Last Login:</strong> Last Login</p>
+      <p id="nextBookingLine">Your next active booking: <span class="gold-text">...</span></p>
+      <p id="activeBookingsLine">Your current active bookings: <span class="gold-text">...</span></p>
+      <p id="pointsLine">Your current points: <span class="gold-text">...</span></p>
     </div>
 
     <!-- Purchase history panel -->
@@ -163,10 +202,29 @@
       <h3>Revenue Dashboard</h3>
 
       <label>Month:</label>
-      <input type="number" id="reportMonth" min="1" max="12">
+      <select id="reportMonth" class="styled-select">
+        <option value="">Select Month</option>
+        <option value="01">01</option>
+        <option value="02">02</option>
+        <option value="03">03</option>
+        <option value="04">04</option>
+        <option value="05">05</option>
+        <option value="06">06</option>
+        <option value="07">07</option>
+        <option value="08">08</option>
+        <option value="09">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
 
       <label>Year:</label>
-      <input type="number" id="reportYear" min="2020">
+      <select id="reportYear" class="styled-select">
+        <option value="">Select Year</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+      </select>
 
       <button id="loadReportBtn">Generate Report</button>
 
@@ -217,7 +275,12 @@
 
   if (email) {
     document.getElementById("accountEmail").textContent = email;
-    document.getElementById("usernameDisplay").textContent = email;
+
+    const usernameRaw = email.split("@")[0];
+    const username =
+      usernameRaw.charAt(0).toUpperCase() + usernameRaw.slice(1);
+
+    document.getElementById("usernameDisplay").textContent = username;
   }
 
   document.querySelectorAll(".tabs button").forEach(button => {
@@ -300,6 +363,7 @@
     }
 
     renderBookings(bookingsCache);
+    updateAccountOverview(bookingsCache);
   }
 
   function renderBookings(bookings) {
@@ -316,7 +380,12 @@
       div.innerHTML = `
         <strong>${b.movieTitle}</strong><br>
         Booking Date: ${b.bookingDate}<br>
-        Status: ${b.status}<br><br>
+        Amount: $${parseFloat(b.amount).toFixed(2)}<br>
+        Status: ${
+          b.status
+            ? b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase()
+            : ""
+        }<br><br>
 
         ${b.status !== "cancelled"
           ? `<button onclick="cancelBooking('${b.bookingId}')">Cancel</button>`
@@ -328,6 +397,52 @@
 
       container.appendChild(div);
     });
+  }
+
+  function updateAccountOverview(bookings) {
+    if (!bookings || bookings.length === 0) {
+      document.querySelector("#nextBookingLine .gold-text").textContent = "...";
+      document.querySelector("#activeBookingsLine .gold-text").textContent = "0";
+      document.querySelector("#pointsLine .gold-text").textContent = "0";
+      return;
+    }
+
+    const today = new Date();
+
+    const activeBookings = bookings.filter(
+      b => b.status && b.status.toLowerCase() !== "cancelled"
+    );
+
+    let nextBooking = null;
+
+    activeBookings.forEach(b => {
+      const date = new Date(b.bookingDate);
+      if (date >= today) {
+        if (!nextBooking || date < new Date(nextBooking.bookingDate)) {
+          nextBooking = b;
+        }
+      }
+    });
+
+    const activeCount = activeBookings.length;
+
+    let totalAmount = 0;
+    activeBookings.forEach(b => {
+      if (b.amount) {
+        totalAmount += parseFloat(b.amount);
+      }
+    });
+
+    const points = Math.floor(totalAmount) * 10;
+
+    document.querySelector("#nextBookingLine .gold-text").textContent =
+      nextBooking ? nextBooking.bookingDate : "No upcoming bookings";
+
+    document.querySelector("#activeBookingsLine .gold-text").textContent =
+      activeCount;
+
+    document.querySelector("#pointsLine .gold-text").textContent =
+      points;
   }
 
   async function cancelBooking(bookingId) {
@@ -438,7 +553,7 @@
 
   setTimeout(() => {
     fetchBookings();
-  }, 500);
+  }, 100);
 </script>
 
 </body>
