@@ -126,6 +126,7 @@
       <div class="confirmed-icon">&#10003;</div>
       <h1>You're all set!</h1>
       <p>Your booking is confirmed. See you at the movies!</p>
+      <p id="confirmationEmail" style="color: #aaa; font-size: 0.95rem; margin-bottom: 2rem;"></p>
 
       <!--booking details-->
       <div class="confirmed-card">
@@ -182,6 +183,13 @@
   </footer>
 
   <script>
+
+    const userEmail = sessionStorage.getItem('userEmail') || localStorage.getItem('guestEmail');
+    if(userEmail){
+      document.getElementById('confirmationEmail').textContent = 'Confirmation sent to ' + userEmail;
+    }
+
+
     const curtain = document.getElementById('curtain');
     const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
     const selectedDate = localStorage.getItem('selectedDate') || 'Unknown Date';

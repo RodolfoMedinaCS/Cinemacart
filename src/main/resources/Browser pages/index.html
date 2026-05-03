@@ -47,7 +47,15 @@
   <section>
     <h2>Now Showing</h2>
     <!-- The movie cards will be dynamically inserted here by app.js -->
-    <div id="nowShowing" class="movie-grid"></div>
+
+    <div class="carousel-wrapper">
+      <button class="carousel-btn prev-btn">&#8592;</button>
+      <div class="carousel-track-container">
+        <div id="nowShowing" class="carousel-track"></div>
+      </div>
+      <button class="carousel-btn next-btn">&#8594;</button>
+    </div>
+
   </section>
 <!-- Footer section (contact info) -->
   <footer style="
