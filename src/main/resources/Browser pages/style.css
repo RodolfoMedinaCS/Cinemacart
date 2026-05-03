@@ -407,7 +407,7 @@ footer {
 
 .carousel-track {
   display: flex;
-  gap: 20px;
+  gap: 60px;
   transition: transform 0.4s ease;
 }
 
@@ -415,6 +415,7 @@ footer {
   flex: 0 0 220px;
   width: 220px;
   max-width: 220px;
+  scroll-snap-align: start;
 }
 
 .carousel-btn {
@@ -458,3 +459,5 @@ footer {
 #revenueBtn.hidden {
   display: none;
 }
+
+

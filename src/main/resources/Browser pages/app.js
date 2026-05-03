@@ -344,27 +344,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      const track = document.getElementById('nowShowing');
+      // carosel arrow logic
+      const carouselContainer = document.querySelector('.carousel-track-container');
       const prevBtn = document.querySelector('.prev-btn');
       const nextBtn = document.querySelector('.next-btn');
-      const total = allMovies.length;
-      const visibleCount = Math.floor(track.parentElement.offsetWidth / 240);
-      const maxIndex = total - visibleCount - 1;
-      let index = Math.floor(maxIndex / 2);
 
-      function updateCarousel() {
-        track.style.transform = `translateX(-${index * 240}px)`;
+      if(carouselContainer && prevBtn && nextBtn){
+        const scrollAmount = 240 * 2// 3 cards per click
+
+        nextBtn.addEventListener('click', () => {
+          carouselContainer.scrollBy({left: scrollAmount, behavior: 'smooth'});
+        });
+
+        prevBtn.addEventListener('click', () =>{
+          carouselContainer.scrollBy({left: -scrollAmount, behavior: 'smooth'});
+        })
+
       }
 
-      updateCarousel();
-
-      nextBtn.addEventListener('click', () => {
-        if (index < maxIndex) { index++; updateCarousel(); }
-      });
-
-      prevBtn.addEventListener('click', () => {
-        if (index > 0) { index--; updateCarousel(); }
-      });
 
     })
     .catch(err => {
