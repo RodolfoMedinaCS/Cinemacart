@@ -117,7 +117,7 @@ section h2 {
 /* Movie grid formatting */
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   justify-content: center;
   padding: 40px 5%;
@@ -127,9 +127,10 @@ section h2 {
 .movie-card {
   background: #141414;
   border-radius: 6px;
-  width: 200px;
+  width: 100%;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 220px;
 }
 
 .movie-card:hover {
@@ -358,3 +359,79 @@ footer {
   background-color: #222;
   color: var(--gold);
 }
+
+.rating-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.75);
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.movie-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.genre-tag {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.duration-text {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 2rem;
+}
+
+.carousel-track-container {
+  overflow: hidden;
+  flex: 1;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.4s ease;
+}
+
+.carousel-track .movie-card {
+  flex: 0 0 220px;
+  width: 220px;
+  max-width: 220px;
+}
+
+.carousel-btn {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: var(--gold);
+  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.carousel-btn:hover {
+  background: #2a2a2a;
+}
+
+

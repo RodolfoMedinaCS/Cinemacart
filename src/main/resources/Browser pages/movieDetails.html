@@ -140,13 +140,23 @@
           Loading movie details...
         </p>
 
+
         <!-- Action Buttons -->
         <div class="movie-details-actions">
           <button class="btn-back" id="backBtn">← Back</button>
           <button class="btn" id="bookBtn">Get Tickets →</button>
         </div>
 
+        <div style="margin-top: 2rem; margin-bottom: 2rem;">
+          <iframe id="movieTrailer" width="100%" height="315"
+                  src="" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen style="border-radius: 8px;">
+          </iframe>
+        </div>
+
       </div>
+
     </div>
   </main>
 
@@ -189,12 +199,30 @@
         12: "images/beautybeast.jpg"
       };
 
+      const trailers = {
+        1: "https://www.youtube.com/embed/I7c1etV7D7g",
+        2: "https://www.youtube.com/embed/UaVTIH8mujA",
+        3: "https://www.youtube.com/embed/9O1Iy9od7-A",
+        4: "https://www.youtube.com/embed/P5ieIbInFpg",
+        5: "https://www.youtube.com/embed/xvszmNXdM4w",
+        6: "https://www.youtube.com/embed/mqqft2x_Aa4",
+        7: "https://www.youtube.com/embed/lFzVJEksoDY",
+        8: "https://www.youtube.com/embed/q94n3eWOWXM",
+        9: "https://www.youtube.com/embed/sLtavGjAOJY",
+        10: "https://www.youtube.com/embed/nb_fFj_0rq8",
+        11: "https://www.youtube.com/embed/EXeTwQWrcwY",
+        12: "https://www.youtube.com/embed/iurbZwxKFUE"
+      };
+
       document.getElementById('moviePoster').src = images[movieId] || 'images/placeholder.jpg';
       document.getElementById('movieTitle').textContent = movieTitle;
       document.getElementById('movieRating').textContent = '⭐ ' + movieRating + ' / 10';
       document.getElementById('movieGenre').textContent = movieGenre;
       document.getElementById('movieDuration').textContent = movieDuration + ' min';
       document.getElementById('movieDescription').textContent = localStorage.getItem('selectedMovieDescription') || 'No description available.';
+      document.getElementById('movieTrailer').src = trailers[movieId] || '';
+
+
 
 
       document.getElementById("backBtn").addEventListener("click", () => {

@@ -216,6 +216,12 @@
         </div>
       </div>
 
+      <!-- guest email -->
+      <div class="checkout-card" id="guestEmailCard" style="display:none;">
+        <p class="checkout-label">Confirmation Email</p>
+        <input class="form-input" type="email" id="guestEmail" placeholder="Enter your email for booking confirmation">
+      </div>
+
       <!-- payment form -->
 
       <div class="checkout-card">
@@ -259,6 +265,12 @@
     </footer>
 
   <script>
+
+    if(!sessionStorage.getItem('sessionToken')){
+      document.getElementById('guestEmailCard').style.display = 'block';
+    }
+
+
     const curtain = document.getElementById('curtain');
 
     const movieTitle = localStorage.getItem('selectedMovieTitle') || 'Unknown Movie';
@@ -393,6 +405,7 @@
         }
 
       } else {
+        localStorage.setItem('guestEmail', document.getElementById('guestEmail').value.trim());
         curtain.classList.add('active');
         setTimeout(() => { window.location.href = 'bookingConfirmed.html'; }, 1500);
       }
