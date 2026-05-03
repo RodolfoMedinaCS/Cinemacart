@@ -9,22 +9,22 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.DocumentSnapshot;
 
 /**
- * a. BookingRepository
- * b. Date created: 
- * c. Author: Winter Tomas
+ * BookingRepository
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. The primary method of this class is to save user bookings to the Firebase database upon creation. Other methods include checking booking history of an account within the database
+ * The primary method of this class is to save user bookings to the Firebase database upon creation. Other methods include checking booking history of an account within the database
  * Similarly to the UserRepository class, objects are stored in the Firebase database. They are specifically stored in a collection called Bookings which serves as a "folder" for all booking documents.
  * Each booking document can be considered as a file within the Booking collection / folder. Each booking object in this case is a file that contains the booking data that is saved to a user's account.
  * 
- * e. Methods:
- * - BookingRepository - Constructor for the BookingRepository class, initializes the Firestore database connection that will be used for saving and retrieving bookings in the database
- * - save - This method takes in a Booking object and saves its data to the "bookings" collection in the Firestore database, using the bookingId as the document ID
- * - cancelBooking - This method takes in a bookingId and updates the "status" field of the corresponding booking document in the "bookings" collection in the Firestore database to "cancelled"
- * - deleteBooking - This method takes in a bookingId and deletes the corresponding booking document from the "bookings" collection in the Firestore database
- * - findByEmail - This method takes in an email and retrieves all booking documents from the "bookings" collection in the Firestore database where the "email" field matches the specified email, returning a list of Booking objects that are associated with the specified email
+ * Methods:
+ * BookingRepository - Constructor for the BookingRepository class, initializes the Firestore database connection that will be used for saving and retrieving bookings in the database
+ * save - This method takes in a Booking object and saves its data to the "bookings" collection in the Firestore database, using the bookingId as the document ID
+ * cancelBooking - This method takes in a bookingId and updates the "status" field of the corresponding booking document in the "bookings" collection in the Firestore database to "cancelled"
+ * deleteBooking - This method takes in a bookingId and deletes the corresponding booking document from the "bookings" collection in the Firestore database
+ * findByEmail - This method takes in an email and retrieves all booking documents from the "bookings" collection in the Firestore database where the "email" field matches the specified email, returning a list of Booking objects that are associated with the specified email
  * 
- * f. Data structures:
+ * Data structures:
  * A list is used to store the Booking objects that are retrieved from the database in the findByEmail method. A map is used to store the booking data when saving a booking to the database in the save method.
 */
 
@@ -34,7 +34,6 @@ public class BookingRepository {
 
     /**
      * BookingRepository - Constructor for the BookingRepository class, initializes the Firestore database connection that will be used for saving and retrieving bookings in the database
-     * @return - A new instance of the BookingRepository class with an initialized Firestore database connection
      */
 
     public BookingRepository() {
@@ -49,7 +48,10 @@ public class BookingRepository {
 
     public void save(Booking booking) {
         try {
+            String date = booking.getBookingDate();
             Map <String, Object> bookingData = new HashMap<>();
+            bookingData.put("year", date.substring(0,4));
+            bookingData.put("month", date.substring(5, 7));
             bookingData.put("bookingId", booking.getBookingId());
             bookingData.put("email", booking.getEmail());
             bookingData.put("movieId", booking.getMovieId());
@@ -57,6 +59,7 @@ public class BookingRepository {
             bookingData.put("status", booking.getStatus());
             bookingData.put("movieTitle", booking.getMovieTitle());
             bookingData.put("purchaseDate", booking.getPurchaseDate());
+            bookingData.put("amount", booking.getAmount());
             db.collection("bookings").document(booking.getBookingId()).set(bookingData).get(); // Saves the booking data to the "bookings" collection in Firestore database, using the bookingId as the document ID
         } catch (Exception e) {
             throw new RuntimeException("Error saving booking", e);
@@ -118,7 +121,8 @@ public class BookingRepository {
                 String status = doc.getString("status");
                 String movieTitle = doc.getString("movieTitle");
                 String purchaseDate = doc.getString("purchaseDate");
-                Booking booking = new Booking(email, bookingId, movieId, bookingDate, status, movieTitle, purchaseDate); // Create a new Booking object using the retrieved data from the document
+                double amount = doc.getDouble("amount");
+                Booking booking = new Booking(email, bookingId, movieId, bookingDate, status, movieTitle, purchaseDate, amount); // Create a new Booking object using the retrieved data from the document
                 bookings.add(booking); // Add the Booking object to the list of bookings
             }
             return bookings; // Return the list of bookings associated with the specified email

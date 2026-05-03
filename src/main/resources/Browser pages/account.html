@@ -38,6 +38,10 @@
       max-width: 900px;
     }
 
+    .content h2 {
+      margin-bottom: 25px;
+    }
+
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -105,6 +109,39 @@
       font-size: 1rem;
       border-top: 1px solid #222;
     }
+
+    .styled-select {
+      background-color: #1c1c1c;
+      color: #eee;
+      border: 2px solid #e50914;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 20px 30px 0;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .styled-select:focus {
+      outline: none;
+      border-color: #ff1e1e;
+    }
+
+    .styled-select option {
+      background-color: #1c1c1c;
+      color: #eee;
+    }
+
+    #revenuePanel label {
+      display: inline-block;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+
+    .gold-text {
+      color: #d4af37;
+      font-weight: 600;
+    }
+
   </style>
 </head>
 <body>
@@ -115,29 +152,32 @@
   </div>
 
   <header>
-    <div class="logo">Cinema<span>Cart</span></div>
+    <a href="index.html" class="logo">Cinema<span>Cart</span></a>
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
+      <a href="cart.html">Cart</a>
       <a href="login.html">Logout</a>
     </nav>
   </header>
 
   <div class="content">
-    <h2>Welcome back, <br><br><span id="usernameDisplay"></span></h2>
+    <h2>Welcome back, <span id="usernameDisplay"></span></h2>
 
     <div class="tabs">
       <button id="accountInfoBtn" class="active">Account Info</button>
       <button id="purchaseHistoryBtn">Purchase History</button>
       <button id="paymentInfoBtn">Update Payment Info</button>
       <button id="securityBtn">Security Settings</button>
+      <button id="revenueBtn">Revenue</button>
     </div>
 
     <div class="panel active" id="accountInfoPanel">
       <h3>Account Overview</h3>
       <p><strong>Email:</strong> <span id="accountEmail"></span></p>
-      <p><strong>Member Since:</strong> Date</p>
-      <p><strong>Last Login:</strong> Last Login</p>
+      <p id="nextBookingLine">Your next active booking: <span class="gold-text">...</span></p>
+      <p id="activeBookingsLine">Your current active bookings: <span class="gold-text">...</span></p>
+      <p id="pointsLine">Your current points: <span class="gold-text">...</span></p>
     </div>
 
     <!-- Purchase history panel -->
@@ -156,6 +196,39 @@
       <h3>Security Settings</h3>
       <p>Change your password or review other security settings.<br><br></p>
       <button>Change Password</button>
+    </div>
+
+    <div class="panel" id="revenuePanel">
+      <h3>Revenue Dashboard</h3>
+
+      <label>Month:</label>
+      <select id="reportMonth" class="styled-select">
+        <option value="">Select Month</option>
+        <option value="01">01</option>
+        <option value="02">02</option>
+        <option value="03">03</option>
+        <option value="04">04</option>
+        <option value="05">05</option>
+        <option value="06">06</option>
+        <option value="07">07</option>
+        <option value="08">08</option>
+        <option value="09">09</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+      </select>
+
+      <label>Year:</label>
+      <select id="reportYear" class="styled-select">
+        <option value="">Select Year</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+      </select>
+
+      <button id="loadReportBtn">Generate Report</button>
+
+      <div id="reportOutput" style="margin-top:20px;"></div>
     </div>
 
   </div>
@@ -179,18 +252,46 @@
   const panels = document.querySelectorAll(".panel");
   const buttons = document.querySelectorAll(".tabs button");
 
-  const email = sessionStorage.getItem("userEmail") || localStorage.getItem("userEmail");
-  const username = sessionStorage.getItem("username") || localStorage.getItem("username");
+  const email =
+    sessionStorage.getItem("userEmail") ||
+    localStorage.getItem("userEmail");
 
-  if (email) document.getElementById("accountEmail").textContent = email;
-  if (username) document.getElementById("usernameDisplay").textContent = username;
+  const isManager = sessionStorage.getItem("isManager") === "true";
+  if (!isManager) {
+    document.getElementById("revenueBtn").style.display = "none";
+    document.getElementById("revenuePanel").classList.add("hidden");
+  }
 
-  buttons.forEach(button => {
+  const revenueBtn = document.getElementById("revenueBtn");
+  const revenuePanel = document.getElementById("revenuePanel");
+
+  if (!isManager) {
+    if (revenueBtn) revenueBtn.style.display = "none";
+    if (revenuePanel) revenuePanel.classList.add("hidden");
+  } else {
+    if (revenueBtn) revenueBtn.style.display = "inline-block";
+    if (revenuePanel) revenuePanel.classList.remove("hidden");
+  }
+
+  if (email) {
+    document.getElementById("accountEmail").textContent = email;
+
+    const usernameRaw = email.split("@")[0];
+    const username =
+      usernameRaw.charAt(0).toUpperCase() + usernameRaw.slice(1);
+
+    document.getElementById("usernameDisplay").textContent = username;
+  }
+
+  document.querySelectorAll(".tabs button").forEach(button => {
     button.addEventListener("click", () => {
+      if (!isManager && button.id === "revenueBtn") return;
       panels.forEach(panel => panel.classList.remove("active"));
-      buttons.forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tabs button").forEach(btn =>
+        btn.classList.remove("active")
+      );
 
-      const panelId = `${button.id.replace("Btn", "Panel")}`;
+      const panelId = button.id.replace("Btn", "Panel");
       document.getElementById(panelId).classList.add("active");
       button.classList.add("active");
     });
@@ -204,9 +305,8 @@
     });
   }
 
-  // Booking logic
   const API_URL = "http://localhost:8000/booking";
-  let bookingsCache = null; // Cache bookings after initial load
+  let bookingsCache = null;
 
   async function fetchBookings(forceRefresh = false) {
     const sessionToken =
@@ -229,7 +329,6 @@
       return;
     }
 
-    // Only fetch if not cached or forced
     if (!bookingsCache || forceRefresh) {
       container.innerHTML = "Loading bookings...";
       try {
@@ -251,7 +350,7 @@
           return;
         }
 
-        bookingsCache = data; // Cache the bookings
+        bookingsCache = data;
       } catch (err) {
         container.innerHTML = "Error connecting to server.";
         return;
@@ -264,6 +363,7 @@
     }
 
     renderBookings(bookingsCache);
+    updateAccountOverview(bookingsCache);
   }
 
   function renderBookings(bookings) {
@@ -280,18 +380,69 @@
       div.innerHTML = `
         <strong>${b.movieTitle}</strong><br>
         Booking Date: ${b.bookingDate}<br>
-        Status: ${b.status}<br><br>
+        Amount: $${parseFloat(b.amount).toFixed(2)}<br>
+        Status: ${
+          b.status
+            ? b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase()
+            : ""
+        }<br><br>
 
         ${b.status !== "cancelled"
           ? `<button onclick="cancelBooking('${b.bookingId}')">Cancel</button>`
           : ""
         }
 
-        <button onclick="deleteBooking('${b.bookingId}', '${b.status}')">Delete</button>
+        <button onclick="deleteBooking('${b.bookingId}')">Delete</button>
       `;
 
       container.appendChild(div);
     });
+  }
+
+  function updateAccountOverview(bookings) {
+    if (!bookings || bookings.length === 0) {
+      document.querySelector("#nextBookingLine .gold-text").textContent = "...";
+      document.querySelector("#activeBookingsLine .gold-text").textContent = "0";
+      document.querySelector("#pointsLine .gold-text").textContent = "0";
+      return;
+    }
+
+    const today = new Date();
+
+    const activeBookings = bookings.filter(
+      b => b.status && b.status.toLowerCase() !== "cancelled"
+    );
+
+    let nextBooking = null;
+
+    activeBookings.forEach(b => {
+      const date = new Date(b.bookingDate);
+      if (date >= today) {
+        if (!nextBooking || date < new Date(nextBooking.bookingDate)) {
+          nextBooking = b;
+        }
+      }
+    });
+
+    const activeCount = activeBookings.length;
+
+    let totalAmount = 0;
+    activeBookings.forEach(b => {
+      if (b.amount) {
+        totalAmount += parseFloat(b.amount);
+      }
+    });
+
+    const points = Math.floor(totalAmount) * 10;
+
+    document.querySelector("#nextBookingLine .gold-text").textContent =
+      nextBooking ? nextBooking.bookingDate : "No upcoming bookings";
+
+    document.querySelector("#activeBookingsLine .gold-text").textContent =
+      activeCount;
+
+    document.querySelector("#pointsLine .gold-text").textContent =
+      points;
   }
 
   async function cancelBooking(bookingId) {
@@ -342,10 +493,67 @@
     fetchBookings();
   }
 
-  // Load bookings once on page load
+  document.getElementById("loadReportBtn").addEventListener("click", async () => {
+    const output = document.getElementById("reportOutput");
+    const sessionToken = sessionStorage.getItem("sessionToken");
+
+    if (!sessionToken) {
+      output.innerHTML = "Session expired. Please log in again.";
+      return;
+    }
+
+    const month = document.getElementById("reportMonth").value;
+    const year = document.getElementById("reportYear").value;
+
+
+    if (!month || !year) {
+      output.innerHTML = "Please enter month and year.";
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionToken,
+          month,
+          year
+        })
+      });
+
+      const text = await res.text();
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        output.innerHTML = text;
+        return;
+      }
+
+      if (res.status !== 200) {
+        output.innerHTML = data.message || "Failed to load report.";
+        return;
+      }
+
+      output.innerHTML = `
+        <h4>Report for ${data.month}/${data.year}</h4>
+        <p><strong>Total Revenue:</strong> $${parseFloat(data.totalRevenue).toFixed(2)}</p>
+        <p><strong>Total Bookings:</strong> ${data.totalBookings}</p>
+        <p><strong>Cancelled Bookings:</strong> ${data.cancelledBookings}</p>
+        <p><strong>Most Popular Movie:</strong> ${data.mostPopularMovie}</p>
+      `;
+
+    } catch (err) {
+      output.innerHTML = "Error connecting to server.";
+      console.error(err);
+    }
+  });
+
   setTimeout(() => {
     fetchBookings();
-  }, 500); // 0.5 seconds
+  }, 100);
 </script>
 
 </body>

@@ -167,10 +167,11 @@
 
     <!-- navbar -->
   <header>
-    <div class="logo">Cinema<span>Cart</span></div>
+    <a href="index.html" class="logo">Cinema<span>Cart</span></a>
     <nav>
       <a href="index.html">Home</a>
       <a href="Search.html">Search</a>
+      <a href="cart.html">Cart</a>
       <span id="navAuthLink">
         <a href="login.html">Login</a>
       </span>
@@ -371,6 +372,8 @@
       if (sessionToken) {
         try {
 
+          const amountPreTax = parseFloat(subtotal.toFixed(2));
+
           const res = await fetch('http://localhost:8000/booking', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -379,7 +382,8 @@
               sessionToken: sessionToken,
               movieId: localStorage.getItem('selectedMovieId'),
               movieTitle: localStorage.getItem('selectedMovieTitle'),
-              bookingDate: localStorage.getItem('selectedDate')
+              bookingDate: localStorage.getItem('selectedDate'),
+              amount: amountPreTax
             })
           });
 

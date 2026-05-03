@@ -6,23 +6,23 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 
 /**
- * a. UserRepository
- * b. Date created: 
- * c. Author: Winter Tomas
+ * UserRepository
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. The primary method of this class is to save user accounts to a database upon creation. Other methods include checking existence of the account within the database, searching and
+ * The primary method of this class is to save user accounts to a database upon creation. Other methods include checking existence of the account within the database, searching and
  * returning a user along with their data, and an account deletion method
  * Firestore utilizes a fieldname and value to store in the database, in the save method, we are inputting a string for the fieldname and the user's data onto a hashmap which 
  * is then imported to the Firestore database
  * 
- * e. Methods:
- * - UserRepository - Constructor for the UserRepository class, initializes the Firestore database connection that will be used for saving and retrieving user accounts in the database
- * - save - This method takes in a UserAccount object and saves its data to the "
- * - exists - This method takes in an email and checks if a user account with that email exists in the "users" collection in the Firestore database. It returns true if the account exists and false otherwise
- * - findByEmail - This method takes in an email and retrieves the corresponding user document from the "users" collection in the Firestore database. It returns a UserAccount object with the retrieved data if the account exists, or null if it does not
- * - deleteUser - This method takes in an email and deletes the corresponding user document from the "users" collection in the Firestore database. This method can be called to give users the option to delete their account
+ * Methods:
+ * UserRepository - Constructor for the UserRepository class, initializes the Firestore database connection that will be used for saving and retrieving user accounts in the database
+ * save - This method takes in a UserAccount object and saves its data to the "
+ * exists - This method takes in an email and checks if a user account with that email exists in the "users" collection in the Firestore database. It returns true if the account exists and false otherwise
+ * indByEmail - This method takes in an email and retrieves the corresponding user document from the "users" collection in the Firestore database. It returns a UserAccount object with the retrieved data if the account exists, or null if it does not
+ * deleteUser - This method takes in an email and deletes the corresponding user document from the "users" collection in the Firestore database. This method can be called to give users the option to delete their account
  * 
- * f. Data structures:
+ * Data structures:
  * A map is used to store the user data when saving a user account to the database in the save method. 
  * The map allows us to associate field names (such as "email", "username", etc.) with their corresponding values from the UserAccount object, which can then be easily saved to the Firestore database.
  * String parameter - The field name used in the Firestore database to identify the type of data being stored (e.g., "email", "username", etc.)
@@ -34,7 +34,6 @@ public class UserRepository {
 
     /**
      * UserRepository - Constructor for the UserRepository class, initializes the Firestore database connection that will be used for saving and retrieving user accounts in the database
-     * @return - A new instance of the UserRepository class with an initialized Firestore database connection
     */
 
     public UserRepository() {

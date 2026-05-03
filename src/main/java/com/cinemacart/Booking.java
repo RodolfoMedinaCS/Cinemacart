@@ -1,15 +1,15 @@
 package com.cinemacart;
 
 /**
- * a. Booking
- * b. Date created: 
- * c. Author: Winter Tomas
+ * Booking
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. Represents a booking made by a customer for a specific movie and showtime.
+ * Represents a booking made by a customer for a specific movie and showtime.
  * Contains details such as the movie, showtime, number of tickets, and total price.
  * Bookings are tied to emails rather than userId
  * 
- * e. Methods:
+ * Methods:
  * Booking - Constructor to initialize a booking with the provided details
  * getEmail - Getter method to retrieve the email associated with the booking
  * getBookingId - Getter method to retrieve the unique identifier for the booking
@@ -30,6 +30,7 @@ public class Booking {
     private String status;
     private final String movieTitle;
     private final String purchaseDate;
+    private final double amount;
 
     
     /** 
@@ -42,7 +43,7 @@ public class Booking {
      * @param movieTitle - The title of the movie that was booked
      * @param purchaseDate - The date and time when the booking was made
      **/
-    public Booking (String email, String bookingId, String movieId, String bookingDate, String status, String movieTitle, String purchaseDate) {
+    public Booking (String email, String bookingId, String movieId, String bookingDate, String status, String movieTitle, String purchaseDate, double amount) {
         this.email = email;
         this.bookingId = bookingId;
         this.movieId = movieId;
@@ -50,6 +51,7 @@ public class Booking {
         this.status = status;
         this.movieTitle = movieTitle;
         this.purchaseDate = purchaseDate;
+        this.amount = amount;
     }
 
     // Getters for the booking details
@@ -116,5 +118,9 @@ public class Booking {
     */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public double getAmount() {
+        return amount;
     }
 }

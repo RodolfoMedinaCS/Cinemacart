@@ -205,10 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
           noResultsMsg.style.display = "none";
           resultsContainer.style.display = "";
 
-          // Limit to top 3 results (can be increased later)
-          const resultsToShow = data.slice(0, 3);
-
-          resultsToShow.forEach(movie => {
+          data.forEach(movie => {
             const card = document.createElement("div");
             card.className = "movie-card";
 
@@ -287,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.json())
     .then(allMovies => {
-      // Shuffle movies array and pick the first 4
+      // Shuffle movies array and pick the first 6
       allMovies.sort(() => Math.random() - 0.5);
       const nowShowing = allMovies;
 

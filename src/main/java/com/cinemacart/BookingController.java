@@ -1,31 +1,28 @@
 package com.cinemacart;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Scanner;
 import java.util.List;
 import com.google.gson.Gson;
 import java.util.UUID;
 
 /**
- * a. BookingController
- * b. Date created: 
- * c. Author: Winter Tomas
+ * BookingController
+ * Date created: Q1 of 2026
+ * Author: Winter Tomas
  * 
- * d. BookingController class is responsible for handling booking related requests from the frontend. 
+ * BookingController class is responsible for handling booking related requests from the frontend. 
  * It uses the SessionManager class to validate user sessions and the BookingRepository class to interact with the bookings stored in the database.
  * BookingControllers processes are available to the user, these include creating new bookings, viewing booking history, and cancelling existing obokings. Bookings may only be deleted if they are cancelled first.
  * 
- * e. Methods:
+ * Methods:
  * - BookingController - Constructor for the BookingController class, takes in a SessionManager and BookingRepository instance to manage user sessions and bookings in the database
  * - handle - This void method is called when an HTTP request is received at the endpoint associated with this handler.
  * - BookingRequest - Represents the structure of the incoming JSON request body for booking-related actions
 */
 
-    public class BookingController implements HttpHandler {
+    public class BookingController extends HttpRequestController {
         
         private final SessionManager sessionManager;
         private final BookingRepository bookingRepository;
@@ -47,25 +44,13 @@ import java.util.UUID;
  * @param exchange - An HttpExchange object that encapsulates the details of the incoming HTTP request and allows sending a response back to the client
  **/
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+            addHeaders(exchange);
             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
 
-            InputStream inputStream = exchange.getRequestBody();
-            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
-            String requestBody;
-
-            if (scanner.hasNext()) {
-                requestBody = scanner.next();
-            } else {
-                requestBody = "";
-            }
-            scanner.close();
-
+            String requestBody = readBody(exchange);
             Gson gson = new Gson(); // Create a new Gson instance to parse the JSON request body into a BookingRequest object
             BookingRequest req = gson.fromJson(requestBody, BookingRequest.class); // Convert the JSON request body into a BookingRequest object, allowing access the action, sessionToken, movieId, bookingDate, bookingId, movieTitle, and purchaseDate fields from the request
             
@@ -86,7 +71,7 @@ import java.util.UUID;
                     if ("book".equalsIgnoreCase(req.action)) {
                         // Creates a new booking and saves it to Firebase
                         String bookingId = UUID.randomUUID().toString();
-                        Booking booking = new Booking(email, bookingId, req.movieId, req.bookingDate, "confirmed", req.movieTitle, req.bookingDate);
+                        Booking booking = new Booking(email, bookingId, req.movieId, req.bookingDate, "Confirmed", req.movieTitle, req.bookingDate, req.amount);
                         bookingRepository.save(booking);
                         status = 201;
 
@@ -103,6 +88,11 @@ import java.util.UUID;
                         status = 200;
                         System.out.println("Booking cancelled successfully");
 
+                    } else if ("delete".equalsIgnoreCase(req.action)) {
+                        bookingRepository.deleteBooking(req.bookingId);
+                        status = 200;
+                        System.out.println("Booking cancelled successfully");
+
                     } else {
                         status = 400;
                         System.out.println("Invalid action");
@@ -114,10 +104,7 @@ import java.util.UUID;
             }
 
             // HTTP response to frontend sent in JSON format
-            exchange.sendResponseHeaders(status, response.getBytes().length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            sendHttpResponse(exchange, status, response);
         }
 
 /**
@@ -139,5 +126,6 @@ import java.util.UUID;
         String bookingId; // ID of the booking to cancel (required for cancellation)
         String movieTitle; // Title of the movie to book (required for booking)
         String purchaseDate; // Date of the purchase (required for booking)
+        double amount;
         }
     }
