@@ -460,4 +460,11 @@ footer {
   display: none;
 }
 
+#searchResults{
+  gap: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  grid-template-columns:unset;
+}
 
